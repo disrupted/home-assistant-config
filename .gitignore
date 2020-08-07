@@ -1,0 +1,40 @@
+# Example .gitignore file for your config dir.
+# An * ensures that everything will be ignored.
+*
+
+# You can whitelist files/folders with !, these will not be ignored.
+!.gitignore
+!.gitkeep
+!*.yaml
+!*.md
+
+# Ignore folders.
+.storage
+.cloud
+deps
+.google.token
+
+# Ensure these YAML files containing secrets/credentials are ignored.
+secrets.yaml
+ip_bans.yaml
+known_devices.yaml
+.ios.conf
+.spotify-token-cache
+.uuid
+.config_entries.json
+.homekit.state
+google_calendars.yaml
+
+# ESPHome
+esphome/secrets.yaml
+esphome/**/
+
+# Generic
+*.db*
+*.db-shm
+*.db-wal
+*.pyc
+._*
+__pycache__
+*.log
+*.pyc
