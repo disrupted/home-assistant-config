@@ -35,7 +35,7 @@ jobs:
       - name: Getting your configuration from GitHub
         uses: actions/checkout@v1
       - name: Copy stub files into configuration folder
-        run: cp -R ./.stubs/* ./config
+        run: cp -R ./.stubs/* .
       - name: Home Assistant Version
         uses: "docker://homeassistant/home-assistant:stable"
         with:
@@ -44,7 +44,7 @@ jobs:
       - name: Home Assistant Check
         uses: "docker://homeassistant/home-assistant:stable"
         with:
-          args: python -m homeassistant --config ./config/ --script check_config --info all
+          args: python -m homeassistant --config . --script check_config --info all
   home_assistant_beta:
     runs-on: ubuntu-latest
     needs: [yamllint, remarklint]
@@ -52,7 +52,7 @@ jobs:
       - name: Getting your configuration from GitHub
         uses: actions/checkout@v1
       - name: Copy stub files into configuration folder
-        run: cp -R ./.stubs/* ./config
+        run: cp -R ./.stubs/* .
       - name: Home Assistant Version
         uses: "docker://homeassistant/home-assistant:beta"
         with:
@@ -61,7 +61,7 @@ jobs:
       - name: Home Assistant Check
         uses: "docker://homeassistant/home-assistant:beta"
         with:
-          args: python -m homeassistant --config ./config/ --script check_config --info all
+          args: python -m homeassistant --config . --script check_config --info all
   home_assistant_dev:
     runs-on: ubuntu-latest
     needs: [yamllint, remarklint]
@@ -69,7 +69,7 @@ jobs:
       - name: Getting your configuration from GitHub
         uses: actions/checkout@v1
       - name: Copy stub files into configuration folder
-        run: cp -R ./.stubs/* ./config
+        run: cp -R ./.stubs/* .
       - name: Home Assistant Version
         uses: "docker://homeassistant/home-assistant:dev"
         with:
@@ -78,7 +78,7 @@ jobs:
       - name: Home Assistant Check
         uses: "docker://homeassistant/home-assistant:dev"
         with:
-          args: python -m homeassistant --config ./config/ --script check_config --info all
+          args: python -m homeassistant --config . --script check_config --info all
   esphome:
     runs-on: ubuntu-latest
     needs: [yamllint]
@@ -96,8 +96,8 @@ jobs:
           pip list
           esphome version
       - name: Copy stub files into configuration folder
-        run: cp -R ./.stubs/* ./config/esphome/
+        run: cp -R ./.stubs/* ./esphome/
       - name: Run esphome on all files
         # yamllint disable rule:line-length
         run: |
-          for file in $(find ./config/esphome -type f -name "*.yaml" -not -name "secrets.yaml"); do esphome "${file}" config; done
+          for file in $(find ./esphome -type f -name "*.yaml" -not -name "secrets.yaml"); do esphome "${file}" config; done
