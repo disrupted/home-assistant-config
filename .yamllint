@@ -29,9 +29,9 @@ rules:
     min-spaces-after: 1
     max-spaces-after: 1
   comments:
-    level: error
+    level: warning
     require-starting-space: true
-    min-spaces-from-content: 2
+    min-spaces-from-content: 1
   comments-indentation:
     level: error
   empty-lines:

@@ -1,0 +1,353 @@
+homeassistant:
+  name: !secret name
+  latitude: !secret location_home_lat
+  longitude: !secret location_home_lon
+  elevation: !secret location_home_elevation
+  unit_system: metric
+  time_zone: !secret timezone
+  internal_url: !secret internal_url
+  external_url: !secret external_url
+  # customize_domain: {}
+  packages: !include_dir_named packages
+  whitelist_external_dirs:
+    - /tmp
+    - /config
+
+http:
+  # For extra security set this to only accept connections on localhost if NGINX is on the same machine
+  # server_host: 127.0.0.1
+  use_x_forwarded_for: true
+  # You must set the trusted proxy IP address so that Home Assistant will properly accept connections
+  # Set this to your NGINX machine IP, or localhost if hosted on the same machine.
+  trusted_proxies:
+    - 127.0.0.1
+    - !secret ip_nginx
+    - !secret ip_vault
+
+frontend:
+  javascript_version: latest
+  themes: !include_dir_merge_named themes
+  extra_html_url:
+    - /local/cwm-moon-icons.html
+    - /local/hass-bha-icons.html
+
+lovelace:
+  mode: yaml
+  resources:
+    - type: module
+      url: /hacsfiles/custom-header/custom-header.js
+    - type: module
+      url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js
+    - type: module
+      url: /hacsfiles/mini-media-player/mini-media-player-bundle.js
+    - type: js
+      url: /hacsfiles/lovelace-valetudo-map-card/valetudo-map-card.js
+    - type: js
+      url: /hacsfiles/lovelace-xiaomi-vacuum-card/xiaomi-vacuum-card.js
+    - type: module
+      url: /hacsfiles/weather-card/weather-card.js
+    - type: module
+      url: /hacsfiles/lovelace-auto-entities/auto-entities.js
+    - type: js
+      url: /hacsfiles/group-card/group-card.js
+    - type: js
+      url: /hacsfiles/lovelace-slider-entity-row/slider-entity-row.js
+    - type: js
+      url: /hacsfiles/lovelace-toggle-lock-entity-row/toggle-lock-entity-row.js
+    - type: module
+      url: /hacsfiles/stack-in-card/stack-in-card.js
+    - type: module
+      url: /hacsfiles/lovelace-fold-entity-row/fold-entity-row.js
+    - type: module
+      url: /hacsfiles/button-card/button-card.js
+    - type: js
+      url: /hacsfiles/lovelace-layout-card/layout-card.js
+    - type: js
+      url: /hacsfiles/lovelace-card-tools/card-tools.js
+    - type: module
+      url: /hacsfiles/simple-thermostat/simple-thermostat.js
+    - type: module
+      url: /hacsfiles/simple-weather-card/simple-weather-card-bundle.js
+    - type: module
+      url: >-
+        https://cdn.jsdelivr.net/gh/custom-cards/spotify-card/dist/spotify-card.umd.js
+    - type: module
+      url: /local/custom-lovelace/vacuum/card.js
+    - type: module
+      url: /hacsfiles/lovelace-gap-card/gap-card.js
+    - type: module
+      url: /hacsfiles/lovelace-template-entity-row/template-entity-row.js
+    # - type: module
+    #   url: /hacsfiles/config-template-card/config-template-card.js
+    # - type: module
+    #   url: /hacsfiles/lovelace-card-templater/lovelace-card-templater.js
+    - type: module
+      url: /hacsfiles/lovelace-card-mod/card-mod.js
+    - type: module
+      url: /hacsfiles/secondaryinfo-entity-row/secondaryinfo-entity-row.js
+
+config:
+
+mobile_app:
+
+hassio:
+
+updater:
+  include_used_components: true
+
+hacs:
+  token: !secret hacs_token
+
+# Discover some devices automatically
+# discovery:
+ssdp:
+system_health:
+
+recorder:
+  include:
+    entities:
+      - group.awesome_people
+      - group.guests
+      - group.all_people
+  exclude:
+    domains:
+      - weblink
+      - updater
+      - calendar
+      - camera
+      - group
+      - weather
+      - zone
+      - zha
+      - history_graph
+      - plant
+    entities:
+      - sun.sun
+      - sensor.time
+      - sensor.date
+      - sensor.sun_daylight_remaining
+      - input_number.scene_brightness
+      - sensor.ha_uptime
+      - sensor.nono_map
+      - sensor.vacuum_days_since_last_clean
+      - sensor.circadian_values
+      - switch.circadian_lighting_floor
+      - switch.circadian_lighting_desk
+      - switch.circadian_lighting_bed
+      - switch.circadian_lighting_bed_no_brightness
+      - sensor.bvg_1
+      - sensor.bvg_2
+      - sensor.bvg_3
+      - sensor.washing_machine_voltage
+      - sensor.washing_machine_current
+      - sensor.washing_machine_power
+      - sensor.washing_machine_wifi_signal
+      - sensor.chandelier_wifi_signal
+      - sensor.total_sleep_last_night
+      - sensor.lights_on_today
+      - sensor.icloud_last_update
+      - binary_sensor.google_dns
+      - binary_sensor.cloudflare_dns
+      - sensor.load_5m
+      - sensor.processor_use
+      - sensor.memory_use_percent
+      - sensor.cpu_temperature
+      - sensor.router_cpu_load_1
+      - sensor.router_wan_total_in_byte
+      - sensor.router_wan_total_out_byte
+      - sensor.router_lan_curbw_in_mbit
+      - sensor.router_lan_curbw_out_mbit
+      - sensor.router_lan_total_in_byte
+      - sensor.router_lan_total_out_byte
+      - sensor.router_wlan0_curbw_in_mbit
+      - sensor.router_wlan0_curbw_out_mbit
+      - sensor.router_wlan0_total_in_byte
+      - sensor.router_wlan0_total_out_byte
+      - sensor.router_wlan1_curbw_in_mbit
+      - sensor.router_wlan1_curbw_out_mbit
+      - sensor.router_wlan1_total_in_byte
+      - sensor.router_wlan1_total_out_byte
+      - sensor.rtorrent_down_speed
+      - sensor.rtorrent_up_speed
+      - sensor.rtorrent_active_torrents
+      - sensor.rtorrent_all_torrents
+      - sensor.rtorrent_downloading_torrents
+      - sensor.rtorrent_uploading_torrents
+      - sensor.nzbget_speed
+
+influxdb:
+  host: a0d7b954-influxdb
+  port: 8086
+  database: homeassistant
+  username: !secret influxdb_username
+  password: !secret influxdb_password
+  max_retries: 3
+  default_measurement: state
+  include:
+    domains:
+      - person
+      - climate
+      - input_boolean
+    entities:
+      - sensor.tree
+      # Climate
+      - sensor.room_temperature
+      - sensor.thermostat_valve_state
+      # COVID-19
+      - sensor.germany_coronavirus_current
+      - sensor.germany_coronavirus_confirmed
+      - sensor.germany_coronavirus_recovered
+      - sensor.germany_coronavirus_deaths
+      - sensor.worldwide_coronavirus_current
+      - sensor.worldwide_coronavirus_confirmed
+      - sensor.worldwide_coronavirus_recovered
+      - sensor.worldwide_coronavirus_deaths
+      # Health
+      - sensor.total_sleep_last_night
+      - sensor.total_time_outside
+      - sensor.disrupted_iphone_steps
+      - sensor.polina_iphone_steps
+      # Network
+      - sensor.snmp_stats_192_168_178_1_netif_pppoe_wan_curbw_in_mbit
+      - sensor.snmp_stats_192_168_178_1_netif_pppoe_wan_curbw_out_mbit
+      - sensor.router_wan_total_in_byte
+      - sensor.router_wan_total_out_byte
+      - sensor.router_wlan0_curbw_in_mbit
+      - sensor.router_wlan0_curbw_out_mbit
+      - sensor.router_wlan1_curbw_in_mbit
+      - sensor.router_wlan1_curbw_out_mbit
+      - sensor.tautulli
+      - sensor.tautulli_lan_bandwidth
+      - sensor.tautulli_wan_bandwidth
+      - sensor.router_cpu_load_1
+      - sensor.ping_google_dns
+      - sensor.ping_cloudflare_dns
+      - sensor.adguard_average_processing_speed
+      - sensor.adguard_dns_queries
+      - sensor.adguard_dns_queries_blocked_ratio
+      - sensor.rtorrent_up_speed
+      - sensor.rtorrent_down_speed
+      - sensor.rtorrent_up_limit
+      - sensor.rtorrent_down_limit
+      - sensor.rtorrent_active_torrents
+      - sensor.rtorrent_all_torrents
+      - sensor.rtorrent_complete_torrents
+      # - sensor.rtorrent_stopped_torrents
+      - sensor.rtorrent_uploading_torrents
+      - sensor.rtorrent_downloading_torrents
+      - sensor.nzbget_speed
+      # System
+      - sensor.processor_use
+      - sensor.load_5m
+      - sensor.memory_use_percent
+      - sensor.cpu_temperature
+      # Plants
+      - sensor.miflora_1_moisture
+      - sensor.miflora_1_temperature
+      - sensor.miflora_1_soil_conductivity
+      - sensor.miflora_1_illuminance
+      - sensor.miflora_2_moisture
+      - sensor.miflora_2_temperature
+      - sensor.miflora_2_soil_conductivity
+      - sensor.miflora_2_illuminance
+      - sensor.miflora_3_moisture
+      - sensor.miflora_3_temperature
+      - sensor.miflora_3_soil_conductivity
+      - sensor.miflora_3_illuminance
+      - sensor.miflora_4_moisture
+      - sensor.miflora_4_temperature
+      - sensor.miflora_4_soil_conductivity
+      - sensor.miflora_4_illuminance
+      # Washing machine
+      - binary_sensor.washing_machine
+      - sensor.washing_machine_power
+      - sensor.washing_machine_total_daily_energy
+      - sensor.washing_machine_total_daily_energy_cost
+      - sensor.washing_machine_runtime_today
+      - sensor.washing_machine_wifi_signal
+      # Weather
+      - sensor.dark_sky_temperature
+      - sensor.dark_sky_apparent_temperature
+      - sensor.dark_sky_humidity
+      - sensor.dark_sky_pressure
+      - sensor.dark_sky_precip # type
+      - sensor.dark_sky_precip_intensity
+      - sensor.dark_sky_precip_probability
+      - sensor.dark_sky_wind_speed
+      # - sensor.dark_sky_cloud_coverage
+      - sensor.dark_sky_dew_point
+      - sensor.dark_sky_uv_index
+      - sensor.dark_sky_nearest_storm_distance
+      - sensor.waqi_neukolln_nansenstrasse_berlin_germany
+      - sensor.htw_wetter_temperature
+      - sensor.htw_wetter_humidity
+      - sensor.htw_wetter_pressure
+      - sensor.htw_wetter_wind_speed
+      - sensor.htw_wetter_solar_radiation
+      - sensor.weather_yr_cloudiness
+      - sensor.weather_yr_low_clouds
+      - sensor.weather_yr_medium_clouds
+      - sensor.weather_yr_high_clouds
+      - sensor.dwd_wetter_precipitation
+      - sensor.dwd_wetter_pressure
+      - sensor.dwd_wetter_sunshine
+      - sensor.dwd_wetter_temperature
+      - sensor.dwd_wetter_wind_bearing
+      - sensor.dwd_wetter_wind_speed
+      # Transport
+      - sensor.bvg_1
+      - sensor.bvg_2
+      - sensor.bvg_3
+      # populartimes
+      - sensor.populartimes_rewe
+      - sensor.populartimes_rewe_usual
+      - sensor.populartimes_rewe_usual_difference
+
+history:
+  include:
+    domains:
+      - media_player
+      - person
+      - vacuum
+
+logbook:
+  include:
+    domains:
+      - automation
+      - sun
+      - person
+      - climate
+      - input_boolean
+      - vacuum
+      - light
+
+notify:
+  - name: all
+    platform: group
+    services:
+      - service: kodi
+      - service: telegram
+  - name: mobile
+    platform: group
+    services:
+      - service: mobile_app_disrupted_iphone
+      - service: mobile_app_disrupted_ipadpro
+  - name: all_iphones
+    platform: group
+    services:
+      - service: mobile_app_disrupted_iphone
+      - service: mobile_app_polina_iphone
+
+logger:
+  default: warn # notset
+  logs:
+    custom_components.dwd_wetter: debug
+    # homeassistant.components.zha: debug
+    # zigpy: debug
+    # zigpy_deconz: debug
+    # homeassistant.components.device_tracker: debug
+
+# automation: !include automations.yaml
+# automation: !include_dir_merge_list automations/
+# automation: !include_dir_list automations
+script: !include_dir_merge_named scripts
