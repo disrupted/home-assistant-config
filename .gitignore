@@ -8,6 +8,7 @@
 !*.md
 !.yamllint
 !/.stubs/
+!esphome/*.yaml
 
 # Ignore folders.
 .storage
@@ -36,7 +37,7 @@ omv_cookies.json
 
 # ESPHome
 esphome/secrets.yaml
-esphome/**/
+#esphome/**/
 
 # Generic
 *.db*
