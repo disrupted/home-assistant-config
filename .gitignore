@@ -10,8 +10,10 @@
 # Ignore folders.
 .storage
 .cloud
+.vscode
+.gitprivate
 deps
-.google.token
+tts
 
 # Ensure these YAML files containing secrets/credentials are ignored.
 secrets.yaml
@@ -22,7 +24,13 @@ known_devices.yaml
 .uuid
 .config_entries.json
 .homekit.state
+.google.token
 google_calendars.yaml
+plex.conf
+*.session
+zigbee.db
+bvg_*.json
+omv_cookies.json
 
 # ESPHome
 esphome/secrets.yaml
@@ -37,3 +45,6 @@ esphome/**/
 __pycache__
 *.log
 *.pyc
+*.vim
+*.bkp
+*.sql
