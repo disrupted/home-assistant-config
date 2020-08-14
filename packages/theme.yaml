@@ -1,0 +1,59 @@
+homeassistant:
+  customize_glob:
+    automation.theme_*:
+      icon: mdi:theme-light-dark
+
+input_select:
+  hass_theme:
+    name: Choose theme
+    options:
+      - default
+      # - dark-green
+      - midnight
+      - midnight-remake
+      - synthwave
+      - clear-dark
+    # initial: default
+    icon: mdi:theme-light-dark
+
+automation:
+  # IF: { input_select hass_template is changed by user OR home assistants boots up } THEN: { set theme to state given by input_select.hass_template }
+  - alias: theme_switch_manual
+    id: theme_switch_manual
+    trigger:
+      - platform: state
+        entity_id: input_select.hass_theme
+      - platform: homeassistant
+        event: start
+    action:
+      - service: frontend.set_theme
+        data_template:
+          name: "{{ states('input_select.hass_theme') }}"
+
+    # IF: { sun.sun is up } THEN: { set theme to day mode }
+  - alias: theme_switch_day
+    id: theme_switch_day
+    trigger:
+      - platform: numeric_state
+        entity_id: sun.sun
+        value_template: "{{ state.attributes.elevation }}"
+        above: 0 # -3.9
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.hass_theme
+          option: "default"
+
+    # IF: { sun.sun goes under horizon } THEN: { set theme to night mode }
+  - alias: theme_switch_night
+    id: theme_switch_night
+    trigger:
+      - platform: numeric_state
+        entity_id: sun.sun
+        value_template: "{{ state.attributes.elevation }}"
+        below: 0 # -4.0
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.hass_theme
+          option: "midnight"
