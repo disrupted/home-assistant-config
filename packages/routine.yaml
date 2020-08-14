@@ -1,0 +1,50 @@
+sensor:
+  - platform: template
+    sensors:
+      day_phase:
+        friendly_name: "Day Phase"
+        value_template: >-
+          {% if now() >= now().replace(hour=0, minute=0, second=0) and
+              now() < now().replace(hour=8, minute=0, second=0) %}
+              Night
+          {% elif now() >= now().replace(hour=8, minute=0, second=0) and
+              now() < now().replace(hour=11, minute=0, second=0) %}
+              Morning
+          {% elif is_state('sun.sun', 'above_horizon') %}
+              Day
+          {% else %}
+              Evening
+          {% endif %}
+        icon_template: >-
+          {% if is_state('sun.sun', 'above_horizon') %}mdi:white-balance-sunny{% else %}mdi:moon-waxing-crescent{% endif %}
+
+automation:
+  - alias: Routine Bedtime
+    trigger:
+      - platform: time
+        at: "00:30:00"
+    condition:
+      - condition: state
+        entity_id: input_boolean.present
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.sleeping
+        state: "off"
+      - condition: state
+        entity_id: binary_sensor.bayesian_sleeping
+        state: "off"
+      - condition: state
+        entity_id: light.livingroom
+        state: "on"
+      - condition: state
+        entity_id: binary_sensor.workday_sensor
+        state: "on"
+      - condition: state
+        entity_id: binary_sensor.movietime
+        state: "off"
+    action:
+      - service: scene.turn_on
+        entity_id: scene.bedtime
+      - service: notify.mobile_app_disrupted_iphone
+        data_template:
+          message: "It's getting pretty late. Don't forget to go to bed soon."

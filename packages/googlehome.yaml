@@ -1,0 +1,4 @@
+notify:
+  - name: ga_broadcast
+    platform: rest
+    resource: !secret google_home_broadcast_url

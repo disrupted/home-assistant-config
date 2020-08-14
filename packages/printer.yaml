@@ -1,0 +1,10 @@
+homeassistant:
+  customize:
+    sensor.e_studio382p:
+      friendly_name: Printer
+
+sensor:
+  - platform: cups
+    host: !secret ip_vault
+    printers:
+      - e-STUDIO382P

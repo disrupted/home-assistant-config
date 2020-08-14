@@ -1,0 +1,348 @@
+homeassistant:
+  customize_glob:
+    automation.sleeping_*:
+      icon: mdi:sleep
+  customize:
+    script.wakeup:
+      icon: mdi:weather-sunset-up
+
+input_boolean:
+  sleeping:
+    name: sleeping
+    icon: mdi:sleep
+
+sensor:
+  - platform: moon
+  - platform: template
+    sensors:
+      moon_phase:
+        friendly_name: Moon Phase
+        value_template: >
+          {{ states('sensor.moon') }}
+        icon_template: >
+          moon:{{ states('sensor.moon') }}
+
+  - platform: history_stats
+    name: Total Sleep last night
+    entity_id: input_boolean.sleeping
+    state: "on"
+    type: time
+    # start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    start: "{{ (as_timestamp(now().replace(hour=20, minute=0, second=0)) - 24 * 3600) }}"
+    end: "{{ now().replace(hour=20, minute=0, second=0) }}"
+  # - platform: history_stats
+  #   name: Total Sleep week
+  #   entity_id: input_boolean.sleeping
+  #   state: 'on'
+  #   type: time
+  #   start: '{{ as_timestamp( now().replace(hour=0).replace(minute=0).replace(second=0) ) - now().weekday() * 86400 }}'
+  #   end: '{{ now() }}'
+  # - platform: template
+  #   sensors:
+  #     total_sleep_today_templated:
+  #       friendly_name: 'Total sleep today'
+  #       value_template: >-
+  #         {%- set hm_split = states('sensor.total_sleep_today').split('.') -%}
+  #         {%- set hours = hm_split[0] | int -%}
+  #         {%- set minutes_raw = hm_split[1] | int -%}
+  #         {%- set minutes = (0.6 * minutes_raw) | round(0) -%}
+  #         {%- if hours > 0 -%}
+  #           {%- if hours == 1 -%}
+  #             1 hour
+  #           {%- else -%}
+  #             {{ hours }} hours
+  #           {%- endif -%}
+  #         {%- endif -%}
+  #         {%- if minutes > 0 -%}
+  #           {%- if hours > 0 -%}
+  #             {{ ', ' }}
+  #           {%- endif -%}
+  #           {%- if minutes == 1 -%}
+  #             1 minute
+  #           {%- else -%}
+  #             {{ minutes }} minutes
+  #           {%- endif -%}
+  #         {%- endif -%}
+
+# input_number:
+#   wakeup_duration:
+#     name: Light fade-in duration
+#     icon: mdi:clock-in
+#     initial: 10
+#     min: 5
+#     max: 60
+#     step: 5
+
+binary_sensor:
+  - platform: bayesian
+    prior: 0.1
+    name: "Bayesian Sleeping"
+    probability_threshold: 0.85
+    observations:
+      - platform: state
+        entity_id: input_boolean.present
+        prob_given_true: 0.99
+        prob_given_false: 0.5
+        to_state: "on"
+      - platform: state
+        entity_id: person.salomon
+        prob_given_true: 0.95
+        prob_given_false: 0.5
+        to_state: "home"
+      - platform: state
+        entity_id: sun.sun
+        prob_given_true: 0.9
+        prob_given_false: 0.2
+        to_state: "below_horizon"
+      - platform: state
+        entity_id: light.livingroom
+        prob_given_true: 0.9
+        prob_given_false: 0.2
+        to_state: "off"
+      # - platform: state
+      #   entity_id: media_player.kodi
+      #   prob_given_true: 0.1
+      #   prob_given_false: 0.6
+      #   to_state: 'playing'
+      # - platform: state
+      #   entity_id: media_player.ps4
+      #   prob_given_true: 0.1
+      #   prob_given_false: 0.6
+      #   to_state: 'playing'
+      # - platform: state
+      #   entity_id: media_player.google_home
+      #   prob_given_true: 0.1
+      #   prob_given_false: 0.6
+      #   to_state: 'playing'
+      # - platform: template
+      #   value_template: >
+      #     {{ states('media_player.kodi') != 'playing' }}
+      #   prob_given_true: 0.5
+      #   prob_given_false: 0.6
+      # - platform: template
+      #   value_template: >
+      #     {{ states('media_player.google_home') != 'playing' }}
+      #   prob_given_true: 0.8
+      #   # prob_given_false: 0.4
+      # - platform: template
+      #   value_template: >
+      #     {{ states('media_player.ps4') != 'playing' }}
+      #   prob_given_true: 0.8
+      #   # prob_given_false: 0.4
+      # - platform: template
+      #   value_template: >
+      #     {{ state_attr('sensor.tautulli', 'disrupted').Activity != 'playing' }}
+      #   prob_given_true: 0.8
+      #   # prob_given_false: 0.4
+
+group:
+  sleep_tracking:
+    name: Sleep Tracking
+    icon: mdi:sleep
+    entities:
+      - input_boolean.sleeping
+      - sensor.google_home_next_alarm
+      - sensor.moon
+      # - sensor.total_sleep_today
+      # - sensor.total_sleep_week
+
+  wakeup:
+    name: Wakeup
+    icon: mdi:bell-sleep
+    entities:
+      - input_number.wakeup_duration
+      - script.wakeup
+      - automation.google_home_routine_morning
+
+automation:
+  - alias: Sleeping Begin
+    id: sleeping_begin
+    trigger:
+      platform: state
+      entity_id: input_boolean.sleeping
+      from: "off"
+      to: "on"
+    condition:
+      - condition: state
+        entity_id: input_boolean.present
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.away
+        state: "off"
+    action:
+      - service: media_player.media_pause
+        entity_id:
+          - media_player.google_home
+          - media_player.kodi
+          - media_player.spotify
+      - service: media_player.volume_set
+        entity_id: media_player.google_home
+        data:
+          volume_level: 0.1
+      - service: scene.turn_on
+        entity_id: scene.night
+
+  - alias: Sleeping End
+    id: sleeping_end
+    trigger:
+      platform: state
+      entity_id: input_boolean.sleeping
+      from: "on"
+      to: "off"
+    condition:
+      - condition: state
+        entity_id: input_boolean.present
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.away
+        state: "off"
+    action:
+      # - service: input_select.set_option
+      #   data:
+      #     entity_id: input_select.scene
+      #     option: 'Select'
+      - service: script.scene_set_input_select
+        data:
+          name: "Select"
+      # - service: script.thermostat_21_degrees
+      # - service: climate.set_temperature
+      #   data:
+      #     entity_id: climate.thermostat
+      #     operation_mode: 'manual'
+      #     temperature: 21
+      - service: notify.mobile_app_disrupted_iphone
+        data:
+          message: "delete_alert"
+          data:
+            apns_headers:
+              "apns-collapse-id": "sleeping-end"
+            push:
+              # badge: 0
+              sound: "none"
+
+  - alias: Sleeping timeout
+    id: sleeping_timeout
+    trigger:
+      platform: state
+      entity_id: input_boolean.sleeping
+      from: "off"
+      to: "on"
+      for:
+        hours: 12
+    condition:
+      - condition: state
+        entity_id: input_boolean.sleeping
+        state: "on"
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.sleeping
+      - service: notify.all
+        data:
+          message: "Sleeping Mode stopped after 12h without response."
+
+  # - alias: Wakeup Light
+  #   id: wakeup_light
+  #   condition:
+  #     - condition: state
+  #       entity_id: input_boolean.present
+  #       state: 'on'
+  #     - condition: state
+  #       entity_id: input_boolean.away
+  #       state: 'off'
+  #   action:
+  #     - service: script.turn_on
+  #       entity_id: script.wakeup
+  #     - service: notify.telegram
+  #       data:
+  #         message: 'wakeup light triggered'
+
+  - alias: sleeping begin assumed
+    id: sleeping_begin_assumed
+    trigger:
+      # - platform: state
+      #   entity_id: light.livingroom
+      #   from: 'on'
+      #   to: 'off'
+      #   for:
+      #     minutes: 15
+      - platform: state
+        entity_id: binary_sensor.bayesian_sleeping
+        from: "off"
+        to: "on"
+        for:
+          minutes: 15
+    condition:
+      - condition: state
+        entity_id: light.livingroom
+        state: "off"
+      - condition: state
+        entity_id: input_boolean.present
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.sleeping
+        state: "off"
+      - condition: time
+        after: "22:00:00"
+        before: "07:00:00"
+      # - condition: template  # 'night' condition: from dusk to dawn, in typical locations
+      #   value_template: '{{ state_attr("sun.sun", "elevation") < -6 }}'
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.sleeping
+
+  - alias: sleeping end leaving
+    id: sleeping_end_leaving
+    trigger:
+      - platform: state
+        entity_id: person.salomon
+        from: "home"
+        to: "not_home"
+    condition:
+      - condition: state
+        entity_id: input_boolean.sleeping
+        state: "on"
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.sleeping
+
+  - alias: sleeping end notification
+    id: sleeping_end_notification
+    trigger:
+      - platform: state
+        entity_id: input_boolean.sleeping
+        from: "off"
+        to: "on"
+        for:
+          hours: 5
+      - platform: state
+        entity_id: binary_sensor.telegram_online
+        from: "off"
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: input_boolean.sleeping
+        state: "on"
+    action:
+      service: notify.mobile_app_disrupted_iphone
+      data:
+        title: "Are you up, sleepyhead?"
+        message: "Just let me know when you see this"
+        data:
+          # subtitle: "Subtitle goes here"
+          apns_headers:
+            "apns-collapse-id": "sleeping-end"
+          push:
+            category: "sleep"
+            # badge: 0
+            sound: "none"
+
+  - alias: sleeping end notification action
+    id: sleeping_end_notification_action
+    trigger:
+      platform: event
+      event_type: ios.notification_action_fired
+      event_data:
+        actionName: SLEEP_END
+    action:
+      service: input_boolean.turn_off
+      entity_id: input_boolean.sleeping

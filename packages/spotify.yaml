@@ -1,0 +1,7 @@
+spotify:
+  client_id: !secret api_client_id_spotify
+  client_secret: !secret api_client_secret_spotify
+# spotcast:
+#   username: !secret spotify_username
+#   password: !secret spotify_password
+

@@ -1,0 +1,4 @@
+camera:
+  - platform: ffmpeg
+    name: xiaofang
+    input: !secret cam_xiaofang_input

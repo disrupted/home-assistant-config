@@ -1,0 +1,494 @@
+homeassistant:
+  customize_glob:
+    sensor.github_*:
+      icon: mdi:github-circle
+    sensor.ha_*:
+      icon: mdi:home-assistant
+  customize:
+    script.hass_restart:
+      icon: mdi:restart
+    script.hassio_reboot:
+      icon: mdi:power
+    sensor.hass_uptime:
+      icon: mdi:home-assistant
+    sensor.homeassistant_v2db:
+      friendly_name: Database size
+      icon: mdi:database-plus
+    sensor.version:
+      friendly_name: HA Installed version
+    sensor.home_assistant_version:
+      icon: mdi:home-assistant
+    sensor.connected_clients:
+      friendly_name: "Connected Clients"
+      icon: mdi:home-assistant
+    binary_sensor.google:
+      hidden: true
+    sensor.google:
+      friendly_name: Google
+      icon: mdi:google
+    sensor.router:
+      friendly_name: Router
+      icon: mdi:lan
+    # sensor.ssl_cert_expiry:
+    #   icon: mdi:certificate
+    sensor.wan_ip:
+      friendly_name: External IP Address
+      icon: mdi:web
+    sensor.disk_used_home:
+      friendly_name: Used Space
+    sensor.disk_free_home:
+      friendly_name: Free Space
+    sensor.fast_com_download:
+      friendly_name: Speedtest
+      icon: mdi:speedometer
+    sensor.speedtest_upload:
+      icon: mdi:upload
+    sensor.speedtest_download:
+      icon: mdi:download
+    sensor.speedtest_ping:
+      icon: mdi:timer
+    sensor.ping_cloudflare_dns:
+      icon: mdi:timer
+    sensor.ping_google_dns:
+      icon: mdi:timer
+    sensor.failed_logins:
+      icon: mdi:key-remove
+
+binary_sensor:
+  # - platform: ping
+  #   host: !secret ip_router
+  #   name: router
+  - platform: ping
+    host: 1.1.1.1
+    name: Cloudflare DNS
+    count: 2
+    scan_interval: 60
+  - platform: ping
+    host: 8.8.8.8
+    name: Google DNS
+    count: 2
+    scan_interval: 60
+
+sensor:
+  - platform: websocket_api
+  # - platform: command_line
+  #   command: 'grep -c invalidpassword /config/home-assistant.log'
+  #   name: Failed logins
+  - platform: uptime
+    name: HA Uptime
+    unit_of_measurement: minutes
+  - platform: template
+    sensors:
+      ping_cloudflare_dns:
+        friendly_name: "Ping"
+        entity_id:
+          - binary_sensor.cloudflare_dns
+        value_template: "{{ state_attr('binary_sensor.cloudflare_dns', 'round_trip_time_avg') | round(2) }}"
+        unit_of_measurement: "ms"
+      ping_google_dns:
+        friendly_name: "Ping"
+        entity_id:
+          - binary_sensor.google_dns
+        value_template: "{{ state_attr('binary_sensor.google_dns', 'round_trip_time_min') | round(2) }}"
+        unit_of_measurement: "ms"
+  #     uptime_templated:
+  #       friendly_name: System Uptime
+  #       value_template: >-
+  #         {%- set slb = states('sensor.since_last_boot').split(' ') -%}
+  #         {%- set count = slb | length -%}
+  #         {%- set hms = slb[count - 1] -%}
+  #         {%- set hms_trimmed = hms.split('.')[0] -%}
+  #         {%- set hms_split = hms_trimmed.split(':') -%}
+  #         {%- set hours = hms_split[0] | int -%}
+  #         {%- set minutes = hms_split[1] | int -%}
+  #         {%- if count == 3 -%}
+  #           {{ slb[0] ~ ' ' ~ slb[1] ~ ' ' }}
+  #         {%- endif -%}
+  #         {%- if hours > 0 -%}
+  #           {%- if hours == 1 -%}
+  #             1 hour
+  #           {%- else -%}
+  #             {{ hours }} hours
+  #           {%- endif -%}
+  #         {%- endif -%}
+  #         {%- if minutes > 0 -%}
+  #           {%- if hours > 0 -%}
+  #              {{ ', ' }}
+  #           {%- endif -%}
+  #           {%- if minutes == 1 -%}
+  #             1 minute
+  #           {%- else -%}
+  #             {{ minutes }} minutes
+  #           {%- endif -%}
+  #         {%- endif -%}
+
+  - platform: dnsip
+    name: wan_ip
+
+  # - platform: rest
+  #   name: wan_ip
+  #   resource: https://api.ipify.org/?format=json
+  #   value_template: '{{ value_json.ip }}'
+  #   scan_interval: 300
+
+  # resource: https://wtfismyip.com/json
+  # value_template: '{{ value_json.YourFuckingIPAddress }}'
+  # json_attributes:
+  #   - YourFuckingHostname
+  #   - YourFuckingISP
+  #   - YourFuckingLocation
+  # - platform: scrape
+  #   resource: https://www.home-assistant.io/components/
+  #   name: HA components count
+  #   select: 'a[href="#all"]'
+  #   value_template: '{{ value.split("(")[1].split(")")[0] | int }}'
+
+  - platform: rest
+    resource: https://s3.amazonaws.com/hassio-version/stable.json
+    name: Home Assistant Version
+    value_template: "{{ value_json.homeassistant.default }}"
+    headers:
+      Content-Type: application/json
+      User-Agent: Home Assistant REST sensor
+      Time-Zone: !secret timezone
+    scan_interval: 3600
+
+  - platform: rest
+    resource: https://api.github.com/repos/coreelec/coreelec/releases/latest
+    name: GitHub CoreELEC tag
+    username: !secret github_username
+    password: !secret github_access_token
+    authentication: basic
+    value_template: "{{ value_json.tag_name }}"
+    headers:
+      Accept: application/vnd.github.v3+json
+      Content-Type: application/json
+      User-Agent: Home Assistant REST sensor
+      Time-Zone: !secret timezone
+    scan_interval: 3600
+
+  - platform: rest
+    name: GitHub Home Assistant Release
+    resource: https://api.github.com/repos/home-assistant/core/releases/latest
+    username: !secret github_username
+    password: !secret github_access_token
+    authentication: basic
+    value_template: "{{ value_json.tag_name }}"
+    json_attributes:
+      - body
+      - html_url
+      - prerelease
+      - created_at
+      - published_at
+    headers:
+      Accept: application/vnd.github.v3+json
+      Content-Type: application/json
+      User-Agent: Home Assistant REST sensor
+
+  - platform: command_line
+    name: CPU Temperature
+    command: "cat /sys/class/thermal/thermal_zone0/temp"
+    unit_of_measurement: "°C"
+    value_template: "{{ value | multiply(0.001) | round(1)  }}"
+
+  - platform: version
+  - platform: systemmonitor
+    resources:
+      # - type: last_boot
+      # - type: since_last_boot
+      - type: processor_use
+      # - type: disk_use
+      #   arg: /home
+      # - type: disk_free
+      #   arg: /home
+      # - type: memory_free
+      - type: memory_use_percent
+      # - type: network_in
+      #   arg: enp2s0 #eth0
+      # - type: network_out
+      #   arg: enp2s0
+      - type: load_5m
+
+  # - platform: template
+  #   sensors:
+  #     hass_uptime:
+  #       friendly_name: 'HA uptime'
+  #       value_template: "{{ relative_time(state_attr('automation.hass_started', 'last_triggered')) | int }}"
+
+  # - platform: filesize
+  #   file_paths:
+  #     - /config/home-assistant_v2.db
+
+  # shell_command:
+  #   backup_github: cd /config && git commit -am 'auto backup `date +"%y%m%d %H:%M"`' --quiet && git push --quiet
+
+  # fastdotcom:
+  #   scan_interval:
+  #       minutes: 30
+
+  # speedtestdotnet:
+  #   scan_interval:
+  #     minutes: 30
+  #   monitored_conditions:
+  #     - ping
+  # - download
+  # - upload
+
+  - platform: template
+    sensors:
+      dsl_download_total:
+        friendly_name: "DSL Total Download"
+        unit_of_measurement: "GB"
+        value_template: "{{ (states('sensor.router_wan_total_in_byte') | float / 1000000000) | round(2) }}"
+      dsl_upload_total:
+        friendly_name: "DSL Total Upload"
+        unit_of_measurement: "GB"
+        value_template: "{{ (states('sensor.router_wan_total_out_byte') | float / 1000000000) | round(2) }}"
+
+utility_meter:
+  dsl_download_daily:
+    source: sensor.dsl_download_total
+    cycle: daily
+  dsl_upload_daily:
+    source: sensor.dsl_upload_total
+    cycle: daily
+  dsl_download_monthly:
+    source: sensor.dsl_download_total
+    cycle: monthly
+  dsl_upload_monthly:
+    source: sensor.dsl_upload_total
+    cycle: monthly
+
+automation:
+  # - alias: Hass Started
+  #   trigger:
+  #     platform: homeassistant
+  #     event: start
+  #   action:
+  #     - service: telegram_bot.send_message
+  #       data:
+  #         message: "Back Online \U0001f680"
+
+  # - alias: Hass Stopped
+  #   trigger:
+  #     platform: homeassistant
+  #     event: shutdown
+  #   action:
+  #     - service: telegram_bot.send_message
+  #       data:
+  #         message: 'Going Offline'
+
+  - alias: HA new version
+    id: ha_new_version
+    trigger:
+      - platform: state
+        entity_id: sensor.home_assistant_version
+    condition:
+      - condition: template
+        value_template: "{{ trigger.from_state.state not in ['unknown', 'unavailable'] }}"
+      - condition: template
+        value_template: "{{ trigger.to_state.state not in ['unknown', 'unavailable'] }}"
+    action:
+      service: telegram_bot.send_message
+      data_template:
+        message: "v{{ states('sensor.home_assistant_version') }} available on AWS"
+
+  - alias: GitHub CoreELEC new release tag
+    id: github_coreelec_new_release_tag
+    trigger:
+      platform: state
+      entity_id: sensor.github_coreelec_tag
+    condition:
+      - condition: template
+        value_template: "{{ trigger.from_state.state not in ['unknown', 'unavailable'] }}"
+      - condition: template
+        value_template: "{{ trigger.to_state.state not in ['unknown', 'unavailable'] }}"
+    action:
+      service: notify.all
+      data_template:
+        message: "CoreELEC {{ states('sensor.github_coreelec_tag') }} is now available"
+
+  - alias: GitHub Home Assistant new release tag
+    id: github_home_assistant_new_release_tag
+    trigger:
+      platform: state
+      entity_id: sensor.github_home_assistant_release
+    condition:
+      - condition: template
+        value_template: "{{ trigger.from_state.state not in ['unavailable', 'unknown'] }}"
+      - condition: template
+        value_template: "{{ trigger.to_state.state not in ['unavailable', 'unknown'] }}"
+      - condition: template
+        value_template: "{{ trigger.to_state.state != state_attr('binary_sensor.updater', 'newest_version') }}"
+      - condition: template
+        value_template: "{{ not is_state_attr('sensor.github_home_assistant_release', 'body', None) }}"
+    action:
+      service: telegram_bot.send_message
+      data_template:
+        parse_mode: html
+        disable_web_page_preview: true
+        message: >
+          Home Assistant {{ states('sensor.github_home_assistant_release') }} tagged on GitHub
+
+          {{ state_attr('sensor.github_home_assistant_release', 'html_url') }}
+
+          {{ state_attr('sensor.github_home_assistant_release', 'body') }}
+
+  - alias: Hass Update Available
+    id: hass_update_available
+    trigger:
+      platform: state
+      entity_id: binary_sensor.updater
+      from: "off"
+      to: "on"
+    action:
+      # - service: notify.all
+      #   data_template:
+      #     message: >
+      #       Update {{ state_attr('binary_sensor.updater', 'newest_version') }} is now available for install.
+      - service: notify.mobile_app_disrupted_iphone
+        data_template:
+          title: "Home Assistant"
+          message: >
+            Update {{ state_attr('binary_sensor.updater', 'newest_version') }} available for install.
+
+  # - alias: Hass SSL renew warning
+  #   id: hass_ssl_renew_warning
+  #   trigger:
+  #     platform: numeric_state
+  #     entity_id: sensor.ssl_cert_expiry
+  #     below: 21
+  #   action:
+  #     service: notify.telegram
+  #     data:
+  #       title: 'Time to renew Lets Encrypt'
+  #       message: "Certificate expires in {{ states('sensor.ssl_cert_expiry') }} days"
+
+  # - alias: Hass failed login attempt
+  #   id: hass_failed_login_attempt
+  #   trigger:
+  #     - platform: state
+  #       entity_id: persistent_notification.httplogin
+  #   condition:
+  #     - condition: template
+  #       value_template: "{{ trigger.to_state.state != 'None' }}"
+  #   action:
+  #     - service: notify.telegram
+  #       data_template:
+  #         title: "{{ state_attr('persistent_notification.httplogin', 'message') }}"
+  #         message: "url: https://whatismyipaddress.com/ip/{{ state_attr('persistent_notification.httplogin', 'message').split('from ')[1] }}"
+
+  - alias: Alert Switch On While Away
+    trigger:
+      - platform: state
+        entity_id:
+          - group.all_switches
+        to: "on"
+        for:
+          seconds: 10
+    condition:
+      - condition: state
+        entity_id: input_boolean.present
+        state: "off"
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          parse_mode: html
+          title: "Switch turned on while not present"
+          # source: https://github.com/arsaboo/homeassistant-config/blob/master/automation_lab.yaml
+          message: >-
+            {% for entity in state_attr('group.all_switches', 'entity_id') | rejectattr('entity_id', 'equalto', 'switch.flux') if is_state(entity, 'on') %}
+              {%- if loop.first and loop.last %}
+                {{ states[entity.split('.')[0]][entity.split('.')[1]].name }} is on.
+              {% elif loop.length == length(states.group.all_switches.attributes.entity_id) %}
+                {{ "All switches are on." if loop.last }}
+              {% else %}
+                {%- if loop.first %}{% elif loop.last %} & {% else %}, {% endif -%}
+                {{ states[entity.split('.')[0]][entity.split('.')[1]].name }}{{ " are on" if loop.last }}
+              {%- endif -%}
+            {% else %}
+              All switches are off.
+            {% endfor %}
+          # message: >
+          #   {{ trigger.to_state.name }} is {{ trigger.to_state.state }} while you're away.
+
+  - alias: Alert Light On While Away
+    trigger:
+      - platform: state
+        entity_id:
+          - group.all_lights
+        to: "on"
+        for:
+          seconds: 10
+    condition:
+      - condition: state
+        entity_id: input_boolean.present
+        state: "off"
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          parse_mode: html
+          title: "Light turned on while not present"
+          # source: https://github.com/arsaboo/homeassistant-config/blob/master/automation_lab.yaml
+          message: >
+            {% for entity in states.group.all_lights.attributes.entity_id if is_state(entity, 'on') %}
+              {%- if loop.first and loop.last %}
+                {{ states[entity.split('.')[0]][entity.split('.')[1]].name }} is on.
+              {% elif loop.length == length(states.group.all_lights.attributes.entity_id) %}
+                {{ "All lights are on." if loop.last }}
+              {% else %}
+                {%- if loop.first %}{% elif loop.last %} & {% else %}, {% endif -%}
+                {{ states[entity.split('.')[0]][entity.split('.')[1]].name }}{{ " are on" if loop.last }}
+              {%- endif -%}
+            {% else %}
+              All lights are off.
+            {% endfor %}
+
+  - alias: Alert media player active while away
+    trigger:
+      - platform: state
+        entity_id:
+          - media_player.google_home
+        # from: 'off'
+        to: "playing"
+        for:
+          seconds: 10
+      - platform: state
+        entity_id:
+          - media_player.tv
+          - media_player.ps4
+        from: "off"
+    condition:
+      - condition: state
+        entity_id: input_boolean.present
+        state: "off"
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          parse_mode: html
+          title: "{{ trigger.to_state.attributes.friendly_name }} active for at least {{ trigger.for }} while away"
+          # source: https://github.com/arsaboo/homeassistant-config/blob/master/automation_lab.yaml
+          message: >
+            state: {{ trigger.to_state.state }}
+
+            volume: {{ (trigger.to_state.attributes.volume_level * 100) | round(0) }}%
+
+            type: {{ trigger.to_state.state.attributes.media_content_type }}
+
+            app: {{ trigger.to_state.state.attributes.app_name }}
+
+  - alias: System monitor connected clients
+    id: systemmonitor_connected_clients
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.connected_clients
+        below: 1
+        for:
+          hours: 48
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          title: "so so bored..."
+          # source: https://github.com/arsaboo/homeassistant-config/blob/master/automation_lab.yaml
+          message: >
+            hey, it's your smart home, remember me? you haven't checked me in a while. I wonder if everything is ok?

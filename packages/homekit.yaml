@@ -1,0 +1,57 @@
+homekit:
+  filter:
+    exclude_domains:
+      - script
+      - sensor
+      - input_boolean
+      - switch
+    exclude_entities:
+      - media_player.ps4
+    include_domains:
+      # - media_player
+      - climate
+    include_entities:
+      - input_boolean.present
+      - input_boolean.sleeping
+      - input_boolean.movietime
+      - light.chandelier
+      - light.string
+      - switch.tv
+      - switch.amp
+      - switch.ps4
+      - person.salomon
+      - person.polina
+      - person.luke
+      - person.franzi
+      - light.floor_lamp
+      - light.bed_lamp
+      - light.desk_lamp
+      - light.candle
+      - media_player.tv
+      - media_player.kodi
+      - media_player.google_home
+      - camera.xiaofang
+  entity_config:
+    media_player.google_home:
+      feature_list:
+        - feature: on_off
+        - feature: play_pause
+    media_player.kodi:
+      feature_list:
+        - feature: on_off
+        - feature: play_pause
+    camera.xiaofang:
+      support_audio: true
+    # media_player.ps4:
+    #   feature_list:
+    #     - feature: on_off
+    switch.amp:
+      type: outlet
+# requires an iPad, Apple TV or HomePod to act as a base station for Homekit automations
+# input_boolean:
+#   homekit_presence_disrupted:
+#     name: Salomon
+#     icon: mdi:account
+#   homekit_presence_polina:
+#     name: Polina
+#     icon: mdi:account

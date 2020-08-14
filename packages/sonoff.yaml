@@ -1,0 +1,288 @@
+homeassistant:
+  customize_glob:
+    sensor.sonoff_*_version:
+      icon: mdi:power-socket-eu
+  customize:
+    # switch.christmas_lights:
+    #   friendly_name: Christmas Lights
+    #   icon: 'bha:light-string' #mdi:pine-tree
+    #   assumed_state: false
+    #   aliases:
+    #     - Christmas lights
+    #     - Christmas decoration
+    #     - light chain
+    #     - lightstring
+    #     - string lights
+    #     - string of lights
+    #     - chain of lights
+    #     - fairy lights
+    light.string:
+      friendly_name: Lightstring
+      icon: mdi:string-lights
+    # switch.chandelier:
+    #   icon: 'bha:chandelier' #mdi:ceiling-light
+    #   assumed_state: false
+    #   aliases:
+    #     - Chandelier
+    #     - Ceiling
+    light.chandelier:
+      icon: "bha:chandelier" # mdi:ceiling-light
+    sensor.sonoff_tasmota_latest_release:
+      icon: mdi:update
+    script.check_sonoffs_version:
+      friendly_name: Check Sonoff versions
+      icon: mdi:checkbox-multiple-marked-outline
+    script.update_sonoffs:
+      friendly_name: Update Sonoffs
+      icon: mdi:download-network
+    # switch.amp:
+    #   icon: mdi:audio-video #mdi:speaker
+
+group:
+  sonoff_update:
+    name: Sonoff Update
+    icon: mdi:download-network
+    entities:
+      - sensor.sonoff_tasmota_latest_release
+      - script.check_sonoffs_version
+      - sensor.sonoff_11_version
+      - sensor.sonoff_12_version
+      - sensor.sonoff_13_version
+      - sensor.sonoff_14_version
+      - sensor.sonoff_15_version
+      - script.update_sonoffs
+
+switch:
+  # - platform: mqtt
+  #   name: 'Christmas Lights'
+  #   state_topic: 'home/tasmota/christmas_lights/stat/POWER'
+  #   command_topic: 'home/tasmota/christmas_lights/cmnd/POWER'
+  #   availability_topic: 'home/tasmota/christmas_lights/tele/LWT'
+  #   qos: 1
+  #   payload_on: 'ON'
+  #   payload_off: 'OFF'
+  #   payload_available: 'Online'
+  #   payload_not_available: 'Offline'
+  #   retain: false
+  #   optimistic: true
+  # - platform: mqtt
+  #   name: 'Sonoff power'
+  #   state_topic: 'home/tasmota/sonoff_pow/stat/POWER'
+  #   command_topic: 'home/tasmota/sonoff_pow/cmnd/POWER'
+  #   availability_topic: 'home/tasmota/sonoff_pow/tele/LWT'
+  #   qos: 1
+  #   payload_on: 'ON'
+  #   payload_off: 'OFF'
+  #   payload_available: 'Online'
+  #   payload_not_available: 'Offline'
+  #   retain: false
+  #   optimistic: true
+  # - platform: mqtt
+  #   name: 'Amp'
+  #   state_topic: 'home/tasmota/amp/stat/POWER'
+  #   command_topic: 'home/tasmota/amp/cmnd/POWER'
+  #   availability_topic: 'home/tasmota/amp/tele/LWT'
+  #   qos: 1
+  #   payload_on: 'ON'
+  #   payload_off: 'OFF'
+  #   payload_available: 'Online'
+  #   payload_not_available: 'Offline'
+  #   retain: false
+  #   optimistic: false
+  # - platform: mqtt
+  #   name: Chandelier
+  #   state_topic: 'home/tasmota/chandelier/stat/POWER'
+  #   command_topic: 'home/tasmota/chandelier/cmnd/POWER1'
+  #   availability_topic: 'home/tasmota/chandelier/tele/LWT'
+  #   qos: 1
+  #   payload_on: 'ON'
+  #   payload_off: 'OFF'
+  #   payload_available: 'Online'
+  #   payload_not_available: 'Offline'
+  #   retain: false
+  #   optimistic: true
+  #   # assumed_state: false
+
+# light:
+#   - platform: switch
+#     name: Chandelier
+#     entity_id: switch.chandelier
+# - platform: switch
+#   name: String
+#   entity_id: switch.christmas_lights
+
+# sensor:
+#   - platform: mqtt
+#     name: "Chandelier Switch"
+#     state_topic: 'home/tasmota/chandelier/cmnd/POWER1'
+#     qos: 1
+#     expire_after: 1  # Forget what just happen
+# - platform: mqtt
+#   name: 'Room temperature' #'Sonoff 11 TH16 Temperature'
+#   state_topic: 'home/tasmota/christmas_lights/tele/SENSOR'
+#   value_template: '{{ value_json.DS18B20.Temperature }}'
+#   unit_of_measurement: '°C'
+#   force_update: true
+# - platform: mqtt
+#   name: 'Energy'
+#   state_topic: 'home/tasmota/sonoff_pow/tele/SENSOR'
+#   value_template: '{{ value_json["ENERGY"]["Today"] }}'
+#   unit_of_measurement: 'kWh'
+# - platform: mqtt
+#   name: 'Power'
+#   state_topic: 'home/tasmota/sonoff_pow/tele/SENSOR'
+#   value_template: '{{ value_json["ENERGY"]["Power"] }}'
+#   unit_of_measurement: 'W'
+# - platform: mqtt
+#   name: 'Voltage'
+#   state_topic: 'home/tasmota/sonoff_pow/tele/SENSOR'
+#   value_template: '{{ value_json["ENERGY"]["Voltage"] }}'
+#   unit_of_measurement: 'V'
+# - platform: mqtt
+#   name: 'Current'
+#   state_topic: 'home/tasmota/sonoff_pow/tele/SENSOR'
+#   value_template: '{{ value_json["ENERGY"]["Current"] }}'
+#   unit_of_measurement: 'A'
+# - platform: rest
+#   name: Sonoff Tasmota latest release
+#   resource: https://api.github.com/repos/arendst/Sonoff-Tasmota/releases/latest
+#   headers:
+#     Accept: application/vnd.github.v3+json
+#     User-Agent: Home Assistant
+#     Content-Type: application/json
+#     Time-Zone: !secret timezone
+#   value_template: '{{ value_json.tag_name }}'
+#   scan_interval: 3600
+# - platform: template
+#   sensors:
+#     sonoff_tasmota_latest_release_float:
+#       friendly_name: Sonoff Tasmota latest release float
+#       value_template: "{{ states('sensor.sonoff_tasmota_latest_release') | replace('v','') | replace ('.0','') | float }}"
+# - platform: mqtt
+#   name: Sonoff 11 Version
+#   state_topic: 'home/tasmota/christmas_lights/stat/STATUS2'
+#   value_template: "{{ value_json['StatusFWR'].Version }}"
+# - platform: mqtt
+#   name: Sonoff 12 Version
+#   state_topic: 'home/tasmota/amp/stat/STATUS2'
+#   value_template: "{{ value_json['StatusFWR'].Version }}"
+# - platform: mqtt
+#   name: Sonoff 13 Version
+#   state_topic: 'home/tasmota/sonoff_pow/stat/STATUS2'
+#   value_template: "{{ value_json['StatusFWR'].Version }}"
+# - platform: mqtt
+#   name: Sonoff 14 Version
+#   state_topic: 'home/tasmota/SPARE/stat/STATUS2'
+#   value_template: "{{ value_json['StatusFWR'].Version }}"
+# - platform: mqtt
+#   name: Sonoff 15 Version
+#   state_topic: 'home/tasmota/chandelier/stat/STATUS2'
+#   value_template: "{{ value_json['StatusFWR'].Version }}"
+
+automation:
+  # - id: sonoff_tasmota_update
+  #   alias: sonoff_tasmota_update
+  #   trigger:
+  #     - platform: state
+  #       entity_id: sensor.sonoff_tasmota_update
+  #   action:
+  #     - service: telegram_bot.send_message
+  #       data_template:
+  #         message: "[Sonoff-Tasmota](https://github.com/arendst/Sonoff-Tasmota) update available: {{ states.sensor.sonoff_tasmota_update.attributes.tag_name }} (published at: {{ states.sensor.sonoff_tasmota_update.attributes.published_at }})"
+
+  # - id: switch_chandelier_hold
+  #   alias: Switch Chandelier HOLD
+  #   trigger:
+  #   - entity_id: sensor.chandelier_switch
+  #     platform: state
+  #     to: 'HOLD'
+  #   action:
+  #   # - service: light.toggle
+  #   #   entity_id: light.livingroom
+  #   - service_template: >-
+  #       {% if is_state('light.livingroom', 'on') %}
+  #       scene.turn_on
+  #       {% else %}
+  #       light.toggle
+  #       {% endif %}
+  #     data_template:
+  #       entity_id: >-
+  #         {% if is_state('light.livingroom', 'on') %}
+  #         scene.away
+  #         {% else %}
+  #         light.livingroom
+  #         {% endif %}
+
+  # - id: switch_chandelier_hold_on
+  #   alias: Switch Chandelier HOLD on
+  #   trigger:
+  #     - entity_id: sensor.chandelier_switch
+  #       platform: state
+  #       to: 'HOLD'
+  #   condition:
+  #     - condition: state
+  #       entity_id: light.livingroom
+  #       state: 'off'
+  #   action:
+  #     - service: scene.turn_on
+  #       entity_id: scene.normal
+
+  # - id: switch_chandelier_hold_off
+  #   alias: Switch Chandelier HOLD off
+  #   trigger:
+  #     - entity_id: sensor.chandelier_switch
+  #       platform: state
+  #       to: 'HOLD'
+  #   condition:
+  #     - condition: state
+  #       entity_id: light.livingroom
+  #       state: 'on'
+  #   action:
+  #   # - service: light.turn_off
+  #   #   entity_id: light.livingroom
+  #     - service: scene.turn_on
+  #       entity_id: scene.away
+
+  - id: switch_chandelier_hold
+    alias: Switch Chandelier HOLD
+    trigger:
+      []
+      # - entity_id: sensor.chandelier_switch
+      #   platform: state
+      #   to: 'HOLD'
+    action:
+      # - service_template: >
+      #       {% if is_state('light.livingroom', 'off') %}
+      #         scene.turn_on
+      #       {% else %}
+      #         light.turn_off
+      #       {% endif %}
+      - service: scene.turn_on
+        data_template:
+          # entity_id: >
+          #   {% if is_state('light.livingroom', 'off') %}
+          #     scene.normal
+          #   {% else %}
+          #     light.livingroom
+          #   {% endif %}
+          entity_id: >
+            {% if is_state('light.livingroom', 'off') %}
+              scene.normal
+            {% else %}
+              scene.off
+            {% endif %}
+
+script:
+  check_sonoffs_version:
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic: "home/tasmota/sonoffs/cmnd/status"
+          payload: 2
+
+  update_sonoffs:
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic: "home/tasmota/sonoffs/cmnd/upgrade"
+          payload: 1

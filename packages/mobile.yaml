@@ -1,0 +1,72 @@
+ios:
+  push:
+    categories:
+      - name: Sleep
+        identifier: "sleep"
+        actions:
+          - identifier: "SLEEP_END"
+            title: "I woke up!"
+            activationMode: "background"
+            # authenticationRequired: true
+      - name: Vacuum start
+        identifier: "vacuum-start"
+        actions:
+          - identifier: "VACUUM_START"
+            title: "Yes, let's do it!"
+            activationMode: "background"
+          - identifier: "VACUUM_DESK"
+            title: "Just the Desk"
+            activationMode: "background"
+          - identifier: "VACUUM_SOFA"
+            title: "Just the Sofa"
+            activationMode: "background"
+      - name: Vacuum paused
+        identifier: "vacuum-paused"
+        actions:
+          - identifier: "VACUUM_STOP"
+            title: "Stop for now"
+            destructive: true
+            activationMode: "background"
+          - identifier: "VACUUM_RESUME"
+            title: "Continue"
+            activationMode: "background"
+      - name: Vacuum empty bin
+        identifier: "vacuum-empty-bin"
+        actions:
+          - identifier: "VACUUM_EMPTY_BIN"
+            title: "Right away!"
+            activationMode: "background"
+
+sensor:
+  - platform: template
+    sensors:
+      nearest_iphone_notify:
+        friendly_name: Nearest iPhone's notify service
+        value_template: >
+          {% if is_state("person.salomon", "home") and is_state("person.polina", "home") %}
+            notify.all_iphones
+          {% elif is_state_attr("proximity.home", "nearest", "Salomon") %}
+            notify.mobile_app_disrupted_iphone
+          {% else %}
+            notify.mobile_app_scar_on
+          {% endif %}
+
+automation:
+  - alias: Hass Update Available mobile
+    id: hass_update_available_mobile
+    trigger:
+      platform: state
+      entity_id: binary_sensor.updater
+      from: "off"
+      to: "on"
+    action:
+      - service: notify.mobile_app_disrupted_iphone
+        data_template:
+          data:
+            push:
+              thread-id: "hass-update"
+          title: "Update {{ state_attr('binary_sensor.updater', 'newest_version') }} is now available."
+          message: >
+            {{ state_attr('binary_sensor.updater', 'release_notes') }}
+            {{ states('sensor.github_home_assistant_release') }}:
+            {{ state_attr('sensor.github_home_assistant_release', 'body') }}
