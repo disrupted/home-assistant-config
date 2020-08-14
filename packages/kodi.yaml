@@ -1,0 +1,227 @@
+homeassistant:
+  customize_glob:
+    "*.kodi*":
+      icon: mdi:kodi
+
+media_player:
+  - platform: kodi
+    name: Kodi
+    host: !secret ip_kodi
+    port: !secret kodi_port
+    username: !secret kodi_username
+    password: !secret kodi_password
+    # turn_on_action:
+    #   - service: wake_on_lan.send_magic_packet
+    #     data:
+    #       mac: !secret mac_kodi
+    #       broadcast_address: !secret ip_broadcast
+    # turn_off_action:
+    #   service: kodi.call_method
+    #   data:
+    #     entity_id: '{{ entity_id }}'
+    #     method: System.Suspend
+    # enable_websocket: true
+    turn_on_action:
+      - service: kodi.call_method
+        data:
+          entity_id: media_player.kodi
+          method: Addons.ExecuteAddon
+          addonid: script.json-cec
+          params:
+            command: activate
+    turn_off_action:
+      - service: media_player.media_stop
+        data:
+          entity_id: media_player.kodi
+      - service: kodi.call_method
+        data:
+          entity_id: media_player.kodi
+          method: GUI.ActivateWindow
+          params:
+            window: screensaver
+      # - service: media_player.kodi_call_method
+      #   data:
+      #     entity_id: media_player.kodi
+      #     method: Addons.ExecuteAddon
+      #     addonid: script.json-cec
+      #     params:
+      #       command: standby
+
+input_boolean:
+  movietime:
+    name: Movie Time
+    initial: false
+    icon: mdi:theater
+
+switch:
+  - platform: template
+    switches:
+      kodi:
+        friendly_name: Kodi
+        value_template: "{{ is_state('media_player.kodi', 'playing') }}"
+        turn_on:
+          service: media_player.kodi_call_method
+          data:
+            entity_id: media_player.kodi
+            method: Addons.ExecuteAddon
+            addonid: script.json-cec
+            params:
+              command: activate
+        turn_off:
+          service: media_player.turn_off
+          entity_id: media_player.tv
+
+notify:
+  - platform: kodi
+    name: Kodi
+    host: !secret ip_kodi
+    port: 80
+    username: !secret kodi_username
+    password: !secret kodi_password
+    data:
+      title: "Home Assistant"
+      icon: "/local/ha_kodi.png"
+
+automation:
+  - alias: Kodi movietime on
+    id: kodi_movietime_on
+    trigger:
+      - platform: state
+        entity_id: media_player.kodi
+        # from: 'idle'
+        to: "playing"
+        for: "00:00:03"
+    condition:
+      - condition: or
+        conditions:
+          - condition: template
+            value_template: "{{ is_state_attr('media_player.kodi', 'media_content_type', 'movie') }}"
+          - condition: and
+            conditions:
+              - condition: template
+                value_template: "{{ is_state_attr('media_player.kodi', 'media_content_type', 'tvshow') }}"
+              - condition: template
+                value_template: "{{ state_attr('media_player.kodi', 'media_season') < 2000 }}"
+      - condition: template
+        value_template: "{{ is_state_attr('media_player.kodi', 'is_volume_muted', False) }}"
+      - condition: template
+        value_template: "{{ state_attr('media_player.kodi', 'media_duration') > 1000 }}"
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.movietime
+
+  - alias: Kodi movietime dim lights
+    id: kodi_movietime_dim_lights
+    trigger:
+      - platform: state
+        entity_id: input_boolean.movietime
+        from: "off"
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: light.floor_lamp
+        state: "on"
+      - condition: template
+        value_template: "{{ state_attr('light.floor_lamp', 'brightness') > 64 }}"
+      # - condition: state
+      #   entity_id: sun.sun
+      #   state: 'below_horizon'
+      # - condition: numeric_state
+      #   entity_id: sun.sun
+      #   value_template: '{{ state.attributes.elevation }}'
+      #   below: -10.0
+      - condition: template
+        value_template: "{{ state_attr('sun.sun', 'elevation') < -4.0 }}"
+    action:
+      - service: scene.turn_on
+        entity_id: scene.dim
+      - service: switch.turn_on
+        entity_id: switch.circadian_lighting_bed_no_brightness
+
+  - alias: Kodi pause other players
+    id: kodi_pause_other_players
+    trigger:
+      - platform: state
+        entity_id: media_player.kodi
+        to: "playing"
+    condition:
+      - condition: state
+        entity_id: media_player.google_home
+        state: "playing"
+      - condition: template
+        value_template: '{{ is_state_attr("media_player.kodi", "is_volume_muted", False) }}'
+    action:
+      - service: media_player.media_pause
+        entity_id: media_player.google_home
+      - service: notify.kodi
+        data:
+          message: "Google Home playback paused"
+
+  - alias: Kodi movietime off
+    id: kodi_movietime_off
+    trigger:
+      - platform: state
+        entity_id: media_player.kodi
+        # from: 'playing'
+        to: "idle"
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.movietime
+
+  - alias: Kodi movietime undim lights
+    id: kodi_movietime_undim_lights
+    trigger:
+      - platform: state
+        entity_id: input_boolean.movietime
+        from: "on"
+        to: "off"
+        for:
+          seconds: 30
+    condition:
+      - condition: state
+        entity_id: light.floor_lamp
+        state: "on"
+      - condition: template
+        value_template: "{{ state_attr('light.floor_lamp', 'brightness') < 77 }}"
+      - condition: state
+        entity_id: light.bed_lamp
+        state: "on"
+      - condition: template
+        value_template: "{{ not is_state('input_select.scene', 'Bedtime') }}"
+    action:
+      - service: scene.turn_on
+        entity_id: scene.undim
+
+  - alias: Kodi Startup → Turn on TV & Amplifier
+    id: kodi_startup_turn_on_tv_and_amp
+    trigger:
+      - platform: state
+        entity_id: switch.kodi
+        from: "off"
+        to: "on"
+      - platform: state
+        entity_id: media_player.kodi
+        from: "off"
+        to: "idle"
+      - platform: state
+        entity_id: media_player.kodi
+        to: "playing"
+        for: "00:00:01"
+      # - platform: event
+      #   event_type: call_service
+      #   event_data:
+      #     service_data:
+      #       entity_id: [scene.netflix_and_chill]
+      #     domain: scene
+      #     service: turn_on
+    condition:
+      - condition: state
+        entity_id: input_boolean.present
+        state: "on"
+      - condition: template
+        value_template: "{{ not is_state_attr('media_player.kodi', 'is_volume_muted', True) }}"
+    action:
+      - service: switch.turn_on
+        entity_id:
+          - switch.tv
+          - switch.amp
