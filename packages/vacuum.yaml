@@ -1,0 +1,406 @@
+homeassistant:
+  customize_glob:
+    automation.vacuum_*:
+      icon: mdi:robot-vacuum
+  customize:
+    vacuum.nono:
+      friendly_name: Nono
+    sensor.vacuum_days_since_last_clean:
+      icon: mdi:broom
+#     input_boolean.vacuum_disable_daily:
+#       icon: mdi:stop-circle-outline
+#     input_boolean.vacuum_disable_dustbin_notification:
+#       icon: mdi:delete-empty
+#     # binary_sensor.vacuum_room:
+#     #   custom_ui_state_card: state-card-floorplan
+#     #   config: !include ../floorplan_vacuum.yaml
+
+# vacuum:
+# - platform: mqtt
+
+sensor:
+  - platform: template
+    sensors:
+      #       vacuum_status:
+      #         friendly_name: "Vacuum Status"
+      #         value_template: "{{ states.vacuum.nono.attributes.state }}"
+
+      vacuum_days_since_last_clean:
+        friendly_name: Days since last cleaning
+        unit_of_measurement: "days"
+        # value_template: "{{ (relative_time(state_attr('vacuum.nono', 'last_run_stats').startTime / 1000) / 86400) | int }}"
+        value_template: "{{ ((as_timestamp(now()) - state_attr('vacuum.nono', 'last_run_stats').startTime / 1000 | int) / 24 / 3600) | int }}"
+
+  # - platform: mqtt
+  #   state_topic: "valetudo/nono/state"
+  #   json_attributes_topic: "valetudo/nono/map_data_parsed"
+  #   name: nono_map
+  #   value_template: 'OK'
+  #   scan_interval: 5
+
+  - platform: history_stats
+    name: Vacuum cleaning time 7d
+    entity_id: vacuum.nono
+    state: "Cleaning"
+    type: time
+    # end: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    end: "{{ now() }}"
+    duration:
+      days: 7
+
+# group:
+#   Vacuum:
+#     icon: mdi:robot-vacuum
+#     entities:
+#       - vacuum.nono
+#       - input_boolean.vacuum_disable_daily
+#   Vacuum a Room:
+#     entities:
+#       - input_select.vacuum_room
+#       - binary_sensor.vacuum_room
+
+# input_boolean:
+#   vacuum_daily_first_run:
+#     name: Daily Vacuum First Run
+#     initial: off
+#   vacuum_disable_daily:
+#     name: Disable Daily Vacuum Automation
+#     initial: on
+#   vacuum_disable_dustbin_notification:
+#     name: Disable Dustbin Notification
+#     initial: off
+
+# input_select:
+#   vacuum_room:
+#     name: Choose a room to clean
+#     options:
+#       - Select Input
+#       - All Except Bedroom and Ensuite
+#       - Bed
+#       - Desk
+#       - Sofa
+#       - Entryway
+#       - Kitchen
+#       - Living Room
+#       - Bathroom
+#     initial: Select Input
+
+# input_datetime:
+#   vacuum_last_run:
+#     name: Vacuum last run
+#     has_date: true
+#     has_time: true
+
+automation:
+  #   - alias: Vacuum Start Daily Routine
+  #     trigger:
+  #     - platform: state
+  #       entity_id: group.awesome_people
+  #       from: 'home'
+  #       to: 'not_home'
+  #       for:
+  #         minutes: 5
+  #     # - platform: time
+  #     #   at: '7:02:00'
+  #     condition:
+  #       condition: and
+  #       conditions:
+  #       - condition: state
+  #         entity_id: input_boolean.daily_vacuum_first_run
+  #         state: 'off'
+  #       - condition: time
+  #         after: '10:00:00'
+  #         before: '22:00:00'
+  #       - condition: state
+  #         entity_id: group.awesome_people
+  #         state: 'not_home'
+  #       - condition: state
+  #         entity_id: group.guests
+  #         state: 'not_home'
+  #       - condition: state
+  #         entity_id: input_boolean.disable_daily_vacuum
+  #         state: 'off'
+  #     action:
+  #     # - delay: '00:00:30'
+  #     - service: vacuum.turn_on
+  #       entity_id: vacuum.nono
+  #     - service: homeassistant.turn_on
+  #       entity_id: input_boolean.daily_vacuum_first_run
+
+  - alias: Vacuum started mobile
+    id: vacuum_started_mobile
+    trigger:
+      # - platform: state
+      #   entity_id: vacuum.nono
+      #   from: 'docked'
+      #   to: 'cleaning'
+      - platform: event
+        event_type: call_service
+        event_data:
+          domain: vacuum
+          service: send_command
+          service_data:
+            command: zoned_cleanup
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          parse_mode: html
+          message: >
+            Vacuum cleaning started for {% for zone in trigger.event.data.service_data.params["zone_ids"] %}{{ zone }}{% if not loop.last %} and {% endif %}{% endfor %} zone
+      - service: notify.mobile_app_disrupted_iphone
+        data_template:
+          data:
+            push:
+              thread-id: "vacuum"
+          message: >
+            Vacuum cleaning started for {% for zone in trigger.event.data.service_data.params["zone_ids"] %}{{ zone }}{% if not loop.last %} and {% endif %}{% endfor %} zone
+
+  - alias: Vacuum finished mobile
+    id: vacuum_finished_mobile
+    trigger:
+      platform: state
+      entity_id: vacuum.nono
+      from: "cleaning"
+      to: "returning"
+    action:
+      - service: notify.mobile_app_disrupted_iphone
+        data_template:
+          data:
+            push:
+              thread-id: "vacuum"
+          title: "Vacuum finished"
+          message: >
+            Area: {{ state_attr('vacuum.nono', 'last_run_stats').area }} m2
+
+            current Clean Area: {{ state_attr('vacuum.nono', 'currentCleanArea') }} m2
+
+            Clean Time: {{ state_attr('vacuum.nono', 'cleanTime') }} min
+
+            current Clean Time: {{ state_attr('vacuum.nono', 'currentCleanTime') }} min
+
+            {% if not state_attr('vacuum.nono', 'last_run_stats').finishedFlag %}
+              Error code: {{ state_attr('vacuum.nono', 'last_run_stats').errorCode }}
+
+              Error description: {{ state_attr('vacuum.nono', 'last_run_stats').errorDescription }}
+            {% endif %}
+
+  - alias: Vacuum docked mobile
+    id: vacuum_docked_mobile
+    trigger:
+      platform: state
+      entity_id: vacuum.nono
+      # from: 'returning'
+      to: "docked"
+    action:
+      - service: notify.mobile_app_disrupted_iphone
+        data:
+          data:
+            push:
+              thread-id: "vacuum"
+          message: "Vacuum docked"
+
+  - alias: Vacuum docked set speed
+    trigger:
+      - platform: state
+        entity_id: vacuum.nono
+        # from: 'returning'
+        to: "docked"
+      - platform: homeassistant
+        event: start
+    condition:
+      - condition: state
+        entity_id: vacuum.nono
+        state: "docked"
+    action:
+      - service: vacuum.set_fan_speed
+        entity_id: vacuum.nono
+        data:
+          fan_speed: min
+
+  # - alias: Vacuum Last Run
+  #   trigger:
+  #     platform: state
+  #     entity_id: vacuum.nono
+  #     from: 'docked'
+  #     to: 'cleaning'
+  #   action:
+  #     - service: input_datetime.set_datetime
+  #       data_template:
+  #         entity_id: input_datetime.vacuum_last_run
+  #         time: '{{ (as_timestamp(now()) | timestamp_custom("%H:%M:%S", true)) }}'
+  #         date: '{{ (as_timestamp(now()) | timestamp_custom("%Y-%m-%d", true)) }}'
+
+  - alias: Vacuum going out cleaning
+    trigger:
+      platform: state
+      entity_id: input_boolean.present
+      from: "on"
+      to: "off"
+      for:
+        minutes: 30
+    condition:
+      - condition: state
+        entity_id: vacuum.nono
+        state: "docked"
+      # days since last cleaning
+      - condition: template
+        value_template: "{{ (as_timestamp(now()) - state_attr('vacuum.nono', 'last_run_stats').startTime / 1000 | int) / 24 / 3600 > 2 }}"
+    action:
+      service: notify.mobile_app_disrupted_iphone
+      data_template:
+        title: "all the puzzles out of the way?"
+        message: "Nono's last run was {{ ((as_timestamp(now()) - state_attr('vacuum.nono', 'last_run_stats').startTime / 1000 | int) / 24 / 3600) | round }} days ago. Should we run the cleaning now while you're out?"
+        data:
+          # subtitle: "Subtitle goes here"
+          apns_headers:
+            "apns-collapse-id": "vacuum-ask"
+          push:
+            thread-id: "vacuum"
+            category: "vacuum-start"
+            # badge: 0
+            # sound: "none"
+
+  - alias: Vacuum livingroom
+    trigger:
+      platform: event
+      event_type: ios.notification_action_fired
+      event_data:
+        actionName: VACUUM_START
+    action:
+      service: script.vacuum_clean_livingroom
+
+  - alias: Vacuum clean desk
+    trigger:
+      platform: event
+      event_type: ios.notification_action_fired
+      event_data:
+        actionName: VACUUM_DESK
+    action:
+      service: script.vacuum_clean_desk
+
+  - alias: Vacuum clean sofa
+    trigger:
+      platform: event
+      event_type: ios.notification_action_fired
+      event_data:
+        actionName: VACUUM_SOFA
+    action:
+      service: script.vacuum_clean_sofa
+
+  - alias: Vacuum pause when someone comes home
+    trigger:
+      platform: state
+      entity_id: input_boolean.present
+      from: "off"
+      to: "on"
+    condition:
+      - condition: state
+        entity_id: vacuum.nono
+        state: "cleaning"
+    action:
+      - service: vacuum.pause
+        entity_id: vacuum.nono
+      - service: notify.mobile_app_disrupted_iphone
+        data_template:
+          title: "Vacuum paused because someone came home"
+          message: "do you want the cleaning to continue?"
+          data:
+            # subtitle: "Subtitle goes here"
+            # apns_headers:
+            #   "apns-collapse-id": "vacuum-ask"
+            push:
+              thread-id: "vacuum"
+              category: "vacuum-paused"
+              # badge: 0
+              # sound: "none"
+
+  - alias: Vacuum stop return to base
+    trigger:
+      platform: event
+      event_type: ios.notification_action_fired
+      event_data:
+        actionName: VACUUM_STOP
+    # condition:
+    #   - condition: state
+    #     entity_id: vacuum.nono
+    #     state: 'paused'
+    action:
+      # - service: vacuum.stop
+      #   entity_id: vacuum.nono
+      - service: vacuum.return_to_base
+        entity_id: vacuum.nono
+
+  - alias: Vacuum resume
+    trigger:
+      platform: event
+      event_type: ios.notification_action_fired
+      event_data:
+        actionName: VACUUM_RESUME
+    # condition:
+    #   - condition: state
+    #     entity_id: vacuum.nono
+    #     state: 'paused'
+    action:
+      service: vacuum.start_pause
+      entity_id: vacuum.nono
+
+  - alias: Vacuum empty bin reminder
+    initial_state: "off"
+    trigger:
+      platform: state
+      entity_id: person.salomon # input_boolean.present
+      from: "not_home" # 'off'
+      to: "home" # 'on'
+      for:
+        minutes: 5
+    # condition:
+    #   - condition: state
+    #     entity_id: vacuum.nono
+    #     state: 'docked'
+    action:
+      - service: notify.mobile_app_disrupted_iphone
+        data_template:
+          message: "Don't forget to empty and clean Nono"
+          data:
+            # subtitle: "Subtitle goes here"
+            # apns_headers:
+            #   "apns-collapse-id": "vacuum-ask"
+            push:
+              th read-id: "vacuum"
+              category: "vacuum-empty-bin"
+              # badge: 0
+              # sound: "none"
+      - service: automation.turn_off
+        entity_id: automation.vacuum_empty_bin_reminder
+
+  - alias: Vacuum empty bin response
+    trigger:
+      platform: event
+      event_type: ios.notification_action_fired
+      event_data:
+        actionName: VACUUM_EMPTY_BIN
+    # condition:
+    #   - condition: state
+    #     entity_id: vacuum.nono
+    #     state: 'docked'
+    action:
+      service: script.vacuum_empty_bin
+
+  - alias: Vacuum finished enable reminder
+    trigger:
+      platform: state
+      entity_id: vacuum.nono
+      from: "cleaning"
+      to: "returning"
+    # condition:
+    #   - condition: state
+    #     entity_id: input_boolean.present
+    #     state: 'off'
+    action:
+      - service_template: >-
+          {% if is_state('person.salomon', 'home') %}
+          automation.trigger
+          {% else %}
+          automation.turn_on
+          {% endif %}
+        entity_id: automation.vacuum_empty_bin_reminder
