@@ -1,0 +1,80 @@
+homeassistant:
+  customize_glob:
+    automation.ps4_*:
+      icon: mdi:playstation
+
+switch:
+  - platform: template
+    switches:
+      ps4:
+        friendly_name: "PS4"
+        value_template: "{{ is_state('media_player.ps4', 'playing') or is_state('media_player.ps4', 'idle') }}"
+        icon_template: "mdi:sony-playstation"
+        turn_on:
+          service: media_player.turn_on
+          data:
+            entity_id: media_player.ps4
+        turn_off:
+          service: media_player.turn_off
+          data:
+            entity_id: media_player.ps4
+
+automation:
+  - alias: PS4 Startup → Turn on TV & Amplifier
+    id: ps4_startup_turn_on_tv_and_amp
+    trigger:
+      - platform: state
+        entity_id: media_player.ps4
+        from: "off"
+        to: "idle"
+    condition:
+      condition: state
+      entity_id: input_boolean.present
+      state: "on"
+    action:
+      - service: switch.turn_on
+        entity_id: switch.tv
+      - service: switch.turn_on
+        entity_id: switch.amp
+
+  - alias: PS4 OFF → Turn off TV & Amplifier
+    id: ps4_off_turn_on_tv_and_amp
+    trigger:
+      - platform: state
+        entity_id: media_player.ps4
+        to: "off"
+        for:
+          minutes: 5
+    condition:
+      # - condition: state
+      #   entity_id: input_boolean.present
+      #   state: 'on'
+      - condition: template
+        value_template: "{{ trigger.from_state.state != trigger.to_state.state }}"
+      - condition: template
+        value_template: "{{ states('media_player.kodi') != 'playing' }}"
+    action:
+      - service: media_player.turn_off
+        entity_id: media_player.tv
+      - service: switch.turn_off
+        entity_id: switch.amp
+
+  - alias: PS4 dim
+    id: ps4_dim
+    trigger:
+      - platform: state
+        entity_id: media_player.ps4
+        from: "idle"
+        to: "playing"
+    condition:
+      - condition: or
+        conditions:
+          - condition: template
+            value_template: '{{ is_state_attr("media_player.ps4", "media_title", "Uncharted") }}'
+          - condition: template
+            value_template: '{{ is_state_attr("media_player.ps4", "media_content_type", "movie") }}'
+    action:
+      - service: scene.turn_on
+        data_template:
+          entity_id: scene.dim
+          # brightness: "{{ states('input_number.scene_brightness') | int }}"

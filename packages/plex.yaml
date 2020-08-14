@@ -1,0 +1,69 @@
+homeassistant:
+  customize:
+    sensor.tautulli_lan_bandwidth:
+      icon: mdi:server-network
+    sensor.tautulli_wan_bandwidth:
+      icon: mdi:server-network
+  customize_glob:
+    automation.plex_*:
+      icon: mdi:plex
+
+sensor:
+  # - platform: plex
+  #   host: !secret ip_vault
+  #   token: !secret plex_token
+  - platform: tautulli
+    host: !secret ip_vault
+    api_key: !secret api_key_tautulli
+  - platform: template
+    sensors:
+      tautulli_lan_bandwidth:
+        friendly_name: "LAN Streaming Bandwidth"
+        unit_of_measurement: "Mbit/s"
+        value_template: "{{ state_attr('sensor.tautulli', 'lan_bandwidth') / 1000 | round(2) }}"
+      tautulli_wan_bandwidth:
+        friendly_name: "WAN Streaming Bandwidth"
+        unit_of_measurement: "Mbit/s"
+        value_template: "{{ state_attr('sensor.tautulli', 'wan_bandwidth') / 1000 | round(2) }}"
+# media_player:
+#   - platform: plex
+#     entity_namespace: 'plex'
+#     scan_interval: 5
+#     show_all_controls: false
+#     # use_custom_entity_ids: true
+#     use_episode_art: false
+#     remove_unavailable_clients: true
+#     client_remove_interval: 600
+
+# automation:
+#   - alias: Plex playing - pause Music playback on Google Home
+#     id: plex_playing_pause_music_on_google_home
+#     trigger:
+#       - platform: state
+#         entity_id:
+#           - media_player.plex_disrupted_ipadpro
+#           - media_player.plex_web_safari
+#         # from: 'idle'
+#         to: 'playing'
+#     condition:
+#       - condition: state
+#         entity_id: input_boolean.present
+#         state: 'on'
+#       - condition: state
+#         entity_id: media_player.google_home_speaker
+#         state: 'playing'
+#     action:
+#       - service: media_player.media_pause
+#         entity_id: media_player.google_home_speaker
+#  - alias: Plex remote stream throttle downloaders
+#    trigger:
+#      - platform: state
+#        entity_id: sensor.tautulli
+#    condition:
+#      - condition: template
+#        value_template: '{{ trigger.from_state.state < trigger.to_state.state }}' # new stream was started
+#      # - condition: template
+#      #   value_template: "{{ state_attr('sensor.tautulli', 'wan_bandwidth') > 8000 }}"
+#    action:
+#      - service: switch.turn_on
+#        entity_id: switch.transmission_turtle_mode

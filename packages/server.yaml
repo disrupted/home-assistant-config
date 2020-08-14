@@ -1,0 +1,59 @@
+# homeassistant:
+#   customize_glob:
+#     sensor.radarr_*:
+#       icon: mdi:movie
+#   customize:
+#     switch.transmission_turtle_mode:
+#       icon: mdi:gauge-empty
+
+nzbget:
+  host: !secret ip_vault
+  username: !secret nzbget_user
+  password: !secret nzbget_password
+  monitored_variables:
+    - "download_rate"
+  scan_interval: 30
+
+rtorrent:
+  url: !secret rtorrent_url
+  monitored_variables:
+    # - "current_status"
+    - "download_speed"
+    - "upload_speed"
+    - "upload_limit"
+    - "download_limit"
+    - "all_torrents"
+    # - "stopped_torrents"
+    # - "complete_torrents"
+    - "uploading_torrents"
+    - "downloading_torrents"
+    - "active_torrents"
+  scan_interval: 30
+# sensor:
+#   - platform: rtorrent
+#     name: rTorrent
+#     url: !secret rtorrent_url
+#     monitored_variables:
+#       - 'current_status'
+#       - 'download_speed'
+#       - 'upload_speed'
+# - platform: sonarr
+#  host: sonarr # !secret ip_vault
+#  api_key: !secret api_key_sonarr
+#  days: 7
+#  monitored_conditions:
+#    - series
+#    - upcoming
+#    - queue
+#    # - wanted
+# - platform: radarr
+#  host: radarr # !secret ip_vault
+#  api_key: !secret api_key_radarr
+#  days: 30
+#  monitored_conditions:
+#    - movies
+#    - upcoming
+# - platform: pyload
+#  host: !secret ip_vault
+#  username: !secret pyload_user
+#  password: !secret pyload_pass
