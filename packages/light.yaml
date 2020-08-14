@@ -1,0 +1,613 @@
+homeassistant:
+  customize_glob:
+    automation.flux_*:
+      icon: mdi:image-filter-frames
+    automation.hue_switch_*:
+      icon: mdi:remote
+    automation.sunrise_*:
+      icon: mdi:weather-sunset-up
+    automation.sunset_*:
+      icon: mdi:weather-sunset-down
+  customize:
+    switch.flux:
+      friendly_name: Flux
+      icon: mdi:image-filter-frames
+    light.floor_lamp:
+      icon: mdi:floor-lamp
+    # light.floor_lamp_top:
+    #   hidden: true
+    # light.floor_lamp_bottom:
+    #   hidden: true
+    light.bed_lamp:
+      icon: mdi:lamp # mdi:webcam
+    light.desk_lamp:
+      icon: mdi:desk-lamp
+    light.candle:
+      icon: mdi:candle
+
+light:
+  - platform: group
+    name: Floor lamp
+    entities:
+      - light.floor_lamp_top
+      - light.floor_lamp_bottom
+  - platform: group
+    name: Livingroom
+    entities:
+      - light.floor_lamp_top
+      - light.floor_lamp_bottom
+      - light.desk_lamp
+      - light.bed_lamp
+
+# prettier-ignore
+sun:
+
+# hue:
+#   bridges:
+#     - host: !secret ip_hue
+#       allow_unreachable: true
+#       allow_hue_groups: true
+
+circadian_lighting:
+  min_colortemp: 2400 # 2200
+  max_colortemp: 6500
+  sunset_offset: "+01:15:00"
+  # sunset_time: "20:30:00"
+  sunrise_time: "06:00:00"
+  interval: 180
+  transition: 3
+
+switch:
+  - platform: circadian_lighting
+    name: Floor
+    disable_brightness_adjust: true
+    lights_ct:
+      - light.floor_lamp
+  - platform: circadian_lighting
+    name: Bed
+    # disable_entity: input_boolean.movietime
+    # disable_state: 'on'
+    lights_ct:
+      - light.bed_lamp
+  - platform: circadian_lighting
+    name: Bed no brightness
+    lights_ct:
+      - light.bed_lamp
+    disable_brightness_adjust: true
+  - platform: circadian_lighting
+    name: Desk
+    disable_brightness_adjust: true
+    # min_brightness: 15
+    # max_brightness: 60
+    # disable_entity: input_boolean.movietime
+    # disable_state: 'on'
+    lights_ct:
+      - light.desk_lamp
+  # - platform: flux
+  #   lights:
+  #     - light.floor_lamp
+  #     - light.desk_lamp
+  #   name: Flux
+  #   start_time: '16:00' # '06:00'
+  #   stop_time: '01:00'
+  #   start_colortemp: 4000
+  #   sunset_colortemp: 3400
+  #   stop_colortemp: 2400
+  #   disable_brightness_adjust: True
+  #   mode: mired
+  #   transition: 3
+  #   interval: 180
+
+sensor:
+  - platform: history_stats
+    name: Lights ON today
+    entity_id: light.livingroom
+    state: "on"
+    type: time
+    start: "{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}"
+    end: "{{ now() }}"
+  - platform: template
+    sensors:
+      circadian_colortemp:
+        friendly_name: "Circadian Colortemp"
+        unit_of_measurement: "K"
+        value_template: "{{ state_attr('sensor.circadian_values', 'colortemp') }}"
+
+automation:
+  # - id: light_circadian_off_when_hue_scene
+  #   alias: Light Circadian OFF when Hue Scene
+  #   trigger:
+  #     - platform: event
+  #       event_type: call_service
+  #       event_data:
+  #         domain: hue
+  #         service: hue_activate_scene
+  #         # service_data:
+  #         #   entity_id: [scene.test]
+  #   # condition:
+  #   #   - condition: template
+  #   #     value_template: '{{ trigger.event.data.service_data.entity_id[0] | length > 1 }}'
+  #   action:
+  #     - service: switch.turn_off
+  #       entity_id: switch.circadian_lighting_desk
+
+  - alias: Light Circadian Bed OFF
+    # initial_state: true
+    trigger:
+      platform: template
+      value_template: "{{ state_attr('light.bed_lamp', 'rgb_color') != None }}"
+    condition:
+      - condition: or
+        conditions:
+          - condition: state
+            entity_id: switch.circadian_lighting_bed
+            state: "on"
+          - condition: state
+            entity_id: switch.circadian_lighting_bed_no_brightness
+            state: "on"
+    #   condition: sun
+    #   after: sunset
+    #   after_offset: "-01:00:00"
+    action:
+      service: switch.turn_off
+      entity_id:
+        - switch.circadian_lighting_bed
+        - switch.circadian_lighting_bed_no_brightness
+
+  - alias: Light Circadian Bed toggle1
+    trigger:
+      platform: state
+      entity_id: switch.circadian_lighting_bed
+      to: "on"
+    action:
+      service: switch.turn_off
+      entity_id: switch.circadian_lighting_bed_no_brightness
+
+  - alias: Light Circadian Bed toggle2
+    trigger:
+      platform: state
+      entity_id: switch.circadian_lighting_bed_no_brightness
+      to: "on"
+    action:
+      service: switch.turn_off
+      entity_id: switch.circadian_lighting_bed
+
+  # - alias: Flux startup
+  #   id: flux_startup
+  #   trigger:
+  #     platform: homeassistant
+  #     event: start
+  #   action:
+  #     - service: switch.turn_on
+  #       entity_id:
+  #         # - switch.flux
+  #         - switch.circadian_lighting_floor
+  #         - switch.circadian_lighting_bed
+  #         - switch.circadian_lighting_desk
+
+  # - alias: Flux update when turning on the light
+  #   id: flux_update_when_turning_on_light
+  #   trigger:
+  #     - platform: state
+  #       entity_id: light.floor_lamp, light.desk_lamp
+  #       to: 'on'
+  #   action:
+  #     service: switch.flux_update
+
+  - alias: Light Sunrise circadian
+    trigger:
+      - platform: sun
+        event: sunrise
+        # offset: "-01:00:00"
+    action:
+      - service: switch.turn_on
+        entity_id:
+          - switch.circadian_lighting_floor
+          - switch.circadian_lighting_bed
+          - switch.circadian_lighting_desk
+
+  - alias: Light Sunset
+    trigger:
+      platform: sun
+      event: sunset
+      offset: "-02:00:00"
+      # platform: numeric_state
+      # entity_id: sun.sun
+      # value_template: '{{ state.attributes.elevation }}'
+      # below: 5
+    condition:
+      - condition: state
+        entity_id: input_boolean.present
+        state: "on"
+      # - condition: state
+      #   entity_id: light.livingroom
+      #   state: 'off'
+      - condition: template
+        value_template: >
+          {{ is_state('light.floor_lamp', 'off') or is_state('light.bed_lamp', 'off') or is_state('light.desk_lamp', 'off') }}
+    action:
+      - service: scene.turn_on
+        entity_id: scene.sunset
+
+  - alias: Light Sunset lightchain
+    trigger:
+      - platform: numeric_state
+        entity_id: sun.sun
+        value_template: "{{ state.attributes.elevation }}"
+        below: -4.0
+        # above: -8.0
+      # - platform: sun
+      #   event: sunset
+      #   offset: "+01:00:00"
+    condition:
+      - condition: template
+        value_template: '{{ is_state_attr("sun.sun", "rising", False) }}'
+      - condition: state
+        entity_id: input_boolean.away
+        state: "off"
+      # - condition: state
+      #   entity_id: input_boolean.sleeping
+      #   state: 'off'
+    action:
+      service: light.turn_on
+      entity_id: light.string
+
+  - alias: Light Sunrise lightchain
+    trigger:
+      - platform: time
+        at: "02:00:00"
+      - platform: numeric_state
+        entity_id: sun.sun
+        value_template: "{{ state.attributes.elevation }}"
+        above: -4.0
+      - platform: state
+        entity_id: input_boolean.sleeping
+        to: "on"
+        for:
+          minutes: 30
+    condition:
+      - condition: state
+        entity_id: light.string
+        state: "on"
+    action:
+      service: light.turn_off
+      entity_id: light.string
+
+  - alias: Light switch bed nightlight
+    trigger:
+      - platform: device
+        device_id: 26e2dec1fe6f42caafb738958bc3b26a
+        domain: zha
+        type: remote_button_short_press
+        subtype: turn_on
+    condition:
+      # - condition: time
+      #   after: '00:00:00'
+      #   before: '08:00:00'
+      - condition: state
+        entity_id: light.bed_lamp
+        state: "off"
+      - condition: state
+        entity_id: binary_sensor.bayesian_sleeping
+        state: "on"
+      # - condition: template
+      #   value_template: "{{ state_attr('sun.sun', 'elevation') < -10.0 }}"
+      # - condition: or
+      #   conditions:
+      #     - condition: state
+      #       entity_id: input_boolean.sleeping
+      #       state: 'on'
+      #     - condition: state
+      #       entity_id: light.livingroom
+      #       state: 'off'
+    action:
+      # - service: hue.hue_activate_scene
+      #   data_template:
+      #     group_name: 'Bed'
+      #     scene_name: 'Nightlight'
+      service: light.turn_on
+      entity_id: light.bed_lamp
+      data:
+        profile: nightlight
+
+  - alias: light switch bed daytime
+    trigger:
+      - platform: device
+        device_id: 26e2dec1fe6f42caafb738958bc3b26a
+        domain: zha
+        type: remote_button_short_press
+        subtype: turn_on
+    condition:
+      # - condition: time
+      #   after: '00:00:00'
+      #   before: '08:00:00'
+      - condition: state
+        entity_id: binary_sensor.bayesian_sleeping # input_boolean.sleeping
+        state: "off"
+      # - condition: and  # 'when light' condition: before sunset and after sunrise - equivalent to a state condition on `sun.sun` of `above_horizon`
+      #   conditions:
+      #     - condition: sun
+      #       before: sunset
+      #     - condition: sun
+      #       after: sunrise
+      - condition: or
+        conditions:
+          - condition: template
+            value_template: "{{ state_attr('sun.sun', 'elevation') > -2.0 }}"
+          - condition: state
+            entity_id: light.bed_lamp
+            state: "on"
+    action:
+      # - service: hue.hue_activate_scene
+      #   data_template:
+      #     group_name: 'Bed'
+      #     scene_name: 'Concentrate'
+      - service: switch.turn_on
+        entity_id: switch.circadian_lighting_bed
+      - service: light.turn_on
+        data_template:
+          entity_id: light.bed_lamp
+          kelvin: "{{ state_attr('sensor.circadian_values', 'colortemp') | int }}"
+          brightness_pct: "{{ state_attr('switch.circadian_lighting_bed', 'brightness') | int }}"
+          transition: 0.5
+
+  - alias: light switch bed evening
+    trigger:
+      - platform: device
+        device_id: 26e2dec1fe6f42caafb738958bc3b26a
+        domain: zha
+        type: remote_button_short_press
+        subtype: turn_on
+    condition:
+      - condition: state
+        entity_id: light.bed_lamp
+        state: "off"
+      # - condition: time
+      #   after: '00:00:00'
+      #   before: '08:00:00'
+      - condition: state
+        entity_id: binary_sensor.bayesian_sleeping # input_boolean.sleeping
+        state: "off"
+      # - condition: or  # 'when light' condition: after sunset and before sunrise - equivalent to a state condition on `sun.sun` of `below_horizon`
+      #   conditions:
+      #     - condition: sun
+      #       after: sunset
+      #     - condition: sun
+      #       before: sunrise
+      - condition: template
+        value_template: "{{ state_attr('sun.sun', 'elevation') <= -2.0 }}"
+    action:
+      # - service: hue.hue_activate_scene
+      #   data_template:
+      #     group_name: 'Bed'
+      #     scene_name: 'Read'
+      service: light.turn_on
+      entity_id: light.bed_lamp
+      data:
+        profile: reading
+        transition: 0.5
+
+  - alias: light switch bed off
+    trigger:
+      - platform: device
+        device_id: 26e2dec1fe6f42caafb738958bc3b26a
+        domain: zha
+        type: remote_button_short_press
+        subtype: turn_off
+    condition:
+      - condition: state
+        entity_id: light.bed_lamp
+        state: "on"
+    action:
+      - service: light.turn_off
+        entity_id: light.bed_lamp
+
+  # - alias: light switch bed going to sleep
+  #   trigger:
+  #     - platform: device
+  #       device_id: 26e2dec1fe6f42caafb738958bc3b26a
+  #       domain: zha
+  #       type: remote_button_short_press
+  #       subtype: turn_off
+  #   condition:
+  #     - condition: state
+  #       entity_id: light.livingroom
+  #       state: 'on'
+  #     - condition: time
+  #       after: '00:00:00'
+  #       before: '08:00:00'
+  #     # - condition: and  # 'when light' condition: before sunset and after sunrise - equivalent to a state condition on `sun.sun` of `above_horizon`
+  #     #   conditions:
+  #     #     - condition: sun
+  #     #       before: sunset
+  #     #     - condition: sun
+  #     #       after: sunrise
+  #   action:
+  #     - service: scene.turn_on
+  #       entity_id: scene.night
+  #     # - service: input_boolean.turn_on
+  #     #   entity_id: input_boolean.sleeping
+
+  - alias: light switch bed end sleep
+    trigger:
+      - platform: device
+        device_id: 26e2dec1fe6f42caafb738958bc3b26a
+        domain: zha
+        type: remote_button_short_press
+        subtype: turn_off
+    condition:
+      - condition: state
+        entity_id: input_boolean.sleeping
+        state: "on"
+      - condition: state
+        entity_id: light.livingroom
+        state: "off"
+      # - condition: time
+      #   after: '00:00:00'
+      #   before: '08:00:00'
+      # - condition: and  # 'when light' condition: before sunset and after sunrise - equivalent to a state condition on `sun.sun` of `above_horizon`
+      #   conditions:
+      #     - condition: sun
+      #       before: sunset
+      #     - condition: sun
+      #       after: sunrise
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.sleeping
+      - service: notify.ga_broadcast
+        data:
+          message: "Sleep cycle finished"
+
+  - alias: light switch bed dim up
+    trigger:
+      - platform: device
+        device_id: 26e2dec1fe6f42caafb738958bc3b26a
+        domain: zha
+        type: remote_button_short_press
+        subtype: dim_up
+    condition:
+      - condition: state
+        entity_id: light.bed_lamp
+        state: "on"
+      - condition: template
+        value_template: "{{ state_attr('light.bed_lamp', 'brightness') < 254 }}"
+    action:
+      - service: light.turn_on
+        entity_id: light.bed_lamp
+        data:
+          brightness_step_pct: 20
+          transition: 0.5
+
+  - alias: light switch bed dim up full
+    trigger:
+      - platform: device
+        device_id: 26e2dec1fe6f42caafb738958bc3b26a
+        domain: zha
+        type: remote_button_short_press
+        subtype: dim_up
+    condition:
+      - condition: state
+        entity_id: light.bed_lamp
+        state: "on"
+      - condition: template
+        value_template: "{{ state_attr('light.bed_lamp', 'brightness') >= 254 }}"
+    action:
+      - service: light.turn_on
+        entity_id: light.bed_lamp
+        data:
+          flash: short
+
+  - alias: light switch bed dim down
+    trigger:
+      - platform: device
+        device_id: 26e2dec1fe6f42caafb738958bc3b26a
+        domain: zha
+        type: remote_button_short_press
+        subtype: dim_down
+    condition:
+      - condition: state
+        entity_id: light.bed_lamp
+        state: "on"
+    action:
+      - service: light.turn_on
+        entity_id: light.bed_lamp
+        data:
+          brightness_step_pct: -20
+          transition: 0.5
+
+  # BUGGY causes event loop
+  # - alias: light desk on
+  #   trigger:
+  #     # - platform: state
+  #     #   entity_id: light.desk_lamp
+  #     #   from: 'off'
+  #     #   to: 'on'
+  #     - platform: event
+  #       event_type: call_service
+  #       event_data:
+  #         domain: light
+  #         service: turn_on
+  #         service_data:
+  #           entity_id: light.desk_lamp
+  #   condition:
+  #     - condition: template
+  #       value_template: "{{ trigger.event.data.service_data not in ['color_temp', 'brightness'] }}"
+  #   action:
+  #     - service: telegram_bot.send_message
+  #       data_template:
+  #         parse_mode: html
+  #         message: "{{ trigger.event }}"
+  #     # - service: light.turn_on
+  #     #   data:
+  #     #     entity_id: light.desk_lamp
+  #     #     brightness_pct: 60
+
+  - alias: light switch desk toggle
+    trigger:
+      - platform: device
+        device_id: 3c43ca013a444ac7be79e75622ad2310
+        domain: zha
+        type: remote_button_short_press
+        subtype: turn_on
+    action:
+      - service: light.toggle
+        entity_id: light.desk_lamp
+        data:
+          transition: 0.5
+
+  - alias: light switch desk dim up
+    trigger:
+      - platform: device
+        device_id: 3c43ca013a444ac7be79e75622ad2310
+        domain: zha
+        type: remote_button_short_press
+        subtype: dim_up
+    condition:
+      - condition: state
+        entity_id: light.desk_lamp
+        state: "on"
+      - condition: template
+        value_template: "{{ state_attr('light.desk_lamp', 'brightness') < 254 }}"
+    action:
+      - service: light.turn_on
+        entity_id: light.desk_lamp
+        data:
+          brightness_step_pct: 5
+          transition: 0.5
+
+  - alias: light switch desk dim up full
+    trigger:
+      - platform: device
+        device_id: 3c43ca013a444ac7be79e75622ad2310
+        domain: zha
+        type: remote_button_short_press
+        subtype: dim_up
+    condition:
+      - condition: state
+        entity_id: light.desk_lamp
+        state: "on"
+      - condition: template
+        value_template: "{{ state_attr('light.desk_lamp', 'brightness') >= 254 }}"
+    action:
+      - service: light.turn_on
+        entity_id: light.desk_lamp
+        data:
+          flash: short
+
+  - alias: light switch desk dim down
+    trigger:
+      - platform: device
+        device_id: 3c43ca013a444ac7be79e75622ad2310
+        domain: zha
+        type: remote_button_short_press
+        subtype: dim_down
+    condition:
+      - condition: state
+        entity_id: light.desk_lamp
+        state: "on"
+    action:
+      - service: light.turn_on
+        entity_id: light.desk_lamp
+        data:
+          brightness_step_pct: -5
+          transition: 0.5

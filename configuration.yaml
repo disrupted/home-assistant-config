@@ -205,8 +205,8 @@ influxdb:
       - sensor.disrupted_iphone_steps
       - sensor.polina_iphone_steps
       # Network
-      - sensor.snmp_stats_192_168_178_1_netif_pppoe_wan_curbw_in_mbit
-      - sensor.snmp_stats_192_168_178_1_netif_pppoe_wan_curbw_out_mbit
+      - sensor.router_wan_curbw_in_mbit
+      - sensor.router_wan_curbw_out_mbit
       - sensor.router_wan_total_in_byte
       - sensor.router_wan_total_out_byte
       - sensor.router_wlan0_curbw_in_mbit

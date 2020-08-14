@@ -32,8 +32,6 @@ rules:
     level: warning
     require-starting-space: true
     min-spaces-from-content: 1
-  comments-indentation:
-    level: error
   empty-lines:
     level: error
     max: 1

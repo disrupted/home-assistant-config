@@ -1,0 +1,375 @@
+homeassistant:
+  customize_glob:
+    script.scene_*:
+      icon: mdi:vanish
+    automation.scene_*:
+      icon: mdi:vanish
+    automation.hue_*:
+      icon: mdi:vanish
+  customize:
+    group.scenes_day:
+      icon: mdi:white-balance-sunny
+    group.scenes_night:
+      icon: mdi:weather-night
+    scene.daytime:
+      icon: mdi:white-balance-sunny
+    scene.away:
+      icon: mdi:account-off
+    scene.bright:
+      icon: mdi:spotlight
+    scene.normal:
+      icon: mdi:lamp
+    scene.sunset:
+      icon: mdi:weather-sunset
+    scene.relax:
+      icon: mdi:sofa
+    scene.dim:
+      icon: mdi:theater
+    scene.bedtime:
+      icon: mdi:sleep
+    scene.night:
+      icon: mdi:weather-night
+    # scene.nightlight:
+    #   icon: mdi:candle
+    group.scene:
+      icon: mdi:auto-fix
+
+group:
+  scene:
+    name: Scene
+    icon: mdi:vanish
+    entities:
+      - input_select.scene
+      - input_number.scene_brightness
+
+  all_scenes:
+    name: all Scenes
+    icon: mdi:vanish
+    entities:
+      - scene.daytime
+      - scene.sunset
+      - scene.normal
+      - scene.relax
+      - scene.dim
+      - scene.undim
+      - scene.bedtime
+      - scene.night
+      # - scene.nightlight
+      - scene.away
+
+  scenes_day:
+    name: Scenes
+    entities:
+      - scene.daytime
+      - scene.sunset
+      - scene.normal
+      - scene.bright
+      - scene.dim
+      - scene.relax
+
+  scenes_night:
+    name: Scenes
+    entities:
+      - scene.bedtime
+      - scene.night
+      # - scene.nightlight
+
+scene:
+  - name: Normal
+    entities:
+      light.floor_lamp:
+        state: on
+        brightness: 255
+        transition: 1
+      light.bed_lamp:
+        state: on
+        # profile: standard
+        brightness: 255
+        transition: 1
+      light.desk_lamp:
+        state: on
+        brightness_pct: 55
+        transition: 1
+      switch.chandelier:
+        state: off
+      switch.circadian_lighting_floor: on
+      switch.circadian_lighting_bed: on
+      switch.circadian_lighting_desk: on
+
+  - name: Sunset
+    entities:
+      switch.circadian_lighting_floor: on
+      switch.circadian_lighting_bed: on
+      switch.circadian_lighting_desk: on
+      light.floor_lamp:
+        state: on
+        brightness: 255
+        transition: 6
+      light.bed_lamp:
+        state: on
+        # profile: standard
+        brightness: 255
+        transition: 10
+      light.desk_lamp:
+        state: on
+        brightness: 102
+        transition: 10
+
+  - name: Dim
+    entities:
+      switch.circadian_lighting_bed_no_brightness: on
+      light.floor_lamp:
+        state: on
+        transition: 4
+        brightness: 38
+        # brightness_pct: 15
+      light.bed_lamp:
+        state: on
+        transition: 8
+        brightness: 38
+      light.desk_lamp:
+        state: off
+        transition: 3
+      switch.chandelier: off
+      light.candle:
+        state: on
+        brightness: 255
+        effect: Flicker
+
+  - name: Undim
+    entities:
+      switch.circadian_lighting_bed: on
+      light.floor_lamp:
+        state: on
+        transition: 10
+        brightness: 77
+
+  - name: Relax
+    entities:
+      light.floor_lamp:
+        state: on
+        transition: 6
+        brightness_pct: 40
+        # kelvin: 2200
+      switch.chandelier: off
+      light.bed_lamp:
+        state: on
+        profile: orange
+
+  - name: Bedtime
+    entities:
+      switch.circadian_lighting_floor: off
+      light.floor_lamp:
+        state: on
+        transition: 4
+        brightness: 51
+        kelvin: 2200
+      switch.circadian_lighting_bed: off
+      switch.circadian_lighting_bed_no_brightness: off
+      light.bed_lamp:
+        state: on
+        profile: bedtime
+        # flash: long
+        transition: 4
+      light.desk_lamp:
+        state: off
+        # brightness: 50
+        # transition: 4
+        # flash: long
+      switch.chandelier: off
+
+  - name: Daytime
+    entities:
+      light.floor_lamp:
+        state: on
+        transition: 1
+        brightness: 255
+        # kelvin: 4000
+      # switch.chandelier: off
+
+  - name: Max
+    entities:
+      switch.chandelier:
+        state: on
+
+  - name: Night
+    entities:
+      switch.amp: false
+      switch.tv: false
+      # switch.kodi:
+      #   state: off
+      light.livingroom:
+        state: off
+        transition: 3
+      light.candle: off
+      # switch.chandelier: false
+      # switch.circadian_lighting_bed: true
+
+  # - name: Nightlight
+  #   entities:
+  #     light.bed_lamp:
+  #       state: on
+  #       brightness: 1
+  #       rgb_color: [255, 0, 0]
+
+  - name: Away
+    entities:
+      media_player.google_home:
+        state: paused
+      light.livingroom:
+        state: off
+        transition: 1
+      light.candle: off
+      climate.thermostat:
+        state: heat
+        temperature: "17"
+      media_player.kodi:
+        state: paused
+      switch.amp: off
+      media_player.tv: off
+      media_player.ps4: off
+      # switch.chandelier: off
+
+  - name: "OFF"
+    entities:
+      light.livingroom:
+        state: off
+        transition: 1
+      light.chandelier: off
+      light.candle: off
+
+input_select:
+  scene:
+    name: Scene
+    icon: mdi:auto-fix
+    options:
+      - Select
+      - Max
+      - Daytime
+      - Sunset
+      - Normal
+      - Dim
+      - Relax
+      - Bedtime
+      - Night
+      # - Nightlight
+      - Away
+      - "OFF"
+    # initial: 'Select'
+
+input_number:
+  scene_brightness:
+    name: Brightness
+    icon: mdi:contrast-box
+    initial: 255
+    min: 0
+    max: 255
+    step: 1
+
+automation:
+  - id: scene_selection
+    alias: scene_selection
+    trigger:
+      platform: state
+      entity_id: input_select.scene
+    condition:
+      condition: template
+      value_template: "{{ not is_state('input_select.scene', 'Select') }}"
+    action:
+      # - service: automation.turn_off
+      #   entity_id: automation.scene_event
+      - service: scene.turn_on
+        data_template:
+          entity_id: "scene.{{ trigger.to_state.state.replace(' ', '_').replace('&', 'and') | lower }}"
+          # brightness: "{{ states('input_number.scene_brightness') | int }}"
+      # - delay: '00:00:02'
+      # - service: automation.turn_on
+      #   entity_id: automation.scene_event
+
+  # - id: hue_scene_event
+  #   alias: Hue Scene Event
+  #   trigger:
+  #     - platform: event
+  #       event_type: call_service
+  #       event_data:
+  #         domain: hue
+  #         service: hue_activate_scene
+  #         # service_data:
+  #         #   entity_id: [scene.test]
+  #   action:
+  #     - service: persistent_notification.create
+  #       data_template:
+  #         title: "Hue Scene"
+  #         message: "{{ trigger.event.data.service_data.scene_name }}"
+  #     - service: notify.kodi
+  #       data_template:
+  #         message: "Hue Scene '{{ trigger.event.data.service_data.scene_name }}'"
+
+  - id: scene_event
+    alias: scene_event
+    trigger:
+      - platform: event
+        event_type: call_service
+        event_data:
+          domain: scene
+          service: turn_on
+          # service_data:
+          #   entity_id: [scene.test]
+    # condition:
+    #   - condition: template
+    #     value_template: '{{ trigger.event.data.service_data.entity_id[0] | length > 1 }}'
+    action:
+      # - service: telegram_bot.send_message
+      #   data_template:
+      #     parse_mode: html
+      #     disable_notification: yes
+      #     message: >
+      #       DEBUG Scene call registered: {{ trigger.event.data.service_data.entity_id[0] }}
+      # - service: persistent_notification.create
+      #   data_template:
+      #     title: "DEBUG single"
+      #     message: >-
+      #       {% if trigger.event.data.service_data.entity_id | length < 6 %}{% set entity = trigger.event.data.service_data.entity_id[0] %}{% else %}{% set entity = trigger.event.data.service_data.entity_id %}{% endif %}{% set id = entity.split('.')[1] %}{{ states.scene[id].attributes.friendly_name }}
+
+      # {% for entity in trigger.event.data.service_data.entity_id %}{{ entity.split('.')[1] }}{% endfor %}
+
+      # {{ trigger.event.data.service_data.entity_id | length }}
+
+      # {% if trigger.event.data.service_data.entity_id | length > 1 %}{% for entity in trigger.event.data.service_data["entity_id"] %} {{ entity }} {% endfor %}{% endif %}
+      # {{ trigger.event.data.service_data["entity_id"][0] }}
+      # - service: persistent_notification.create
+      #   data_template:
+      #     title: "DEBUG array"
+      #     message: >
+      #       {% set id = trigger.event.data.service_data.entity_id[0].split('.')[1] %}{{ states.scene[id].attributes.friendly_name }}
+      # - service: hue.hue_activate_scene
+      #   data_template:
+      #     group_name: 'All'
+      #     scene_name: >
+      #       {% if trigger.event.data.service_data.entity_id | length < 6 %}{% set entity = trigger.event.data.service_data.entity_id[0] %}{% else %}{% set entity = trigger.event.data.service_data.entity_id %}{% endif %}{% set id = entity.split('.')[1] %}{{ states.scene[id].attributes.friendly_name }}
+      - service: script.scene_set_input_select
+        data_template:
+          entity: >
+            {% if trigger.event.data.service_data.entity_id | length < 6 %}{{ trigger.event.data.service_data.entity_id[0] }}{% else %}{{ trigger.event.data.service_data.entity_id }}{% endif %}
+          name: >-
+            {% if trigger.event.data.service_data.entity_id | length < 6 %}{% set entity = trigger.event.data.service_data.entity_id[0] %}{% else %}{% set entity = trigger.event.data.service_data.entity_id %}{% endif %}{% set id = entity.split('.')[1] %}{{ states.scene[id].attributes.friendly_name }}
+          id: "{{ trigger.event.data.service_data.service_call_id }}"
+        # {% set id = trigger.event.data.service_data.entity_id %}{% set a, b = id.split('.') %}{{ states[a][b].attributes.friendly_name }}
+
+  - id: scene_brightness_change
+    alias: scene_brightness_change
+    trigger:
+      platform: state
+      entity_id: input_number.scene_brightness
+    action:
+      - service: light.turn_on
+        data_template:
+          entity_id:
+            - light.floor_lamp
+            - light.bed_lamp
+            - light.desk_lamp
+          # {% for entity in states.group.all_lights.attributes.entity_id if is_state(entity, 'on') %}
+          # {{ entity }}
+          # {% else %}
+          # {% endfor %}
+          brightness: "{{ states('input_number.scene_brightness') | int }}"

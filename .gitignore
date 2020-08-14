@@ -9,6 +9,7 @@
 !.yamllint
 !/.stubs/
 !esphome/*.yaml
+!.HA_VERSION
 
 # Ignore folders.
 .storage
@@ -33,7 +34,7 @@ plex.conf
 *.session
 zigbee.db
 bvg_*.json
-omv_cookies.json
+.omv_cookies.json
 
 # ESPHome
 esphome/secrets.yaml
