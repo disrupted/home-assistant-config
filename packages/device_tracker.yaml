@@ -1,0 +1,396 @@
+homeassistant:
+  customize_glob:
+    sensor.traveltime_*:
+      icon: mdi:subway
+    automation.device_tracker_*:
+      icon: mdi:crosshairs-gps
+    automation.icloud_*:
+      icon: mdi:apple-icloud
+  customize:
+    # sensor.traveltime_home_to_work:
+    #   friendly_name: → Work
+    sensor.traveltime_home_to_uni:
+      friendly_name: → Uni
+    sensor.traveltime_location_to_home:
+      friendly_name: → Home
+    automation.device_tracker_coming_home:
+      icon: mdi:home-import-outline
+    automation.device_tracker_leaving_home:
+      icon: mdi:home-export-outline # mdi:exit-run
+    sensor.icloud_last_update:
+      icon: mdi:update
+
+device_tracker:
+  # - platform: luci
+  #   host: !secret ip_router
+  #   username: !secret router_user
+  #   password: !secret router_password
+  #   ssl: false
+  #   interval_seconds: 30
+  #   consider_home: 0:10:00
+  #   new_device_defaults:
+  #     track_new_devices: True
+  - platform: ubus
+    host: !secret ip_router
+    username: !secret router_user
+    password: !secret router_password
+    interval_seconds: 30
+    consider_home: 0:10:00
+    new_device_defaults:
+      track_new_devices: true
+  # - platform: bluetooth_tracker
+  #   interval_seconds: 30
+  #   new_device_defaults:
+  #     track_new_devices: False
+
+# icloud:
+#   username: !secret icloud_username
+#   password: !secret icloud_password
+#   with_family: true
+#   max_interval: 240
+#   gps_accuracy_threshold: 500
+
+foursquare:
+  access_token: !secret api_access_token_foursquare
+  push_secret: !secret api_push_secret_foursquare
+
+input_boolean:
+  present:
+    name: present
+    icon: mdi:login
+  presence_salomon:
+    name: Salomon Home
+  presence_polina:
+    name: Polina Home
+  presence_guest:
+    name: Guest Home
+
+# prettier-ignore
+# map:
+
+zone:
+  - name: Home
+    latitude: !secret location_home_lat
+    longitude: !secret location_home_lon
+    radius: !secret location_home_radius
+    icon: mdi:home
+  - name: Uni
+    latitude: !secret location_uni_lat
+    longitude: !secret location_uni_lon
+    radius: !secret location_uni_radius
+    icon: mdi:school
+  # - name: Work
+  #   latitude: !secret location_work_lat
+  #   longitude: !secret location_work_lon
+  #   radius: !secret location_work_radius
+  #   icon: mdi:worker
+  #  - name: Neighbourhood
+  #    latitude: !secret location_home_lat
+  #    longitude: !secret location_home_lon
+  #    radius: 1000
+  #    icon: mdi:google-circles-communities
+  #    passive: true
+  #    track_ios: false
+  # - name: City
+  #   latitude: !secret location_city_lat
+  #   longitude: !secret location_city_lon
+  #   radius: 15000
+  #   icon: mdi:city
+  #   passive: true
+  #   track_ios: false
+  - name: Mama
+    latitude: !secret location_mama_lat
+    longitude: !secret location_mama_lon
+    radius: !secret location_mama_radius
+    icon: mdi:home-heart
+
+sensor:
+  # - platform: google_travel_time
+  #   name: traveltime home to work
+  #   api_key: !secret api_key_google-distance-matrix
+  #   origin: zone.home
+  #   destination: zone.work
+  #   options:
+  #     mode: transit
+  #     arrival_time: '11:00:00'
+
+  # - platform: google_travel_time
+  #   name: traveltime home to uni
+  #   api_key: !secret api_key_google-distance-matrix
+  #   origin: zone.home
+  #   destination: zone.uni
+  #   options:
+  #     mode: transit
+  #     departure_time: now
+
+  # - platform: google_travel_time
+  #   name: traveltime location to home
+  #   api_key: !secret api_key_google-distance-matrix
+  #   origin: person.salomon
+  #   destination: zone.home
+  #   options:
+  #     mode: transit
+  #     departure_time: now
+
+  - platform: template
+    sensors:
+      icloud_last_update:
+        friendly_name: "Last iCloud refresh"
+        entity_id: sensor.time
+        unit_of_measurement: "minutes"
+        value_template: "{{ ((as_timestamp(now()) - as_timestamp(states.device_tracker.polina_iphone_icloud.last_updated)) / 60 ) | round }}"
+
+  - platform: history_stats
+    name: total time outside today
+    entity_id: person.salomon
+    state: "not_home"
+    type: time
+    # start: "{{ state_attr('sun.sun', 'next_dawn') }}"
+    # end: "{{ state_attr('sun.sun', 'next_dusk') }}"
+    # start: "{{ as_timestamp((as_timestamp(now()) | timestamp_custom('%Y-%m-%dT')) + (as_timestamp(state_attr('sun.sun', 'next_dawn')) | timestamp_custom('%H:%M:%S+00:00', False))) }}"
+    # end: "{{ as_timestamp((as_timestamp(now()) | timestamp_custom('%Y-%m-%dT')) + (as_timestamp(state_attr('sun.sun', 'next_dusk')) | timestamp_custom('%H:%M:%S+00:00', False))) }}"
+    start: >
+      {% if state_attr('sun.sun', 'elevation') < 0 and is_state_attr('sun.sun', 'rising', True) %}{{ now().replace(hour=0, minute=0, second=0) }}
+      {% else %}{{ as_timestamp((as_timestamp(now()) | timestamp_custom('%Y-%m-%dT')) + (as_timestamp(state_attr('sun.sun', 'next_dawn')) | timestamp_custom('%H:%M:%S+00:00', False))) }}
+      {% endif %}
+    end: >
+      {% if state_attr('sun.sun', 'elevation') < 0 and is_state_attr('sun.sun', 'rising', True) %}{{ now().replace(hour=0, minute=0, second=0) }}
+      {% else %}{{ as_timestamp((as_timestamp(now()) | timestamp_custom('%Y-%m-%dT')) + (as_timestamp(state_attr('sun.sun', 'next_dusk')) | timestamp_custom('%H:%M:%S+00:00', False))) }}
+      {% endif %}
+
+proximity:
+  home:
+    devices:
+      - person.salomon
+      - person.polina
+    # tolerance: 50
+
+automation:
+  - id: device_tracker_new_device
+    alias: device_tracker new device
+    trigger:
+      platform: event
+      event_type: device_tracker_new_device
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          parse_mode: html
+          title: New device discovered
+          message: >
+            {{trigger.event.data.host_name}}
+            ({{trigger.event.data.entity_id}})
+              DEBUG: {{trigger.event.data}}
+
+  - alias: device_tracker coming Home
+    id: device_tracker_coming_home
+    trigger:
+      platform: state
+      entity_id: group.awesome_people
+      to: "home"
+    action:
+      - service: homeassistant.turn_on
+        entity_id: input_boolean.present
+
+  - alias: device_tracker leaving Home
+    id: device_tracker_leaving_home
+    trigger:
+      - platform: state
+        entity_id: group.awesome_people
+        from: "home"
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.present
+
+  - alias: Coming Home lights
+    id: coming_home_light
+    trigger:
+      platform: state
+      entity_id: input_boolean.present
+      from: "off"
+      to: "on"
+    condition:
+      - condition: state
+        entity_id: light.livingroom
+        state: "off"
+      - condition: or
+        conditions:
+          - condition: sun
+            after: sunset
+            after_offset: "-2:00:00"
+          - condition: sun
+            before: sunrise
+    action:
+      # - service: switch.turn_on
+      #   entity_id:
+      #     - switch.circadian_lighting_floor
+      #     - switch.circadian_lighting_bed
+      #     - switch.circadian_lighting_desk
+      - service: scene.turn_on
+        entity_id: scene.normal
+
+  - alias: Leaving Home
+    id: leaving_home
+    trigger:
+      platform: state
+      entity_id: input_boolean.present
+      from: "on"
+      to: "off"
+    action:
+      - service: scene.turn_on
+        entity_id: scene.away
+
+  - alias: device_tracker notify someone arrives or leaves home
+    trigger:
+      platform: state
+      entity_id:
+        - person.salomon
+        - person.polina
+    condition:
+      - condition: template
+        value_template: "{{ trigger.from_state.state != trigger.to_state.state }}"
+      - condition: numeric_state
+        entity_id: sensor.ha_uptime
+        above: 15
+    action:
+      service: telegram_bot.send_message
+      data_template:
+        disable_notification: true
+        message: "{{ trigger.to_state.attributes.friendly_name }} {% if trigger.to_state.state == 'home' %}arrived home{% elif trigger.from_state.state == 'home' and trigger.to_state.state == 'not_home' %}left home{% elif trigger.to_state.state != 'not_home' %}arrived at {{ trigger.to_state.state }}{% elif trigger.to_state.state == 'not_home' %}left {{ trigger.from_state.state }}{% endif %}.{% if trigger.to_state.attributes.source_type != null %} (source: {{ trigger.to_state.attributes.source_type }}){% endif %}"
+
+  # - alias: device_tracker_icloud_debug
+  #   id: device_tracker_icloud_debug
+  #   trigger:
+  #     - platform: event
+  #       event_type: state_changed
+  #       event_data:
+  #         # service_data:
+  #         #   entity_id: [device_tracker.polina_iphone_icloud]
+  #         domain: icloud
+  #         # service: update
+  #   action:
+  #     - service: telegram_bot.send_message
+  #       data_template:
+  #         parse_mode: html
+  #         title: New device discovered
+  #         message: >
+  #           iCloud Update
+  #           {{ trigger.event.data.entity_id }}
+  #           {{ trigger.event.data }}
+
+  # - alias: device_tracker icloud update polina
+  #   id: device_tracker_icloud_update_polina
+  #   trigger:
+  #     - platform: time_pattern
+  #       minutes: '/20'
+  #     - platform: state
+  #       entity_id: device_tracker.polina_phone
+  #       from: 'home'
+  #       to: 'not_home'
+  #       # for:
+  #       #   minutes: 5
+  #   condition:
+  #     - condition: state
+  #       entity_id: device_tracker.polina_phone
+  #       state: not_home
+  #       # for:
+  #       #   minutes: 5
+  #     # - condition: template
+  #     #   value_template: "{{ not is_state('device_tracker.polina_iphone_icloud', 'unavailable') }}"
+  #       # value_template: "{{ states('device_tracker.polina_iphone_icloud') != 'unavailable' }}"
+  #     # - condition: template
+  #     #   value_template: "{{ state_attr('device_tracker.polina_iphone_icloud', 'battery') == none and state_attr('device_tracker.polina_iphone_icloud', 'battery') > 20 }}"
+  #     # - condition: template
+  #     #   value_template: "{{ as_timestamp(now()) - as_timestamp(states.device_tracker.polina_iphone_icloud.last_updated) > 600 }}"
+  #     - condition: state
+  #       entity_id: input_boolean.away
+  #       state: 'off'
+  #   action:
+  #     service: script.icloud_update
+
+  - alias: device_tracker companion request update Salomon
+    id: device_tracker_companion_request_update_salomon
+    trigger:
+      - platform: state
+        entity_id: device_tracker.disrupted_iphone_wifi
+        from: "home"
+        to: "not_home"
+    condition:
+      - condition: state
+        entity_id: device_tracker.disrupted_iphone
+        state: "home"
+      # - condition: template
+      #   value_template: "{{ not is_state('device_tracker.disrupted_iphone', 'unavailable') }}"
+      - condition: template
+        value_template: "{{ as_timestamp(now()) - as_timestamp(states.device_tracker.disrupted_iphone.last_updated) > 60 }}"
+    action:
+      - service: notify.telegram
+        data:
+          message: "requesting location update from disrupted-iPhone"
+      - service: notify.mobile_app_disrupted_iphone
+        data:
+          message: "request_location_update"
+
+  - alias: device_tracker companion request update Polina
+    id: device_tracker_companion_request_update_polina
+    trigger:
+      - platform: state
+        entity_id: device_tracker.polina_phone
+        from: "home"
+        to: "not_home"
+        # for:
+        #   minutes: 2
+    condition:
+      - condition: state
+        entity_id: device_tracker.polina_iphone
+        state: "home"
+      # - condition: template
+      #   value_template: "{{ not is_state('device_tracker.polina_iphone', 'unavailable') }}"
+      - condition: template
+        value_template: "{{ as_timestamp(now()) - as_timestamp(states.device_tracker.polina_iphone.last_updated) > 60 }}"
+    action:
+      - service: notify.telegram
+        data:
+          message: "requesting location update from Polina-iPhone"
+      - service: script.companion_update_polina
+
+  - alias: device_tracker force not home after timeout
+    trigger:
+      - platform: state
+        entity_id:
+          - device_tracker.polina_phone
+        from: "home"
+        to: "not_home"
+        for:
+          minutes: 5
+    condition:
+      - condition: state
+        entity_id: person.polina
+        state: "home"
+      - condition: template
+        value_template: "{{ as_timestamp(now()) - as_timestamp(states.device_tracker.polina_iphone.last_updated) > trigger.for.minutes * 60 }}"
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          message: "Polina iPhone dropped off of WiFi but wasn't able to get an update from companion app for {{ trigger.for.minutes }}m"
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.presence_polina
+
+  - alias: device_tracker refresh health data at end of day
+    trigger:
+      platform: time
+      at: "23:45:00"
+    action:
+      - service: script.companion_update_polina
+      - service: script.companion_update_salomon
+
+  - alias: device_tracker proximity coming back
+    trigger:
+      platform: numeric_state
+      entity_id: proximity.home
+      above: 0.5
+      below: 1.5
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          message: >
+            Are you coming back home? (dir of travel: {{ state_attr('proximity.home', 'dir_of_travel') }})

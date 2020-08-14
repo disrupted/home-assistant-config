@@ -1,0 +1,69 @@
+homeassistant:
+  customize_glob:
+    automation.away_*:
+      icon: mdi:airballoon
+
+input_boolean:
+  away:
+    name: away
+    icon: mdi:airballoon
+
+automation:
+  - id: away_mode_switch_on_present
+    alias: Away mode switch on present
+    trigger:
+      platform: state
+      entity_id: input_boolean.present
+      from: 'off'
+      to: 'on'
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.away
+
+  - id: away_mode_switch_off_present
+    alias: Away mode switch off present
+    trigger:
+      platform: state
+      entity_id: input_boolean.away
+      from: 'off'
+      to: 'on'
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.present
+      - service: climate.set_away_mode
+        data:
+          entity_id: climate.thermostat
+          away_mode: true
+
+  - id: away_mode_off
+    alias: Away mode off
+    trigger:
+      platform: state
+      entity_id: input_boolean.away
+      from: 'on'
+      to: 'off'
+    action:
+      - service: climate.set_away_mode
+        data:
+          entity_id: climate.thermostat
+          away_mode: false
+
+  - id: away_activate_after_absence
+    alias: Away Mode activate after 24h absence
+    trigger:
+      platform: state
+      entity_id: input_boolean.present
+      from: 'on'
+      to: 'off'
+      for:
+        hours: 24
+    condition:
+      - condition: state
+        entity_id: input_boolean.away
+        state: 'off'
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.away
+      - service: notify.all
+        data:
+          message: 'Away Mode activated after 24h absence.'

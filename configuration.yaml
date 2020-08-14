@@ -27,9 +27,10 @@ http:
 frontend:
   javascript_version: latest
   themes: !include_dir_merge_named themes
-  extra_html_url:
-    - /local/cwm-moon-icons.html
-    - /local/hass-bha-icons.html
+  # extra_html_url:
+  #   - /local/cwm-moon-icons.html
+  extra_module_url:
+    - /hacsfiles/hass-bha-icons/hass-bha-icons.js
 
 lovelace:
   mode: yaml
@@ -85,6 +86,8 @@ lovelace:
       url: /hacsfiles/lovelace-card-mod/card-mod.js
     - type: module
       url: /hacsfiles/secondaryinfo-entity-row/secondaryinfo-entity-row.js
+    # - type: module
+    #   url: /hacsfiles/hass-bha-icons/hass-bha-icons.js
 
 config:
 
