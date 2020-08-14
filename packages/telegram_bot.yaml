@@ -1,0 +1,643 @@
+homeassistant:
+  customize_glob:
+    automation.telegram_*:
+      icon: mdi:telegram
+  customize:
+    sensor.telegram_chat_id:
+      hidden: true
+      icon: mdi:telegram
+
+sensor:
+  - platform: template
+    sensors:
+      telegram_chat_id:
+        friendly_name: "Telegram Chat ID"
+        value_template: !secret telegram_chat_id
+
+binary_sensor:
+  - platform: mqtt
+    state_topic: "telegram/disrupted/online"
+    name: Telegram Online
+  - platform: mqtt
+    state_topic: "telegram/polina/online"
+    name: Telegram Online Polina
+
+telegram_bot:
+  - platform: polling
+    api_key: !secret api_key_telegram
+    parse_mode: markdown
+    allowed_chat_ids:
+      - !secret telegram_chat_id
+
+notify:
+  - platform: telegram
+    name: Telegram
+    chat_id: !secret telegram_chat_id
+
+automation:
+  - alias: Telegram_bot text incoming
+    id: telegram_bot_text_incoming
+    trigger:
+      platform: event
+      event_type: telegram_text
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          target: !secret telegram_chat_id
+          message: >
+            message from [{{ trigger.event.data.from_first }}](tg://user?id={{ trigger.event.data.user_id }}) ({{ trigger.event.data.user_id }}):
+
+            {{ trigger.event.data.text }}
+
+            -----------
+
+            event data:
+
+            first: {{ trigger.event.data.from_first }}
+
+            last: {{ trigger.event.data.from_last }}
+
+            userid: {{ trigger.event.data.user_id }}
+
+            chatid: {{ trigger.event.data.chat_id }}
+
+            chat: {{ trigger.event.data.chat }}
+
+  - alias: Telegram_bot command incoming
+    id: telegram_bot_command_incoming
+    trigger:
+      platform: event
+      event_type: telegram_command
+    condition:
+      condition: template
+      value_template: "{{ trigger.event.data.user_id != states('sensor.telegram_chat_id') | int }}"
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          target: !secret telegram_chat_id
+          parse_mode: html
+          message: >
+            <a href="tg://user?id={{ trigger.event.data.user_id }}">{{ trigger.event.data.from_first }}{{ trigger.event.data.from_last }}</a> ({{ trigger.event.data.user_id }}) requested {{ trigger.event.data.command }} {% if trigger.event.data.args|length > 0 %}{% for state in trigger.event.data["args"] %}{{ state }} {% endfor %}{% endif %}at {{ states("sensor.time") }}{% if trigger.event.data.chat_id != trigger.event.data.user_id %} from a <a href="tg://user?id={{ trigger.event.data.chat_id }}">different chat {{ trigger.event.data.chat }}</a> ({{ trigger.event.data.chat_id }}){% endif %}.
+
+          # {% if trigger.event.data.args|length > 0 %}args: {% for state in trigger.event.data["args"] %}{{ state }} {% endfor %}
+          # {% endif }
+          # {% for state in trigger.event.data %} {{ state }} {% endfor %}
+
+  - alias: Telegram_bot that replies pong to ping
+    id: telegram_bot_test_ping_pong
+    trigger:
+      platform: event
+      event_type: telegram_command
+      event_data:
+        command: "/ping"
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          target: "{{ trigger.event.data.user_id }}"
+          message: "pong"
+
+  # - alias: Telegram_bot available commands
+  #   id: telegram_bot_available_commands
+  #   trigger:
+  #     platform: event
+  #     event_type: telegram_command
+  #     event_data:
+  #       command: '/start'
+  #   action:
+  #     - service: telegram_bot.send_message
+  #       data_template:
+  #         message: 'Hi {{ trigger.event.data.from_first }}! How can I help?'
+  #         target: '{{ trigger.event.data.user_id }}'
+  #         disable_notification: true
+  #         keyboard:
+  #           - '/location, /cominghome'
+  #           - '/people, /devices'
+  #           - '/say, /camera'
+  #           - '/ping, /restart'
+
+  # - alias: Telegram_bot trigger hass restart
+  #   id: telegram_bot_trigger_hass_restart
+  #   trigger:
+  #     platform: event
+  #     event_type: telegram_command
+  #     event_data:
+  #       command: '/restart'
+  #   condition:
+  #     condition: template
+  #     value_template: "{{ trigger.event.data.user_id == states('sensor.telegram_chat_id') | int }}"
+  #   action:
+  #     - service: notify.telegram
+  #       data:
+  #         message: 'initiating restart...'
+  #     - service: script.turn_on
+  #       entity_id: script.hass_restart
+
+  # - alias: Telegram_bot trigger hass reboot
+  #   id: telegram_bot_trigger_hass_reboot
+  #   trigger:
+  #     platform: event
+  #     event_type: telegram_command
+  #     event_data:
+  #       command: '/reboot'
+  #   condition:
+  #     condition: template
+  #     value_template: "{{ trigger.event.data.user_id == states('sensor.telegram_chat_id') | int }}"
+  #   action:
+  #     - service: notify.telegram
+  #       data:
+  #         message: 'initiating reboot...'
+  #     - service: script.turn_on
+  #       entity_id: script.hassio_reboot
+
+  - alias: Telegram_bot leaving work
+    id: telegram_bot_leaving_work
+    trigger:
+      platform: zone
+      entity_id: person.salomon
+      zone: zone.work
+      event: leave
+    condition:
+      - condition: time
+        after: "15:00:00"
+        weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          target: !secret telegram_chat_id
+          message: >
+            hey I noticed you finished work. Are you on your way home now?
+          disable_notification: false
+          inline_keyboard:
+            - "Yesss cant wait:/yescominghome"
+            - "Not yet:/notcominghomeyet"
+
+  - alias: Telegram_bot leaving uni
+    id: telegram_bot_leaving_uni
+    trigger:
+      platform: zone
+      entity_id: person.salomon
+      zone: zone.uni
+      event: leave
+      # - platform: state
+      #   entity_id: device_tracker.salomon
+      #   from: 'Uni'
+    # condition:
+    #   - condition: time
+    #     after: '15:00:00'
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          title: "Looks like you left Uni, huh? :)"
+          target: !secret telegram_chat_id
+          message: "Now let me know are you on the way home yet?"
+          disable_notification: false
+          inline_keyboard:
+            - "Yesss cant wait:/yescominghome"
+            - "Not yet:/notcominghomeyet"
+
+  - alias: Telegram_bot Yes coming home
+    id: telegram_bot_yescominghome
+    trigger:
+      platform: event
+      event_type: telegram_callback
+      event_data:
+        data: "/yescominghome"
+    action:
+      - service: telegram_bot.answer_callback_query
+        data_template:
+          callback_query_id: "{{ trigger.event.data.id }}"
+          message: "gotcha!"
+      - service: notify.telegram
+        data:
+          message: "YAY turning the heating on"
+      - service: script.thermostat_21_degrees
+
+  - alias: Telegram_bot Not coming home yet
+    id: telegram_bot_notcominghomeyet
+    trigger:
+      platform: event
+      event_type: telegram_callback
+      event_data:
+        data: "/notcominghomeyet"
+    action:
+      - service: telegram_bot.answer_callback_query
+        data_template:
+          callback_query_id: "{{ trigger.event.data.id }}"
+          message: "gotcha!"
+      - service: notify.telegram
+        data:
+          message: >
+            Ok, have fun! and don't forget to tell me later then so I can turn the heating up for you.
+      - service: script.thermostat_17_degrees
+
+  # - alias: Telegram_bot Get Location Self
+  #   id: telegram_bot_getlocation_self
+  #   trigger:
+  #     platform: event
+  #     event_type: telegram_command
+  #     event_data:
+  #       command: '/location'
+  #   condition:
+  #     condition: template
+  #     value_template: "{{ trigger.event.data.user_id == states('sensor.telegram_chat_id') | int }}"
+  #   action:
+  #     # - service: telegram_bot.send_message
+  #     #   data_template:
+  #     #     target: !secret telegram_chat_id
+  #     #     message: 'location update requested at {{ states("sensor.time") }}, hold tight...'
+  #     # - service: script.refresh_device_location
+  #     # - delay: '00:00:10'
+  #     - service: telegram_bot.send_location
+  #       data_template:
+  #         target: !secret telegram_chat_id
+  #         latitude: "{{ state_attr('person.salomon', 'latitude') }}"
+  #         longitude: "{{ state_attr('person.salomon', 'longitude') }}"
+  #     - service: telegram_bot.send_message
+  #       data_template:
+  #         target: !secret telegram_chat_id
+  #         message: >-
+  #         {% if is_state("device_tracker.salomon_wifi", "home") %}
+  #         *{{ relative_time(states.device_tracker.salomon_wifi.last_updated) }} ago*
+
+  #         zone: Home
+  #         {% elif is_state("device_tracker.salomon", "Work") %}
+  #         *{{ relative_time(states.device_tracker.salomon.last_updated) }} ago*
+
+  #         zone: Work
+  #         {% elif is_state("device_tracker.salomon", "Uni") %}
+  #         *{{ relative_time(states.device_tracker.salomon.last_updated) }} ago*
+
+  #         zone: Uni
+  #         {% endif %}
+
+  #           `{{ state_attr('person.salomon', 'latitude') }}, {{ state_attr('person.salomon', 'longitude') }}`
+
+  #           accuracy: {{ states.device_tracker.salomon.attributes.gps_accuracy }}m
+
+  #           battery: {{ states.device_tracker.salomon.attributes.battery }}%
+
+  #           last updated: {{ relative_time(states.device_tracker.salomon.last_updated) }} ago
+
+  #           last changed: {{ relative_time(states.device_tracker.salomon.last_changed) }} ago
+
+  #           {{ trigger.event.data.args }}
+
+  - alias: Telegram_bot Location
+    id: telegram_bot_location
+    trigger:
+      platform: event
+      event_type: telegram_command
+      event_data:
+        command: "/location"
+    # condition:
+    #   condition: template
+    #   value_template: "{{ trigger.event.data.user_id != states('sensor.telegram_chat_id') | int }}"
+    action:
+      # - service: telegram_bot.send_message
+      #   data_template:
+      #     target: !secret telegram_chat_id
+      #     message: '[{{ trigger.event.data.from_first }}](tg://user?id={{ trigger.event.data.user_id }}) ({{ trigger.event.data.user_id }}) requested your location at {{ states("sensor.time") }}.'
+      # - service: telegram_bot.send_message
+      #   data_template:
+      #     target: '{{ trigger.event.data.user_id }}'
+      #     message: 'sending location request to phone, hold tight...'
+      # - service: script.refresh_device_location
+      # - service: automation.turn_on
+      #   entity_id: automation.device_tracker_owntracks_refresh
+      # - delay: '00:00:02'
+      - service: telegram_bot.send_message
+        data_template:
+          target: !secret telegram_chat_id
+          message: >-
+            {% if is_state("person.salomon", "home") %}
+            *now*
+
+            zone: Home
+            {% elif is_state("person.salomon", "Work") %}
+            *now*
+
+            zone: Work
+            {% elif is_state("person.salomon", "Uni") %}
+            *now*
+
+            zone: Uni
+            {% else %}
+            {% if state_attr('person.salomon', 'latitude') is defined and state_attr('person.salomon', 'longitude') is defined %}
+            `{{ state_attr('person.salomon', 'latitude') }}, {{ state_attr('person.salomon', 'longitude') }}`
+
+            accuracy: {{ states.person.salomon.attributes.gps_accuracy | int }}m
+
+            battery: {{ states.person.salomon.attributes.battery | int }}%
+            {% else %}
+            currently there is no location data available.
+            {% endif %}
+            {% endif %}
+
+            last updated: {{ relative_time(states.person.salomon.last_updated) }} ago
+
+            last changed: {{ relative_time(states.person.salomon.last_changed) }} ago
+
+            {% for state in trigger.event.data["args"] %} {{ state }} {% endfor %}
+      - service: telegram_bot.send_location
+        data_template:
+          target: "{% if trigger.event.data.user_id != states('sensor.telegram_chat_id') | int %}{{ states('sensor.telegram_chat_id') }}, {{ trigger.event.data.user_id }}{% else %}{{ trigger.event.data.user_id }}{% endif %}"
+          latitude: "{{ state_attr('person.salomon', 'latitude') }}"
+          longitude: "{{ state_attr('person.salomon', 'longitude') }}"
+      - service: telegram_bot.send_message
+        data_template:
+          target: "{{ trigger.event.data.user_id }}"
+          message: >-
+            {% if is_state("person.salomon", "home") %}
+            *now*
+
+            zone: Home
+            {% elif is_state("person.salomon", "Work") %}
+            *now*
+
+            zone: Work
+            {% elif is_state("person.salomon", "Uni") %}
+            *now*
+
+            zone: Uni
+            {% else %}*{{ relative_time(states.person.salomon.last_updated) }} ago*
+
+            {% if states.person.salomon.attributes.latitude is defined and states.person.salomon.attributes.longitude is defined %}
+            `{{ states.person.salomon.attributes.latitude }}, {{ states.person.salomon.attributes.longitude }}`
+
+            {{ states.sensor.google_geocode.attributes.City }}, {{ states.sensor.reversegeocode_osm.attributes.Neighbourhood }}
+
+            place type: {{ states.sensor.reversegeocode_osm.attributes['Place Type'] }}
+
+            accuracy: {{ states.person.salomon.attributes.gps_accuracy | int }}m
+
+            {% if states.person.salomon.attributes.battery is defined %}battery: {{ states.person.salomon.attributes.battery | int }}%{% endif %}
+            {% else %}
+            currently there is no location data available.
+            {% endif %}
+            {% endif %}
+
+          # {% if trigger.event.data.user_id != states('sensor.telegram_chat_id') | int %}
+          # {% else %}
+          # requesting and received chat_id matched, aborting second message.
+          # {% endif %}
+
+  - alias: Telegram_bot speak
+    id: telegram_bot_speak
+    trigger:
+      - platform: event
+        event_type: telegram_command
+        event_data:
+          command: "/say"
+      - platform: event
+        event_type: telegram_command
+        event_data:
+          command: "/speak"
+    # condition:
+    #   condition: template
+    #   value_template: '{{ trigger.event.data["args"] | length > 0}}'
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          message: >
+            {% if trigger.event.data["args"] | length > 0 %}
+            message from *{{ trigger.event.data.from_first }}*: {% for state in trigger.event.data["args"] %}{{ state }} {% endfor %}
+            {% else %}
+            please send your phrase as an argument like this: /say Hello
+            {% endif %}
+      - service: notify.ga_broadcast
+        data_template:
+          message: >
+            {% for state in trigger.event.data["args"] %}{{ state }} {% endfor %}
+
+  - alias: Telegram_bot devices
+    id: telegram_bot_devices
+    trigger:
+      platform: event
+      event_type: telegram_command
+      event_data:
+        command: "/devices"
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          parse_mode: html
+          title: "devices present:"
+          message: >-
+            {% for entity in states.group.all_devices.attributes.entity_id if is_state(entity, 'home') %}
+            - {{ states[entity.split('.')[0]][entity.split('.')[1]].name }} ({{ entity.replace("device_tracker.", "") }})
+
+            {% else %}
+              no devices are home.
+            {% endfor %}
+
+  - alias: Telegram_bot people
+    id: telegram_bot_people
+    trigger:
+      platform: event
+      event_type: telegram_command
+      event_data:
+        command: "/people"
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          parse_mode: markdown
+          title: "people at home:"
+          message: >-
+            {% for entity in states.group.all_people.attributes.entity_id if is_state(entity, 'home') %}{% set parts = entity.split('.') -%}
+              - {{ states[parts[0]][parts[1]].name }}{% if parts[0] != "person" %} ({{ parts[1] }}){% endif %}
+            {%- if not loop.last -%}
+            {{ '\n' }}
+            {%- endif -%}
+            {% else -%}
+              no one is at home.
+            {% endfor %}
+
+          # {{ states[parts[0]][parts[1]].last_changed }}
+
+  - alias: Telegram_bot camera
+    id: telegram_bot_camera
+    trigger:
+      platform: event
+      event_type: telegram_command
+      event_data:
+        command: "/camera"
+    action:
+      # - service: telegram_bot.send_message
+      #   data_template:
+      #     message: >
+      #       Message from {{ trigger.event.data["from_first"] }}. {% for state in trigger.event.data["args"] %} {{ state }} {% endfor %}
+      # - service: telegram_bot.send_photo
+      #   data_template:
+      #     target: !secret telegram_chat_id
+      #     file: /share/motion/lastsnap.jpg
+      #     caption: 'USB Webcam'
+      # - service: telegram_bot.send_photo
+      #   data_template:
+      #     target: !secret telegram_chat_id
+      #     url: !secret android_ip_webcam_photo_url
+      #     username: !secret android_ip_webcam_username
+      #     password: !secret android_ip_webcam_password
+      #     caption: >
+      #       Live from home
+
+      #       battery: {{ states("sensor.ip_webcam_battery_level") | int }}%
+
+      #       motion: {{ states("sensor.ip_webcam_motion") | int }}
+
+      #       {% if is_state("switch.ip_webcam_night_vision", "on") %}night vision on{% endif %}
+      # - service: script.webcam_send_photo
+      #   data_template:
+      #     caption: >
+      #       Live from home
+
+      #       battery: {{ states("sensor.ip_webcam_battery_level") | int }}%
+
+      #       motion: {{ states("sensor.ip_webcam_motion") | int }}
+
+      #       {% if is_state("switch.ip_webcam_night_vision", "on") %}night vision on{% endif %}
+      - service: camera.snapshot
+        data:
+          entity_id: camera.xiaofang
+          filename: "/config/www/cam/snapshot.jpg"
+      # - delay: '00:00:01'
+      - service: telegram_bot.send_photo
+        data_template:
+          target: !secret telegram_chat_id
+          file: "/config/www/cam/snapshot.jpg"
+
+  - alias: Telegram_bot toggle present
+    id: telegram_bot_toggle_present
+    trigger:
+      platform: event
+      event_type: telegram_command
+      event_data:
+        command: "/present"
+    condition:
+      condition: template
+      value_template: "{{ trigger.event.data.user_id == states('sensor.telegram_chat_id') | int }}"
+    action:
+      - service: input_boolean.toggle
+        entity_id: input_boolean.present
+      - service: notify.telegram
+        data_template:
+          message: "present: {{ states('input_boolean.present') }}"
+
+  - alias: Telegram_bot turn on
+    id: telegram_bot_turn_on
+    trigger:
+      platform: event
+      event_type: telegram_command
+      event_data:
+        command: "/on"
+    condition:
+      condition: template
+      value_template: "{{ trigger.event.data.user_id == states('sensor.telegram_chat_id') | int }}"
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          parse_mode: html
+          message: "now send me the entity_id you want to turn on"
+
+  - alias: Telegram_bot thermostat
+    id: telegram_bot_thermostat
+    trigger:
+      platform: event
+      event_type: telegram_command
+      event_data:
+        command: "/thermostat"
+    # condition:
+    # - condition: template
+    #   value_template: '{{ trigger.event.data["args"] | length == 1}}'
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          parse_mode: html
+          message: >
+            {% if trigger.event.data["args"] | length == 1 %}setting Thermostat from {{ states.climate.thermostat.attributes.current_temperature | replace('.0', '') }}°C to {{ trigger.event.data.args[0] }}°C{% else %}please send the desired temperature as an argument like this: /temperature 21{% endif %}
+
+            The current room temperature is {{ states('sensor.room_temperature') }}°C.
+      - service: climate.set_temperature
+        data_template:
+          entity_id: climate.thermostat
+          temperature: "{{ trigger.event.data.args[0] | int }}"
+          operation_mode: "manual"
+
+  # - alias: Telegram_bot hue
+  #   id: telegram_bot_hue
+  #   trigger:
+  #     platform: event
+  #     event_type: telegram_command
+  #     event_data:
+  #       command: '/hue'
+  #   action:
+  #     - service: telegram_bot.send_message
+  #       data_template:
+  #         parse_mode: html
+  #         target:
+  #           - !secret telegram_chat_id
+  #           - "{% if trigger.event.data.user_id != states('sensor.telegram_chat_id') | int %}{{ trigger.event.data.user_id }}{% endif %}"
+  #         message: >
+  #           {% if trigger.event.data["args"] | length > 0 %}setting Hue {% if trigger.event.data["args"] | length > 1 %}group {{ trigger.event.data.args[1] }} {% endif %}to scene {{ trigger.event.data.args[0] }}{% else %}please send the desired Hue scene as an argument like this: /hue Night{% endif %}
+  #     - service: hue.hue_activate_scene
+  #       data_template:
+  #         group_name: >-
+  #           {% if trigger.event.data["args"] | length > 1 %}{{ trigger.event.data.args[1] }}{% else %}All{% endif %}
+  #         scene_name: '{{ trigger.event.data.args[0] }}'
+
+  - alias: Telegram_bot IP
+    trigger:
+      - platform: event
+        event_type: telegram_command
+        event_data:
+          command: "/ip"
+      - platform: state
+        entity_id: sensor.wan_ip
+    action:
+      - service: notify.telegram
+        data_template:
+          message: >
+            {{ states('sensor.wan_ip') }}
+
+            since {{ as_timestamp(states.sensor.wan_ip.last_changed) | timestamp_custom('%d.%m. %H:%M') }} (for {{ relative_time(states.sensor.wan_ip.last_changed) }})
+
+  - alias: Telegram_bot plants
+    trigger:
+      - platform: event
+        event_type: telegram_command
+        event_data:
+          command: "/plants"
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          target:
+            - !secret telegram_chat_id
+            - !secret telegram_chat_id_polina
+          parse_mode: html
+          message: >
+            {%- for plant in states.plant -%}
+              <b>{{ plant.attributes.friendly_name }}</b>
+              {%- set data = namespace(problems=[]) %}
+              {%- for problem in plant.attributes.problem.split(', ') if ((problem not in ['none','brightness low'])) -%}
+                {%- set data.problems = data.problems + [problem] -%}
+              {%- endfor %}
+              {%- if data.problems | length > 0 -%}
+                {%- if 'moisture low' in data.problems -%}
+                {{ '\n- Moisture ' }}{{ states[plant.attributes.sensors.moisture].state_with_unit -}}
+                {% endif %}
+                {%- if 'conductivity low' in data.problems -%}
+                {{ '\n- Conductivity ' }}{{ states[plant.attributes.sensors.conductivity].state_with_unit -}}
+                {{ '\n   '}}needs at least {{ (350 / states(plant.attributes.sensors.conductivity) | int * 100 - 100) | round }}% more fertilizer
+                  {%- if not 'moisture low' in data.problems and states(plant.attributes.sensors.moisture) | int > 30 -%}
+                    {{ '\n   Moisture is at ' }}{{ states(plant.attributes.sensors.moisture) }}% though so don't water it too much
+                  {% endif %}
+                {% endif %}
+                {%- if 'brightness low' in data.problems and state_attr('sun.sun', 'elevation')|float < 20 %}
+                {% endif %}
+              {%- else -%}
+                {{ '\n  ' }}<i>all good</i> {{ "\U0001f33f" }}
+              {% endif %}
+            {% endfor %}
