@@ -95,9 +95,6 @@ hassio:
 updater:
   include_used_components: true
 
-hacs:
-  token: !secret hacs_token
-
 # Discover some devices automatically
 # discovery:
 ssdp:
