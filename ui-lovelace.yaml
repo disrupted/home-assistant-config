@@ -1,0 +1,1396 @@
+custom_header:
+  compact_mode: true
+  options: clock
+  clock_format: 24
+  hide_config: true
+  # default_tab_template: >
+  #   if (states["input_boolean.home"].state == "off") "home";
+  #   else if (states["input_boolean.away"].state == "on") 2;
+  #   else 0;
+title: disrupted Home
+views:
+  - id: 0
+    title: default_view
+    icon: "mdi:home-assistant"
+    # badges:
+    #   - sun.sun
+    #   - sensor.sun_daylight_remaining
+    #   - person.salomon
+    #   - person.polina
+    cards:
+      - type: "custom:auto-entities"
+        card:
+          type: glance
+          title: Who's at home
+          show_state: false
+        filter:
+          include:
+            - group: group.all_people
+              state: "home"
+      # - type: custom:layout-card
+      #   layout: horizontal
+      #   max_columns: 2
+      #   cards:
+      - type: vertical-stack
+        cards:
+          - type: "custom:stack-in-card"
+            mode: vertical
+            cards:
+              - type: entities
+                show_header_toggle: false
+                entities:
+                  - type: custom:secondaryinfo-entity-row
+                    entity: input_boolean.present
+                    secondary_info: "[[ sensor.total_time_outside_today.attributes.value ]] outside today"
+                  # - type: 'custom:toggle-lock-entity-row'
+                  #   entity: input_boolean.away
+                  - type: custom:secondaryinfo-entity-row
+                    entity: sensor.day_phase
+                    secondary_info: "[[ sensor.sun_daylight_remaining ]] h"
+                  # - type: conditional
+                  #   card:
+                  #     type: entities
+                  #     show_header_toggle: false
+                  #     entities:
+                  #       - type: 'custom:toggle-lock-entity-row'
+                  #         entity: input_boolean.away
+                  #   conditions:
+                  #     - entity: input_boolean.present
+                  #       state: 'off'
+                  - binary_sensor.telegram_online
+                  - binary_sensor.telegram_online_polina
+              - type: history-graph
+                hours_to_show: 12
+                refresh_interval: 60
+                entities:
+                  - input_boolean.present
+                  - person.salomon
+                  - person.polina
+          # - type: conditional
+          #   card:
+          #     type: entities
+          #     title: Scene
+          #     show_header_toggle: false
+          #     entities:
+          #       - input_select.scene
+          #       - input_number.scene_brightness
+          #       - input_select.hass_theme
+          #   conditions:
+          #     - entity: sun.sun
+          #       state: below_horizon
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - input_select.scene
+              - input_number.scene_brightness
+          - type: "custom:stack-in-card"
+            mode: vertical
+            cards:
+              - type: entities
+                title: Climate
+                show_header_toggle: false
+                entities:
+                  - type: custom:secondaryinfo-entity-row
+                    entity: climate.thermostat
+                    secondary_info: "[[ sensor.thermostat_valve_state.state ]] %"
+                  # - sensor.thermostat_valve_state
+                  # - sensor.room_temperature
+      # - type: 'custom:simple-thermostat'
+      #   entity: climate.thermostat
+      #   step_size: 1
+      # modes:
+      #   some_mode: false
+      #   another_mode:
+      #     include: false
+      #   'off':
+      #     name: Make it cold
+      #     icon: false
+      #   'on':
+      #     name: false
+      #     icon: mdi:whitewalker
+      # style: |
+      #   :host {
+      #     --st-font-size-xl: 24px
+      #     --st-font-size-m: 20px
+      #     --st-font-size-title: 20px
+      #     --st-font-size-sensors: 30px
+      #     --st-spacing: 2px
+      #   }
+      # - type: custom:mini-graph-card
+      #   entities:
+      #     - entity: sensor.room_temperature
+      #     - color: gray
+      #       entity: input_boolean.present
+      #       name: Night
+      #       show_line: false
+      #       show_points: false
+      #       show_legend: false
+      #       y_axis: secondary
+      #     show:
+      #       labels: true
+      #       labels_secondary: true
+      - type: vertical-stack
+        cards:
+          - type: "custom:mini-media-player"
+            entity: media_player.spotify
+            artwork: full-cover-fit
+            hide:
+              name: true
+              power: true
+              volume: true
+            name: Spotify Player
+            scroll_info: true
+            show_progress: true
+            show_source: small
+          - type: "custom:mini-media-player"
+            entity: media_player.google_home
+            artwork: none
+            icon: "mdi:speaker"
+            max_volume: 50
+            show_tts: google
+            shortcuts:
+              columns: 3
+              buttons:
+                - name: "Spotify"
+                  icon: "mdi:spotify"
+                  type: SERVICE
+                  id: spotcast.start
+                  data:
+                    entity_id: media_player.google_home
+                    force_playback: true
+                - name: FM4
+                  icon: "mdi:radio"
+                  type: MUSIC
+                  id: "http://fm4shoutcast.sf.apa.at/;"
+                - name: BBC R1
+                  icon: "mdi:radio"
+                  type: MUSIC
+                  id: "hls-radio://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/uk/sbr_high/llnw/bbc_radio_one.m3u8"
+                - name: DLF Kultur
+                  icon: "mdi:radio"
+                  type: MUSIC
+                  # id: 'https://st01.sslstream.dlf.de/dlf/01/high/aac/stream.aac'
+                  id: "https://st02.sslstream.dlf.de/dlf/02/high/opus/stream.opus"
+      # - type: thermostat
+      #   entity: climate.thermostat
+      - type: entities
+        show_header_toggle: false
+        entities:
+          - type: custom:secondaryinfo-entity-row
+            entity: binary_sensor.washing_machine
+            secondary_info: "[[ sensor.washing_machine_power.state ]] W | runtime [[ sensor.washing_machine_runtime.state ]] h"
+          - entity: switch.washing_machine_our_laundry
+            name: our Laundry?
+          # - input_datetime.washing_machine_started
+          # - input_datetime.washing_machine_finished
+          # - sensor.washing_machine_voltage
+          # - sensor.washing_machine_current
+          # - sensor.washing_machine_power
+          - entity: sensor.washing_machine_total_daily_energy
+            name: Energy Usage today
+            # secondary_info: "total runtime today [[ sensor.washing_machine_runtime_today.state ]] h"
+          - entity: sensor.washing_machine_total_daily_energy_cost
+            name: Energy Cost today
+          - entity: sensor.washing_machine_runtime_today
+            name: Runtime today
+      - type: vertical-stack
+        cards:
+          - type: entities
+            entities:
+              - type: custom:secondaryinfo-entity-row
+                entity: vacuum.nono
+                secondary_info: "Last cleaning [[ sensor.vacuum_days_since_last_clean.state ]] days ago"
+          - type: custom:vacuum-card
+            entity: vacuum.nono
+            map: camera.nono_map
+            actions:
+              - name: Empty bin
+                service: script.vacuum_empty_bin
+                icon: mdi:delete-empty
+              - name: Load map
+                service: script.vacuum_load_map
+                icon: mdi:map-check-outline
+              - name: Clean living room
+                service: script.vacuum_clean_livingroom
+                icon: mdi:seat-recline-extra
+              - name: Clean sofa
+                service: script.vacuum_clean_sofa
+                icon: mdi:sofa
+              - name: Clean desk
+                service: script.vacuum_clean_desk
+                icon: mdi:desk
+              - name: Clean bathroom
+                service: script.vacuum_clean_bathroom
+                icon: mdi:shower
+            #   - name: Clean kitchen
+            #     service: script.clean_kitchen
+            #     icon: mdi:fridge   #mdi:chef-hat
+            #   - name: Clean corridor
+            #     service: script.clean_corridor
+            #     icon: mdi:door-closed
+          # - type: 'custom:xiaomi-vacuum-card'
+          #   entity: vacuum.nono
+          #   name: Nono
+          #   image: /local/img/xiaomi-vacuum-dark.jpg
+          #   buttons:
+          #     start: false
+      #     - type: picture-glance
+      #       entities: []
+      #       camera_image: camera.nono_map
+      # - type: 'custom:valetudo-map-card'
+      #   title: ''
+      #   entity: sensor.nono_map
+      #   vacuum_entity: vacuum.nono
+      #   map_scale: 1
+      #   icon_scale: 1
+      #   rotate: 0
+      #   crop:
+      #     top: 0
+      #     bottom: 0
+      #     left: 40
+      #     right: 0
+      #   # floor_color: darkgrey
+      #   obstacle_weak_color: yellow
+      #   obstacle_strong_color: green #'#A1DBFE'
+      - type: picture-glance
+        entities: []
+        camera_image: camera.xiaofang
+        show_state: false
+  - id: 1
+    title: Sofa
+    icon: "mdi:sofa"
+    panel: true
+    cards:
+      - type: "custom:layout-card"
+        layout: vertical
+        cards:
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - type: custom:fold-entity-row
+                title: Light
+                head:
+                  entity: light.floor_lamp
+                  hide_when_off: false
+                  name: Floor lamp
+                  toggle: false
+                  hide_state: true
+                  type: "custom:slider-entity-row"
+                entities:
+                  - type: "custom:slider-entity-row"
+                    name: Top
+                    entity: light.floor_lamp_top
+                  - type: "custom:slider-entity-row"
+                    name: Bottom
+                    entity: light.floor_lamp_bottom
+                  - entity: switch.circadian_lighting_floor
+                    name: Circadian
+              - light.chandelier
+              - light.string
+              - light.candle
+          - entities:
+              - input_boolean.movietime
+            type: entities
+          - break
+          - entities:
+              - switch.amp
+              - entity: media_player.tv
+                group: true
+                hide:
+                  controls: true
+                  icon_state: false
+                  power_state: false
+                icon: "mdi:television"
+                type: "custom:mini-media-player"
+                volume_stateless: true
+            show_header_toggle: false
+            title: Multimedia
+            type: entities
+          - type: "custom:mini-media-player"
+            artwork: full-cover
+            entity: media_player.kodi
+            group: false
+            hide:
+              power: true
+              progress: false
+              shuffle: false
+            icon: "mdi:kodi"
+            replace_mute: stop
+            source: full
+            shortcuts:
+              buttons:
+                - icon: "mdi:music"
+                  id: "special://profile/playlists/music/*****.m3u"
+                  name: "5 Stars"
+                  type: DIRECTORY
+                - icon: "mdi:album"
+                  id: "special://profile/playlists/music/random album.xsp"
+                  name: Random
+                  type: DIRECTORY
+                - icon: "mdi:music"
+                  id: "special://profile/playlists/music/2020.xsp"
+                  name: "2020"
+                  type: DIRECTORY
+                - icon: "mdi:music"
+                  id: "special://profile/playlists/music/Drum & Bass.xsp"
+                  name: "D+B"
+                  type: DIRECTORY
+                - icon: "mdi:radio"
+                  id: "http://fm4shoutcast.sf.apa.at/;"
+                  name: FM4
+                  type: MUSIC
+              columns: 3
+          - artwork: full-cover-fit
+            entity: media_player.ps4
+            group: false
+            hide:
+              controls: true
+              info: false
+              name: false
+              power_state: false
+              volume: true
+            type: "custom:mini-media-player"
+  - id: 2
+    title: Bed
+    icon: "mdi:hotel"
+    cards:
+      - type: entities
+        entities:
+          - type: custom:fold-entity-row
+            title: Light
+            head:
+              entity: light.bed_lamp
+              hide_when_off: false
+              name: Bed lamp
+              toggle: true
+              type: "custom:slider-entity-row"
+            entities:
+              - entity: switch.circadian_lighting_bed
+                name: Circadian
+              - entity: switch.circadian_lighting_bed_no_brightness
+                name: Circadian (no brightness)
+        show_header_toggle: false
+      - entities:
+          - type: custom:secondaryinfo-entity-row
+            entity: input_boolean.sleeping
+            secondary_info: "[[ sensor.total_sleep_last_night.attributes.value ]]"
+          - binary_sensor.bayesian_sleeping
+          # - sensor.total_sleep_last_night
+          - sensor.moon_phase
+        show_header_toggle: false
+        theme: Backend-selected
+        title: Sleep Tracking
+        type: entities
+      # - entities:
+      #     - entity: sensor.disrupted_steps
+      #     - entity: sensor.disrupted_distance
+      #     - entity: sensor.disrupted_calories
+      #     - entity: sensor.disrupted_sleep
+      #   show_header_toggle: false
+      #   theme: Backend-selected
+      #   title: Fit
+      #   type: entities
+      # - entities:
+      #     - input_number.wakeup_duration
+      #     - script.wakeup
+      #     - automation.google_home_routine_morning
+      #   show_header_toggle: false
+      #   theme: Backend-selected
+      #   title: Wakeup
+      #   type: entities
+      # - entities:
+      #     - scene.bedtime
+      #     - scene.night
+      #   show_header_toggle: false
+      #   theme: Backend-selected
+      #   title: Scenes
+      #   type: entities
+  - id: 3
+    title: Desk
+    icon: "mdi:monitor"
+    badges:
+      - device_tracker.disrupted_mbp_wifi
+      - device_tracker.disrupted_ipad
+      - device_tracker.disrupted_iphone_wifi
+    cards:
+      - type: entities
+        show_header_toggle: false
+        entities:
+          - type: custom:fold-entity-row
+            title: Light
+            head:
+              type: "custom:slider-entity-row"
+              entity: light.desk_lamp
+              name: Desk lamp
+              toggle: true
+              hide_when_off: false
+            entities:
+              - entity: switch.circadian_lighting_desk
+                name: Circadian
+      - type: entities
+        entities:
+          - switch.printer
+          - sensor.e_studio382p
+          - sensor.printer
+          - sensor.printer_black_toner_cartridge
+          - sensor.printer_black_image_drum_unit
+          - binary_sensor.macbookpro_power
+          - binary_sensor.macbookpro_active
+          - sensor.macbookpro_usage_today
+      - type: entities
+        title: Uni
+        entities:
+          - sensor.uni_lsf_next_class_name_short
+          - sensor.uni_lsf_next_class_name_full
+          - sensor.uni_lsf_next_class_date_time
+          # - sensor.uni_lsf_next_class_message
+          # - sensor.uni_lsf_next_class_description
+          - sensor.uni_lsf_next_class_room
+          - sensor.uni_lsf_next_class_prof
+          - binary_sensor.uni_lsf_next_class_is_lab
+      - type: entities
+        title: Calendar
+        show_header_toggle: false
+        entities:
+          - sensor.next_appt_message
+          - sensor.next_appt_description
+          - sensor.next_appt_date_time
+          - sensor.days_to_next_appointment
+          - sensor.next_holiday
+          - sensor.days_to_next_holiday
+          - sensor.next_birthday
+          - sensor.days_to_next_birthday
+
+  - id: 6
+    title: Weather
+    icon: "mdi:weather-partly-cloudy"
+    panel: true
+    cards:
+      - type: custom:layout-card
+        layout: vertical
+        min_columns: 1
+        max_columns: 2
+        # max_width: [40%, 50%]
+        cards:
+          - type: "custom:stack-in-card"
+            mode: vertical
+            cards:
+              - entity: weather.dark_sky
+                icons: "/hacsfiles/weather-card/icons/"
+                type: "custom:weather-card"
+              - type: markdown
+                # title: DWD Wetterwarnungen
+                content: >-
+                  {% set level_colors = ["#c5e566", "#ffeb3b", "#fb8c00", "#e53935", "#880e4f"] %}
+                  {% set current_count = state_attr("sensor.dwd_weather_warnings_current_warning_level", "warning_count") %}
+                  {% set advance_count = state_attr("sensor.dwd_weather_warnings_advance_warning_level", "warning_count") %}
+                  {% if ((current_count == 0) and (advance_count == 0)) %}
+                  **<font color={{ level_colors[0] }}>Keine Warnungen</font>**
+                  {% else %}
+                    {% for i in range(current_count) %}
+                      {% set headline = state_attr("sensor.dwd_weather_warnings_current_warning_level", "warning_" ~ loop.index ~ "_headline") %}
+                      {% set description = state_attr("sensor.dwd_weather_warnings_current_warning_level", "warning_" ~ loop.index ~ "_description") %}
+                      {% set level = state_attr("sensor.dwd_weather_warnings_current_warning_level", "warning_" ~ loop.index ~ "_level") %}
+                      {% set time_start = state_attr("sensor.dwd_weather_warnings_current_warning_level", "warning_" ~ loop.index ~ "_start") %}
+                      {% set time_end = state_attr("sensor.dwd_weather_warnings_current_warning_level", "warning_" ~ loop.index ~ "_end") %}
+                    **<font color={{ level_colors[level] }}>{{ headline }} (Level {{ states('sensor.dwd_weather_warnings_current_warning_level') }})</font>**
+                    {{ time_start.strftime("%a %H:%M") ~ " - " ~ time_end.strftime("%a %H:%M") }}
+                    *{{ description }}*
+                    {% if not loop.last %}***{% endif %}
+                    {% endfor %}
+                    {% if ((current_count != 0) and (advance_count != 0)) %}***{% endif %}
+                    {% for i in range(advance_count) %}
+                      {% set headline = state_attr("sensor.dwd_weather_warnings_advance_warning_level", "warning_" ~ loop.index ~ "_headline") %}
+                      {% set description = state_attr("sensor.dwd_weather_warnings_advance_warning_level", "warning_" ~ loop.index ~ "_description") %}
+                      {% set level = state_attr("sensor.dwd_weather_warnings_advance_warning_level", "warning_" ~ loop.index ~ "_level") %}
+                      {% set time_start = state_attr("sensor.dwd_weather_warnings_advance_warning_level", "warning_" ~ loop.index ~ "_start") %}
+                      {% set time_end = state_attr("sensor.dwd_weather_warnings_advance_warning_level", "warning_" ~ loop.index ~ "_end") %}
+                    **<font color={{ level_colors[level] }}>{{ headline }}</font>**
+                    {{ time_start.strftime("%a %H:%M") ~ " - " ~ time_end.strftime("%a %H:%M") }}
+                    *{{ description }}*
+                    {% if not loop.last %}***{% endif %}
+                    {% endfor %}
+                  {% endif %}
+          - type: picture-glance
+            entities: []
+            camera_image: camera.rain_radar
+          - break
+          - type: picture # -glance
+            # entities: []
+            # camera_image: camera.meteogram
+            image: !secret meteogram_url
+          - type: vertical-stack
+            cards:
+              - type: "custom:mini-graph-card"
+                name: Temperature
+                icon: "mdi:thermometer"
+                # color_thresholds:
+                #   - color: '#56a0ee'
+                #     value: 0
+                #   - color: '#d35400'
+                #     value: 20
+                #   - color: '#c0392b'
+                #     value: 30
+                entities:
+                  - entity: sensor.dark_sky_apparent_temperature
+                    name: Temperature
+                hour24: true
+                hours_to_show: 48
+                line_width: 3
+                # points_per_hour: 0.5
+                decimals: 0
+                # height: 120
+                # font_size: 140
+                show:
+                  labels: true
+              # - type: conditional
+              #   conditions:
+              #     - entity: sensor.dark_sky_precip
+              #       state_not: unknown
+              #   card:
+              - type: "custom:mini-graph-card"
+                name: Precipitation
+                icon: "mdi:weather-rainy"
+                entities:
+                  - color: "#56A0EE"
+                    # entity: sensor.dark_sky_precip_intensity
+                    entity: sensor.dwd_wetter_precipitation
+                    name: Precipitation
+                hour24: true
+                hours_to_show: 48
+                decimals: 1
+                lower_bound: 0
+                points_per_hour: 1
+                show:
+                  graph: bar
+              - type: "custom:mini-graph-card"
+                name: Wind Speed
+                entities:
+                  - entity: sensor.weather_yr_wind_speed
+                    name: YR
+                  - entity: sensor.htw_wetter_wind_speed_statistics
+                    name: HTW
+                  - entity: sensor.htw_wetter_wind_speed_max
+                    name: max
+                hour24: true
+                hours_to_show: 48
+                icon: "mdi:weather-windy"
+                line_color: "#4bc0c0"
+                line_width: 3
+                decimals: 0
+                # show:
+                #   fill: false
+                # - type: entities
+                #   show_header_toggle: false
+                #   entities:
+                #     - group.dark_sky_currently
+                #     - sensor.dark_sky_wind_direction
+                #     - group.dark_sky_forecast_1d
+                #     - group.dark_sky_forecast_2d
+                # - type: entities
+                #   title: currently
+                #   entities:
+                #     - sensor.dark_sky_icon
+                #     - sensor.dark_sky_precip
+                #     - sensor.dark_sky_precip_intensity
+                #     - sensor.dark_sky_precip_probability
+                # - type: entities
+                #   title: today
+                #   entities:
+                #     - sensor.dark_sky_icon_1d
+                #     - sensor.dark_sky_precip_1d
+                #     - sensor.dark_sky_precip_intensity_1d
+                #     - sensor.dark_sky_precip_probability_1d
+                # - type: entities
+                #   title: tomorrow
+                #   entities:
+                #     - sensor.dark_sky_icon_2d
+                #     - sensor.dark_sky_precip_2d
+                #     - sensor.dark_sky_precip_intensity_2d
+                #     - sensor.dark_sky_precip_probability_2d
+
+  - id: 7
+    title: Weather details
+    icon: "mdi:weather-partly-cloudy"
+    panel: true
+    cards:
+      - type: custom:layout-card
+        layout: horizontal
+        min_columns: 1
+        max_columns: 3
+        # max_width: [40%, 50%]
+        cards:
+          # - type: 'custom:stack-in-card'
+          #   mode: vertical
+          #   cards:
+          # - type: 'custom:stack-in-card'
+          #   mode: vertical
+          # - type: horizontal-stack
+          #   cards:
+          - type: entities
+            entities:
+              - binary_sensor.rain
+              - binary_sensor.trend_dark_sky_precip
+              - sensor.weather_bad_weather
+              - sensor.weather_wind
+              - sensor.weather_rain
+              - binary_sensor.weather_favorite_polina
+              - sensor.temperature_change_per_hour
+              - entity: sensor.htw_wetter_wind_speed_statistics
+                name: Wind Speed mean
+                icon: mdi:weather-windy
+              - sensor.htw_wetter_wind_speed_max
+              - entity: sensor.htw_wetter_solar_radiation_statistics
+                name: Solar Radiation mean
+                icon: mdi:weather-sunny
+              - sensor.htw_wetter_solar_radiation_max
+              - sensor.aqi
+              - sensor.max_uv_index
+              - sensor.current_uv_index
+              - sensor.skin_type_3_safe_exposure_time
+          # - type: custom:gap-card
+          #   height: 168
+          # - type: custom:gap-card
+          #   height: 168
+          # - type: 'custom:auto-entities'
+          #   card:
+          #     type: entities
+          #     title: currently
+          #     show_header_toggle: false
+          #   filter:
+          #     include:
+          #       - group: group.dark_sky_currently
+          # - type: 'custom:auto-entities'
+          #   card:
+          #     type: entities
+          #     # title_template: "{{ now() }}"
+          #   filter:
+          #     include:
+          #       - type: custom:template-entity-row
+          #         # icon: mdi:lamp
+          #         name: "Forecast {{ as_timestamp(now()) | timestamp_custom('%H:%M') }} - {{ (as_timestamp(now()) + 59 * 60)| timestamp_custom('%H:%M') }}"
+          #       - entity_id: sensor.dark_sky_*_0h
+          # - type: 'custom:auto-entities'
+          #   card:
+          #     type: entities
+          #     show_header_toggle: false
+          #   filter:
+          #     include:
+          #       - type: custom:template-entity-row
+          #         # icon: mdi:lamp
+          #         name: "Forecast {{ (as_timestamp(now()) + 60 * 60)| timestamp_custom('%H:%M') }} - {{ (as_timestamp(now()) + 119 * 60)| timestamp_custom('%H:%M') }}"
+          #       - entity_id: sensor.dark_sky_*_1h
+          # - type: 'custom:auto-entities'
+          #   card:
+          #     type: entities
+          #     title: today
+          #     show_header_toggle: false
+          #   filter:
+          #     include:
+          #       - group: group.dark_sky_forecast_0d
+          # - type: 'custom:auto-entities'
+          #   card:
+          #     type: entities
+          #     title: tomorrow
+          #     show_header_toggle: false
+          #   filter:
+          #     include:
+          #       - group: group.dark_sky_forecast_1d
+          # - type: 'custom:auto-entities'
+          #   card:
+          #     type: entities
+          #     title: after tomorrow
+          #     show_header_toggle: false
+          #   filter:
+          #     include:
+          #       - group: group.dark_sky_forecast_2d
+          - type: "custom:auto-entities"
+            card:
+              type: entities
+              title: currently
+              show_header_toggle: false
+            filter:
+              include:
+                - entity_id: sensor.weather_yr_*
+              exclude:
+                - entity_id: "/sensor.weather_yr_[1-9]h_/"
+          - type: "custom:auto-entities"
+            card:
+              type: entities
+              title: currently
+              show_header_toggle: false
+            filter:
+              include:
+                - entity_id: sensor.htw_wetter_*
+          - type: "custom:auto-entities"
+            card:
+              type: entities
+              title: currently
+              show_header_toggle: false
+            filter:
+              include:
+                - entity_id: sensor.dwd_wetter_*
+          - type: "custom:auto-entities"
+            card:
+              type: entities
+              title: 1h
+              show_header_toggle: false
+            filter:
+              include:
+                - entity_id: sensor.weather_yr_1h_*
+          - type: "custom:auto-entities"
+            card:
+              type: entities
+              title: 6h
+              show_header_toggle: false
+            filter:
+              include:
+                - entity_id: sensor.weather_yr_6h_*
+
+  - id: 8
+    title: Plants
+    icon: "mdi:leaf"
+    cards:
+      - type: plant-status
+        entity: plant.miflora_1
+      - type: plant-status
+        entity: plant.miflora_2
+      - type: plant-status
+        entity: plant.miflora_3
+      - type: plant-status
+        entity: plant.miflora_4
+      - type: vertical-stack
+        cards:
+          - type: "custom:auto-entities"
+            card:
+              show_header_toggle: false
+              type: entities
+              title: Plants that need help
+            filter:
+              # include:
+              #   - entity_id: plant.*
+              template: |
+                {% for plant in states.plant %}
+                  {% if 'moisture low' in plant.attributes.problem %}
+                    {{ plant.attributes.sensors.moisture }}
+                  {% endif %}
+                  {% if 'conductivity low' in plant.attributes.problem %}
+                    {{ plant.attributes.sensors.conductivity }}
+                  {% endif %}
+                {% endfor %}
+          - type: "custom:auto-entities"
+            card:
+              show_header_toggle: false
+              type: entities
+              title: Moisture Trend
+            filter:
+              include:
+                - entity_id: binary_sensor.miflora_*_moisture_trend
+  # - id: 9
+  #   title: Automation
+  #   icon: 'mdi:creation'
+  #   cards:
+  #     - type: entities
+  #       entities:
+  #         - head: group.all_automations
+  #           open: false
+  #           type: 'custom:fold-entity-row'
+  #         - head: group.all_scripts
+  #           type: 'custom:fold-entity-row'
+  #         - head: group.all_scenes
+  #           type: 'custom:fold-entity-row'
+  - id: 10
+    title: Server
+    icon: "mdi:server-network"
+    panel: true
+    cards:
+      - type: custom:layout-card
+        layout: vertical
+        # column_num: 2
+        max_columns: 2
+        # max_width: [50%, 30%]
+        #   min_height: <min height>
+        #   ltr: <ltr>
+        #   rebuild: <rebuild>
+        cards:
+          - type: vertical-stack
+            cards:
+              # - type: 'custom:mini-graph-card'
+              #   icon: 'mdi:timer'
+              #   align_icon: left
+              #   align_state: right
+              #   decimals: 1
+              #   entities:
+              #     - entity: sensor.speedtest_ping
+              #       name: Ping
+              #   hour24: true
+              #   hours_to_show: 24
+              #   line_width: 5
+              #   lower_bound: 0
+              #   name: Ping
+              #   points_per_hour: 2
+              #   show:
+              #     extrema: false
+              #     graph: bar
+              #     labels: false
+              #     legend: true
+              #     points: true
+              #   color_thresholds:
+              #     - value: 10
+              #       color: '#4CAF50'
+              #     - value: 20
+              #       color: '#FF5722'
+              #     - value: 30
+              #       color: '#FF5252'
+              - type: "custom:mini-graph-card"
+                icon: "mdi:timer"
+                align_icon: left
+                align_state: right
+                decimals: 1
+                entities:
+                  - entity: sensor.ping_google_dns
+                    name: Ping
+                hour24: true
+                hours_to_show: 1
+                line_width: 5
+                lower_bound: 0
+                name: Ping
+                points_per_hour: 60
+                show:
+                  extrema: false
+                  graph: bar
+                  labels: false
+                  legend: true
+                  points: true
+                color_thresholds:
+                  - value: 10
+                    color: "#4CAF50"
+                  - value: 20
+                    color: "#FF981A"
+                  - value: 40
+                    color: "#FF5252"
+              # - type: horizontal-stack
+              #   cards:
+              #     - type: 'custom:mini-graph-card'
+              #       align_icon: left
+              #       align_state: right
+              #       decimals: 0
+              #       entities:
+              #         - entity: sensor.speedtest_download
+              #           name: Download
+              #           state_adaptive_color: true
+              #       hour24: true
+              #       hours_to_show: 12
+              #       line_width: 8
+              #       lower_bound: 0
+              #       name: Down Speed
+              #       points_per_hour: 1
+              #       show:
+              #         average: true
+              #         extrema: true
+              #         labels: false
+              #         legend: true
+              #         points: hover
+              #         fill: false
+              #       color_thresholds:
+              #         - value: 89
+              #           color: '#4CAF50'
+              #         - value: 70
+              #           color: '#FF5722'
+              #         - value: 50
+              #           color: '#FF5252'
+              #         - value: 0
+              #           color: '#FF5252'
+              #       height: 200
+              #       icon: 'mdi:download'
+              #       upper_bound: 100
+              #     - type: 'custom:mini-graph-card'
+              #       align_icon: left
+              #       align_state: right
+              #       decimals: 0
+              #       entities:
+              #         - entity: sensor.speedtest_upload
+              #           name: Upload
+              #           state_adaptive_color: true
+              #       hour24: true
+              #       hours_to_show: 12
+              #       line_width: 8
+              #       lower_bound: 0
+              #       name: Up Speed
+              #       points_per_hour: 1
+              #       show:
+              #         average: true
+              #         extrema: true
+              #         labels: false
+              #         legend: true
+              #         points: hover
+              #         fill: false
+              #       color_thresholds:
+              #         - value: 35
+              #           color: '#4CAF50'
+              #         - value: 30
+              #           color: '#FF5722'
+              #         - value: 20
+              #           color: '#FF5252'
+              #         - value: 0
+              #           color: '#FF5252'
+              #       height: 200
+              #       icon: 'mdi:upload'
+              #       upper_bound: 40
+              - type: horizontal-stack
+                cards:
+                  - type: "custom:mini-graph-card"
+                    update_interval: 120
+                    align_icon: left
+                    align_state: right
+                    decimals: 0
+                    entities:
+                      - entity: sensor.router_wan_curbw_in_mbit
+                        name: Download
+                        # state_adaptive_color: true
+                    hour24: true
+                    hours_to_show: 1
+                    line_width: 8
+                    name: Download
+                    points_per_hour: 50
+                    aggregate_func: max
+                    show:
+                      # average: true
+                      # extrema: true
+                      labels: false
+                      legend: true
+                      points: hover
+                      fill: false
+                    color_thresholds:
+                      - value: 0
+                        color: "#4CAF50"
+                      - value: 80
+                        color: "#FF5722"
+                      - value: 100
+                        color: "#FF5252"
+                    height: 200
+                    icon: "mdi:download"
+                    lower_bound: 0
+                    upper_bound: 100
+                  - type: "custom:mini-graph-card"
+                    update_interval: 120
+                    align_icon: left
+                    align_state: right
+                    decimals: 0
+                    entities:
+                      - entity: sensor.router_wan_curbw_out_mbit
+                        name: Upload
+                        # state_adaptive_color: true
+                    hour24: true
+                    hours_to_show: 1
+                    line_width: 8
+                    name: Upload
+                    points_per_hour: 50
+                    aggregate_func: max
+                    show:
+                      # average: true
+                      # extrema: true
+                      labels: false
+                      legend: true
+                      points: hover
+                      fill: false
+                    color_thresholds:
+                      - value: 0
+                        color: "#4CAF50"
+                      - value: 30
+                        color: "#FF5722"
+                      - value: 40
+                        color: "#FF5252"
+                    #   - value: 35
+                    #     color: '#4CAF50'
+                    #   - value: 30
+                    #     color: '#FF5722'
+                    #   - value: 20
+                    #     color: '#FF5252'
+                    #   - value: 0
+                    #     color: '#FF5252'
+                    height: 200
+                    icon: "mdi:upload"
+                    lower_bound: 0
+                    upper_bound: 40
+              # - type: 'custom:mini-graph-card'
+              #   update_interval: 1800
+              #   align_icon: left
+              #   decimals: 0
+              #   entities:
+              #     - entity: sensor.router_wan_curbw_in_mbit
+              #       name: Download
+              #     - entity: sensor.router_wan_curbw_out_mbit
+              #       name: Upload
+              #   hour24: true
+              #   hours_to_show: 24
+              #   aggregate_func: max
+              #   line_width: 4
+              #   name: Last 24h
+              #   points_per_hour: 4
+              #   smoothing: true
+              #   show:
+              #     state: false
+              #     # average: true
+              #     # extrema: true
+              #     labels: false
+              #     legend: true
+              #     # points: hover
+              #     fill: false
+              #   height: 200
+              #   icon: 'mdi:download'
+              #   lower_bound: 0
+              #   upper_bound: 100
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.dsl_download_daily
+                name: Downloaded
+                hours_to_show: 168
+                aggregate_func: max
+                group_by: date
+                show:
+                  graph: bar
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.dsl_upload_daily
+                name: Uploaded
+                hours_to_show: 168
+                aggregate_func: max
+                group_by: date
+                show:
+                  graph: bar
+          # - type: vertical-stack
+          #   cards:
+          #     - type: custom:mini-graph-card
+          #       hour24: true
+          #       hours_to_show: 24
+          #       points_per_hour: 2
+          #       decimals: 0
+          #       entities:
+          #         - sensor.speedtest_download
+          #       show:
+          #         labels: true
+          #       color_thresholds:
+          #         - value: 0
+          #           color: '#ff0000'        #red
+          #         - value: 80
+          #           color: '#ffa500'        #orange
+          #         - value: 100
+          #           color: '#00ff00'        #green
+          #     - type: custom:mini-graph-card
+          #       hour24: true
+          #       hours_to_show: 24
+          #       points_per_hour: 2
+          #       decimals: 0
+          #       entities:
+          #         - sensor.speedtest_upload
+          #       show:
+          #         labels: true
+          #       color_thresholds:
+          #         - value: 0
+          #           color: '#ff0000'        #red
+          #         - value: 30
+          #           color: '#ffa500'        #orange
+          #         - value: 40
+          #           color: '#00ff00'        #green
+          # - type: history-graph
+          #   hours_to_show: 1
+          #   refresh_interval: 60
+          #   entities:
+          #     - entity: sensor.router_wan_curbw_in_mbit
+          #       name: Download
+          #     - entity: sensor.router_wan_curbw_out_mbit
+          #       name: Upload
+          - break
+          # - align_icon: left
+          #   align_state: right
+          #   decimals: 0
+          #   entities:
+          #     - entity: sensor.speedtest_download
+          #       name: Download
+          #     - entity: sensor.speedtest_upload
+          #       name: Upload
+          #     - entity: sensor.speedtest_ping
+          #       name: Ping
+          #   hour24: true
+          #   hours_to_show: 12
+          #   line_width: 5
+          #   lower_bound: 0
+          #   name: DSL
+          #   points_per_hour: 1
+          #   show:
+          #     labels: false
+          #     legend: false
+          #     points: true
+          #   type: 'custom:mini-graph-card'
+          #   upper_bound: 105
+          # - type: entities
+          #   title: Network
+          #   show_header_toggle: false
+          #   entities:
+          #     - entity: binary_sensor.router
+          - type: vertical-stack
+            cards:
+              - type: entities
+                show_header_toggle: false
+                entities:
+                  - sensor.tautulli
+                  # - sensor.plex
+                  - sensor.adguard_average_processing_speed
+              - type: "custom:mini-graph-card"
+                name: Streams
+                entities:
+                  - entity: sensor.plex
+                    name: Streams
+                    color: lightgrey
+                align_icon: left
+                align_state: right
+                decimals: 0
+                unit: Streams
+                hour24: true
+                hours_to_show: 24
+                aggregate_func: max
+                group_by: hour
+                # line_width: 5
+                bar_spacing: 2
+                lower_bound: 0
+                show:
+                  name: false
+                  icon: false
+                  extrema: false
+                  graph: bar
+                  labels: false
+                  legend: true
+                  points: true
+              - type: "custom:auto-entities"
+                card:
+                  show_header_toggle: false
+                  type: entities
+                filter:
+                  include:
+                    - entity_id: media_player.plex_*
+                  exclude:
+                    - state: unavailable
+              - type: "custom:mini-graph-card"
+                align_icon: left
+                align_state: right
+                decimals: 0
+                entities:
+                  - entity: sensor.tautulli_lan_bandwidth
+                    name: LAN
+                  - entity: sensor.tautulli_wan_bandwidth
+                    name: WAN
+                hour24: true
+                hours_to_show: 24
+                aggregate_func: max
+                line_width: 5
+                height: 160
+                lower_bound: 0
+                name: Streaming Bandwidth
+                points_per_hour: 1
+                show:
+                  state: false
+                  labels: true
+                  # graph: bar
+                  legend: true
+                  extrema: true
+                  points: hover
+                icon: "mdi:server-network"
+  - id: 10
+    title: System
+    icon: "mdi:raspberry-pi"
+    cards:
+      - entities:
+          - script.ha_restart
+          - sensor.wan_ip
+          - sensor.connected_clients
+          # - sensor.processor_use
+          # - sensor.load_15m
+          # - sensor.disk_free_home
+          # - sensor.disk_use_home
+          # - sensor.home_assistant_version
+          - sensor.github_home_assistant_release
+          - sensor.ha_uptime
+          # - sensor.last_boot
+          - input_select.hass_theme
+        show_header_toggle: false
+        title: System
+        type: entities
+      - type: vertical-stack
+        cards:
+          - type: "custom:auto-entities"
+            card:
+              show_header_toggle: false
+              title: Things that might be broken
+              type: entities
+            filter:
+              include:
+                - state: unknown
+                - state: unavailable
+              exclude:
+                - entity_id: group.*
+                - entity_id: history_graph.*
+                - entity_id: media_player.*
+                - entity_id: sensor.chandelier_switch
+                - entity_id: sensor.sonoff_*_version
+                - entity_id: sensor.dark_sky_*
+                - entity_id: sensor.speedtest_*
+                # - last_changed: < 15
+            unique: true
+          - type: "custom:auto-entities"
+            card:
+              show_header_toggle: false
+              title: duplicates
+              type: entities
+            filter:
+              include:
+                - entity_id: /\_[2-9]$/
+              exclude:
+                - entity_id: /dark_sky/
+                - entity_id: /flora/
+      - type: "custom:auto-entities"
+        card:
+          show_header_toggle: false
+          title: Batteries
+          type: entities
+        filter:
+          include:
+            - domain: sensor
+              attributes:
+                device_class: battery
+          exclude:
+            - entity_id: sensor.disrupted_iphone_icloud_battery_state
+            - entity_id: sensor.disrupted_ipadpro_icloud_battery_state
+        sort:
+          method: last_updated
+          reverse: true
+      # - type: entities
+      #   title: Batteries
+      #   show_header_toggle: false
+      #   entities:
+      #     - entity: sensor.disrupted_iphone_battery_state
+      #     - entity: sensor.disrupted_ipadpro_battery_state
+      - type: entities
+        title: iCloud
+        show_header_toggle: false
+        entities:
+          - sensor.icloud_last_update
+          - script.icloud_update
+      # - type: entities
+      #   title: Sonoff Update
+      #   show_header_toggle: false
+      #   entities:
+      #     - sensor.sonoff_tasmota_latest_release
+      #     - script.check_sonoffs_version
+      #     - sensor.sonoff_11_version
+      #     - sensor.sonoff_12_version
+      #     - sensor.sonoff_13_version
+      #     - sensor.sonoff_14_version
+      #     - sensor.sonoff_15_version
+      #     - script.update_sonoffs
+
+  - id: 11
+    title: Location History
+    icon: "mdi:map-clock"
+    panel: false
+    cards:
+      - type: map
+        hours_to_show: 24
+        # geo_location_sources:
+        #   - wwlln
+        entities:
+          # - zone.home
+          - person.salomon
+          - person.polina
+      # - type: map
+      #   hours_to_show: 6
+      #   entities:
+      #     - device_tracker.disrupted_iphone_icloud
+      #     - device_tracker.polina_iphone_icloud
+      - type: vertical-stack
+        cards:
+          - type: "custom:auto-entities"
+            card:
+              show_header_toggle: false
+              type: entities
+            filter:
+              include:
+                - entity_id: proximity.home
+                - entity_id: device_tracker.disrupted_*phone*
+                - entity_id: device_tracker.polina_*phone*
+              exclude:
+                - entity_id: device_tracker.*_bt
+              #   - state: unavailable
+              sort:
+                method: last_changed # last_updated
+          - type: entities
+            entities:
+              - type: custom:secondaryinfo-entity-row
+                entity: sensor.bvg_1
+                name: !secret bvg_1_name_short
+                secondary_info: '[[ if(sensor.bvg_1.attributes.delay == 0, "On Time", sensor.bvg_1.attributes.delay) ]][[ if(sensor.bvg_1.attributes.delay == 0, "", " min delayed") ]]'
+              - type: custom:secondaryinfo-entity-row
+                entity: sensor.bvg_2
+                name: !secret bvg_2_name_short
+                secondary_info: '[[ if(sensor.bvg_2.attributes.delay == 0, "On Time", sensor.bvg_2.attributes.delay) ]][[ if(sensor.bvg_2.attributes.delay == 0, "", " min delayed") ]]'
+              - type: custom:secondaryinfo-entity-row
+                entity: sensor.bvg_3
+                name: !secret bvg_3_name_short
+                secondary_info: '[[ if(sensor.bvg_3.attributes.delay == 0, "On Time", sensor.bvg_3.attributes.delay) ]][[ if(sensor.bvg_3.attributes.delay == 0, "", " min delayed") ]]'
+          - type: entities
+            entities:
+              - type: custom:secondaryinfo-entity-row
+                entity: sensor.nextbike_berlin_home_d10c16ae8e0dae3ec9e6c1ba5a981399
+                name: Hertzbergplatz
+                secondary_info: "[[ sensor.nextbike_berlin_home_d10c16ae8e0dae3ec9e6c1ba5a981399.attributes.empty_slots ]] empty slots"
+              - type: custom:secondaryinfo-entity-row
+                entity: sensor.nextbike_berlin_home_5cecc6225df13d3d9cc9d83c33d7480f
+                secondary_info: "[[ sensor.nextbike_berlin_home_5cecc6225df13d3d9cc9d83c33d7480f.attributes.empty_slots ]] empty slots"
+              - type: custom:secondaryinfo-entity-row
+                entity: sensor.nextbike_berlin_home_9d84d6515d01344f3f2b280ca274a817
+                secondary_info: "[[ sensor.nextbike_berlin_home_9d84d6515d01344f3f2b280ca274a817.attributes.empty_slots ]] empty slots"
+          - type: entities
+            entities:
+              - type: custom:secondaryinfo-entity-row
+                entity: sensor.populartimes_rewe
+                secondary_info: "[[ sensor.populartimes_rewe_usual_difference ]] % compared to usually"
+              - sensor.tree
+          # - type: 'custom:auto-entities'
+          #   title: Popular Times
+          #   card:
+          #     show_header_toggle: false
+          #     type: entities
+          #   filter:
+          #     include:
+          #       - entity_id: sensor.populartimes_*
+          # - type: 'custom:auto-entities'
+          #   title: Lightning strikes
+          #   card:
+          #     show_header_toggle: false
+          #     type: entities
+          #   filter:
+          #     template: |
+          #       {%- set t = as_timestamp(now()) - 60 * 60 %}
+          #       {%- for s in states.geo_location %}
+          #         {%- if s.attributes.source == 'wwlln' and s.last_updated != None and as_timestamp(s.last_updated) > t %}
+          #         {{ s.entity_id }}{{ ',' if not loop.last else ''}}{%- endif %}
+          #       {%- endfor %}
+          #   sort:
+          #     method: last_changed  # last_updated
+          #     # count: 5
+
+  - id: 12
+    title: Misc
+    icon: "mdi:garage"
+    cards:
+      - type: "custom:auto-entities"
+        card:
+          show_header_toggle: true
+          type: entities
+          title: Shared
+        filter:
+          include:
+            - area: Shared
+            - entity_id: binary_sensor.lights_left_on
+          # exclude:
+          #   - state: unavailable
