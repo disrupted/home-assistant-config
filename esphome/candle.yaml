@@ -1,0 +1,47 @@
+esphome:
+  name: ${name}
+  platform: ESP8266
+  board: nodemcuv2
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  fast_connect: true
+
+logger:
+
+substitutions:
+  name: "candle"
+  friendly_name: "Candle"
+  alpha: 90%
+  intensity: 4%
+  default_transition_length: 0.5s
+  frequency: 1000 Hz
+
+api:
+  password: !secret esphome_api_pass
+
+ota:
+  password: !secret esphome_ota_pass
+
+light:
+  - platform: monochromatic
+    name: ${friendly_name}
+    id: candle
+    output: candle_pwm
+    default_transition_length: ${default_transition_length}
+    effects:
+      - flicker:
+          name: Flicker
+          alpha: ${alpha}
+          intensity: ${intensity}
+      - flicker:
+          name: Flicker2
+          alpha: ${alpha}
+          intensity: 1.5%
+
+output:
+  - platform: esp8266_pwm
+    id: candle_pwm
+    pin: D1
+    frequency: $frequency

@@ -1,0 +1,80 @@
+# Shelly1
+substitutions:
+  name: "chandelier"
+  friendly_name: "Chandelier"
+
+esphome:
+  name: ${name}
+  platform: ESP8266
+  board: esp01_1m
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  fast_connect: true
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${friendly_name} Fallback Hotspot"
+    password: !secret esphome_chandelier_hotspot_pass
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret esphome_api_pass
+
+ota:
+  password: !secret esphome_ota_pass
+
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+binary_sensor:
+  - platform: status
+    name: "${friendly_name} Status"
+
+  - platform: gpio
+    pin:
+      number: GPIO5
+    name: "${friendly_name} Button"
+    on_click:
+      - min_length: 50ms
+        max_length: 350ms
+        then:
+          - light.toggle: ${name}
+    # - min_length: 351ms
+    #   max_length: 2000ms
+    #   then:
+    on_multi_click:
+      - timing:
+          - ON for at least 351ms
+        then:
+          - homeassistant.service:
+              service: automation.trigger
+              data:
+                entity_id: "automation.switch_chandelier_hold"
+
+output:
+  - platform: gpio
+    pin: GPIO4
+    id: shelly_1_relay
+
+light:
+  - platform: binary
+    id: ${name}
+    name: ${friendly_name}
+    output: shelly_1_relay
+
+switch:
+  - platform: restart
+    name: "${friendly_name} Restart"
+
+sensor:
+  - platform: wifi_signal
+    name: "${friendly_name} WiFi Signal"
+    update_interval: 60s
