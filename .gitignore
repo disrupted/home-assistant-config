@@ -1,5 +1,5 @@
 # An * ensures that everything will be ignored.
-*
+# *
 
 # You can whitelist files/folders with !, these will not be ignored.
 !.gitignore
@@ -18,6 +18,7 @@
 .gitprivate
 deps
 tts
+node_modules
 
 # Ensure these YAML files containing secrets/credentials are ignored.
 secrets.yaml
