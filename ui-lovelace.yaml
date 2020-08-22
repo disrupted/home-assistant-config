@@ -511,6 +511,32 @@ views:
                     {% if not loop.last %}***{% endif %}
                     {% endfor %}
                   {% endif %}
+          - type: "custom:mini-graph-card"
+            name: AQI
+            # color_thresholds:
+            #   - color: '#56a0ee'
+            #     value: 50
+            #   - color: '#d35400'
+            #     value: 100
+            #   - color: '#c0392b'
+            #     value: 150
+            entities:
+              - entity: sensor.waqi
+                name: AQI
+                color: lightgrey
+            hour24: true
+            hours_to_show: 72
+            line_width: 4
+            # points_per_hour: 1
+            decimals: 0
+            # lower_bound: 0
+            show:
+              name: false
+              icon: false
+              labels: false
+              extrema: true
+              average: true
+              fill: true
           - type: picture-glance
             entities: []
             camera_image: camera.rain_radar

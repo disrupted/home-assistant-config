@@ -1,0 +1,898 @@
+homeassistant:
+  customize_glob:
+    sensor.luftdaten_pm*:
+      icon: mdi:microscope
+    sensor.waqi_*:
+      friendly_name: Air Quality Index
+    group.dark_sky_*:
+      icon: mdi:weather-partly-cloudy
+    automation.openuv_*:
+      icon: mdi:sunglasses
+  customize:
+    sensor.luftdaten_humidity:
+      icon: mdi:water-percent
+    automation.weather_rain_alert:
+      icon: mdi:umbrella
+    sensor.weather_yr_wind_speed_km:
+      icon: mdi:weather-windy
+    sensor.weather_yr_wind_direction_friendly:
+      icon: mdi:compass
+    sensor.htw_wetter_wind_speed_max:
+      icon: mdi:weather-windy
+    sensor.htw_wetter_solar_radiation_max:
+      icon: mdi:weather-sunny
+    sensor.aqi:
+      icon: mdi:weather-fog
+    sensor.weather_wind:
+      icon: mdi:weather-windy
+    sensor.weather_rain:
+      icon: mdi:weather-rainy
+    zone.lightning_alert:
+      track_ios: false
+
+weather:
+  - platform: darksky
+    api_key: !secret api_key_darksky
+    mode: daily
+
+zone:
+  - name: Lightning Alert
+    latitude: !secret location_home_lat
+    longitude: !secret location_home_lon
+    radius: 30000
+    icon: mdi:weather-lightning
+    passive: true
+
+group:
+  dark_sky_currently:
+    name: Dark Sky currently
+    entities:
+      - sensor.dark_sky_icon
+      - sensor.dark_sky_summary
+      - sensor.dark_sky_temperature
+      - sensor.dark_sky_apparent_temperature
+      - sensor.dark_sky_humidity
+      - sensor.dark_sky_pressure
+      - sensor.dark_sky_precip # type
+      - sensor.dark_sky_precip_intensity
+      - sensor.dark_sky_precip_probability
+      - sensor.dark_sky_wind_speed
+      # - sensor.dark_sky_wind_speed_km
+      - sensor.dark_sky_wind_bearing
+      - sensor.dark_sky_wind_direction
+      # - sensor.dark_sky_minutely_summary
+      # - sensor.dark_sky_cloud_coverage
+      # - sensor.dark_sky_visibility
+      - sensor.dark_sky_dew_point
+      - sensor.dark_sky_uv_index
+      - sensor.dark_sky_nearest_storm_distance
+      - sensor.dark_sky_nearest_storm_bearing
+
+  dark_sky_forecast_0d:
+    name: Dark Sky Forecast 0d
+    entities:
+      - sensor.dark_sky_icon_0d
+      - sensor.dark_sky_summary_0d
+      - sensor.dark_sky_temperature_0d
+      - sensor.dark_sky_humidity_0d
+      - sensor.dark_sky_pressure_0d
+      - sensor.dark_sky_precip_0d
+      - sensor.dark_sky_precip_intensity_0d
+      - sensor.dark_sky_daily_max_precip_intensity_0d
+      - sensor.dark_sky_precip_probability_0d
+      - sensor.dark_sky_precip_accumulation_0d
+      - sensor.dark_sky_wind_speed_0d
+      - sensor.dark_sky_wind_bearing_0d
+      # - sensor.dark_sky_cloud_coverage_0d
+      # - sensor.dark_sky_visibility_0d
+      - sensor.dark_sky_dew_point_0d
+      - sensor.dark_sky_uv_index_0d
+      - sensor.dark_sky_daytime_high_temperature_0d
+      - sensor.dark_sky_daytime_high_apparent_temperature_0d
+      - sensor.dark_sky_overnight_low_temperature_0d
+      - sensor.dark_sky_overnight_low_apparent_temperature_0d
+      - sensor.dark_sky_hourly_summary
+
+  dark_sky_forecast_1d:
+    name: Dark Sky Forecast 1d
+    entities:
+      - sensor.dark_sky_icon_1d
+      - sensor.dark_sky_summary_1d
+      - sensor.dark_sky_temperature_1d
+      - sensor.dark_sky_humidity_1d
+      - sensor.dark_sky_pressure_1d
+      - sensor.dark_sky_precip_1d
+      - sensor.dark_sky_precip_intensity_1d
+      - sensor.dark_sky_daily_max_precip_intensity_1d
+      - sensor.dark_sky_precip_probability_1d
+      - sensor.dark_sky_precip_accumulation_1d
+      - sensor.dark_sky_wind_speed_1d
+      - sensor.dark_sky_wind_bearing_1d
+      # - sensor.dark_sky_cloud_coverage_1d
+      # - sensor.dark_sky_visibility_1d
+      - sensor.dark_sky_dew_point_1d
+      - sensor.dark_sky_uv_index_1d
+      - sensor.dark_sky_daytime_high_temperature_1d
+      - sensor.dark_sky_daytime_high_apparent_temperature_1d
+      - sensor.dark_sky_overnight_low_temperature_1d
+      - sensor.dark_sky_overnight_low_apparent_temperature_1d
+      - sensor.dark_sky_daily_summary
+
+  dark_sky_forecast_2d:
+    name: Dark Sky Forecast 2d
+    entities:
+      - sensor.dark_sky_icon_2d
+      - sensor.dark_sky_summary_2d
+      - sensor.dark_sky_temperature_2d
+      - sensor.dark_sky_humidity_2d
+      - sensor.dark_sky_pressure_2d
+      - sensor.dark_sky_precip_2d
+      - sensor.dark_sky_precip_intensity_2d
+      - sensor.dark_sky_daily_max_precip_intensity_2d
+      - sensor.dark_sky_precip_probability_2d
+      - sensor.dark_sky_precip_accumulation_2d
+      - sensor.dark_sky_wind_speed_2d
+      - sensor.dark_sky_wind_bearing_2d
+      # - sensor.dark_sky_cloud_coverage_2d
+      # - sensor.dark_sky_visibility_2d
+      - sensor.dark_sky_dew_point_2d
+      - sensor.dark_sky_uv_index_2d
+      - sensor.dark_sky_daytime_high_temperature_2d
+      - sensor.dark_sky_daytime_high_apparent_temperature_2d
+      - sensor.dark_sky_overnight_low_temperature_2d
+      - sensor.dark_sky_overnight_low_apparent_temperature_2d
+
+  # wunderground:
+  #   name: Wunderground
+  #   icon: mdi:weather-partly-cloudy
+  #   entities:
+  #     - sensor.pws_weather_1d_metric
+  #     - sensor.pws_weather_2h # Weather conditions in 2 hours. (e.g. “Thunderstorm” etc.)
+  #     - sensor.pws_alerts
+  #     - sensor.pws_temp_c
+  #     - sensor.pws_feelslike_c
+  #     - sensor.pws_temp_high_1d_c
+  #     - sensor.pws_temp_low_1d_c
+  #     - sensor.pws_dewpoint_c
+  #     - sensor.pws_precip_1d_mm
+  #     - sensor.pws_precip_1d
+  #     - sensor.pws_wind_kph # current wind
+  #     - sensor.pws_wind_1d_kph # avg wind today
+  #     - sensor.pws_weather_2d_metric # tomorrow
+  #     - sensor.pws_temp_high_2d_c
+  #     - sensor.pws_temp_low_2d_c
+  #     - sensor.pws_precip_2d_mm
+  #     - sensor.pws_precip_2d
+  #     - sensor.pws_wind_2d_kph
+  #     - sensor.pws_weather_3d_metric # day after tomorrow
+  #     - sensor.pws_temp_high_3d_c
+  #     - sensor.pws_temp_low_3d_c
+  #     - sensor.pws_precip_3d_mm
+  #     - sensor.pws_precip_3d
+  #     - sensor.pws_wind_3d_kph
+
+  dwd:
+    name: DWD
+    icon: mdi:weather-lightning-rainy
+    entities:
+      - sensor.dwd_weather_warnings_advance_warning_level
+      - sensor.dwd_weather_warnings_current_warning_level
+
+  # luftdaten:
+  #   name: Luftdaten
+  #   icon: mdi:weather-windy
+  #   entities:
+  #     - sensor.waqi
+  #     - sensor.luftdaten_pm10
+  #     - sensor.luftdaten_pm25
+  #     - sensor.luftdaten_temperature
+  #     - sensor.luftdaten_humidity
+
+sensor:
+  - platform: dwd_weather_warnings
+    name: DWD Weather Warnings
+    region_name: !secret location_city
+
+  # - platform: dwd_pollen
+  #   partregion_ids:
+  #     - 50
+  #   include_days:
+  #     - today
+
+  - platform: darksky
+    api_key: !secret api_key_darksky
+    latitude: !secret location_home_lat
+    longitude: !secret location_home_lon
+    # scan_interval: '00:05'
+    forecast:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+    hourly_forecast:
+      - 0
+      - 1
+    monitored_conditions:
+      - icon
+      - summary
+      - nearest_storm_distance
+      - nearest_storm_bearing
+      - humidity
+      - temperature
+      - temperature_high
+      - temperature_low
+      - apparent_temperature
+      - apparent_temperature_high
+      - apparent_temperature_low
+      - wind_speed
+      - wind_bearing
+      - precip_type
+      - precip_probability
+      - precip_accumulation
+      - precip_intensity
+      - precip_intensity_max
+      - uv_index
+      # - minutely_summary  # A human-readable text summary for the next hour.
+      - hourly_summary # A human-readable text summary for the next two days.
+      - daily_summary # A human-readable text summary for the next week.
+      - pressure
+      # - visibility
+      # - cloud_cover
+      - dew_point
+
+  - platform: template
+    sensors:
+      weather_yr_wind_direction_friendly:
+        friendly_name: "Wind Direction"
+        value_template: >-
+          {% if states('sensor.weather_yr_wind_direction') | float<=11 %}N
+          {% elif states('sensor.weather_yr_wind_direction') | float>348 %}N
+          {% elif states('sensor.weather_yr_wind_direction') | float<=34 | float>11 %}NNE
+          {% elif states('sensor.weather_yr_wind_direction') | float<=56 | float>34 %}NE
+          {% elif states('sensor.weather_yr_wind_direction') | float<=79 | float>56 %}ENE
+          {% elif states('sensor.weather_yr_wind_direction') | float<=101 | float>79 %}E
+          {% elif states('sensor.weather_yr_wind_direction') | float<=124 | float>101 %}ESE
+          {% elif states('sensor.weather_yr_wind_direction') | float<=146 | float>124 %}SE
+          {% elif states('sensor.weather_yr_wind_direction') | float<=169 | float>146 %}SSE
+          {% elif states('sensor.weather_yr_wind_direction') | float<=191 | float>169 %}S
+          {% elif states('sensor.weather_yr_wind_direction') | float<=214 | float>191 %}SSW
+          {% elif states('sensor.weather_yr_wind_direction') | float<=236 | float>214 %}SW
+          {% elif states('sensor.weather_yr_wind_direction') | float<=259 | float>236 %}WSW
+          {% elif states('sensor.weather_yr_wind_direction') | float<=281 | float>259 %}W
+          {% elif states('sensor.weather_yr_wind_direction') | float<=304 | float>281 %}WNW
+          {% elif states('sensor.weather_yr_wind_direction') | float<=326 | float>304 %}NW
+          {% elif states('sensor.weather_yr_wind_direction') | float<=348 | float>326 %}NNW
+          {% endif %}
+
+      weather_yr_wind_speed_km:
+        friendly_name: "Wind Speed"
+        unit_of_measurement: "km/h"
+        value_template: "{{ (states('sensor.weather_yr_wind_speed')|float * 3.6) | round(1) }}"
+
+      sun_daylight_remaining:
+        friendly_name_template: >-
+          {% if is_state('sun.sun', 'above_horizon') %}Daylight{% else %}Night{% endif %}
+        icon_template: >-
+          {% if is_state('sun.sun', 'above_horizon') %}mdi:white-balance-sunny{% else %}mdi:moon-waxing-crescent{% endif %}
+        value_template: >-
+          {% if is_state('sun.sun', 'above_horizon') %}{{ (as_timestamp(state_attr('sun.sun', 'next_setting')) - now().timestamp()) | timestamp_custom('%-H:%M', false) }}{% else %}{{ (as_timestamp(state_attr('sun.sun', 'next_dawn')) - now().timestamp()) | timestamp_custom('%-H:%M', false) }}{% endif %}
+
+      weather_bad_weather:
+        friendly_name: "Bad weather"
+        value_template: >
+          {% if states('sensor.weather_yr_precipitation') | float > 0.1 and states('sensor.weather_yr_temperature') | float < 2.0 %}snow
+          {% elif ((states('sensor.dark_sky_overnight_low_temperature_1d') | int < 4) and (states('sensor.weather_yr_dewpoint_temperature') | int < 6) and (states('sensor.weather_yr_wind_speed') | int < 12) and (states('sensor.weather_yr_humidity') | int > 50)) %}frost
+          {% elif states('sensor.weather_yr_precipitation') | float > 0.95 %}heavy_rain
+          {% elif states('sensor.weather_yr_precipitation') | float > 0.2 %}rain
+          {% elif states('sensor.weather_yr_precipitation') | float > 0.01 %}light_rain
+          {% elif states('sensor.weather_yr_wind_speed') | int > 18 %}heavy_wind
+          {% elif states('sensor.weather_yr_wind_speed') | int > 13 %}wind
+          {% elif states('sensor.weather_yr_low') | int > 66 %}clouded
+          {% else %}clear
+          {% endif %}
+        icon_template: >
+          {% if is_state("sensor.weather_bad_weather", "snow") %}
+            mdi:weather-snowy-rainy
+          {% elif is_state("sensor.weather_bad_weather", "frost") %}
+            mdi:snowflake-alert
+          {% elif is_state("sensor.weather_bad_weather", "rain") or is_state("sensor.weather_bad_weather", "light_rain") %}
+            mdi:weather-rainy
+          {% elif is_state("sensor.weather_bad_weather", "heavy_rain") %}
+            mdi:weather-pouring
+          {% elif is_state("sensor.weather_bad_weather", "wind") %}
+            mdi:weather-windy
+          {% elif is_state("sensor.weather_bad_weather", "heavy_wind") %}
+            mdi:weather-hurricane
+          {% elif is_state("sensor.weather_bad_weather", "clouded") %}
+            mdi:weather-cloudy
+          {% else %}
+            mdi:weather-sunny
+          {% endif %}
+
+      weather_wind:
+        friendly_name: "Wind"
+        value_template: >
+          {% if states('sensor.weather_yr_wind_speed') | int > 25 %}storm
+          {% elif states('sensor.weather_yr_wind_speed') | int > 18 %}heavy_wind
+          {% elif states('sensor.weather_yr_wind_speed') | int > 13 %}wind
+          {% elif states('sensor.weather_yr_wind_speed') | int > 6 %}light_wind
+          {% elif states('sensor.weather_yr_wind_speed') | int > 2 %}light_breeze
+          {% else %}calm
+          {% endif %}
+
+      weather_rain:
+        friendly_name: "Rain"
+        value_template: >
+          {% if states('sensor.weather_yr_precipitation') | float > 0.95 %}heavy_rain
+          {% elif states('sensor.weather_yr_precipitation') | float > 0.45 %}rain_showers
+          {% elif states('sensor.weather_yr_precipitation') | float > 0.2 %}rain
+          {% elif states('sensor.weather_yr_precipitation') | float > 0.01 %}light_rain
+          {% else %}no_rain
+          {% endif %}
+
+  - platform: waqi
+    token: !secret api_token_waqi
+    locations:
+      - !secret location_city
+    stations:
+      - !secret waqi_station
+
+  - platform: season
+    type: meteorological
+
+  - platform: yr
+    name: Weather yr
+    monitored_conditions:
+      - temperature
+      # - symbol
+      - precipitation
+      - windSpeed
+      - pressure
+      - windDirection
+      - humidity
+      - fog
+      - cloudiness
+      - lowClouds
+      - mediumClouds
+      - highClouds
+      - dewpointTemperature
+
+  - platform: yr
+    name: Weather yr 1h
+    forecast: 1
+    monitored_conditions:
+      - temperature
+      # - symbol
+      - precipitation
+      - windSpeed
+      # - pressure
+      # - windDirection
+      # - humidity
+      # - fog
+      - cloudiness
+      # - lowClouds
+      # - mediumClouds
+      # - highClouds
+      # - dewpointTemperature
+
+  - platform: yr
+    name: Weather yr 6h
+    forecast: 6
+    monitored_conditions:
+      - temperature
+      # - symbol
+      - precipitation
+      - windSpeed
+      # - pressure
+      # - windDirection
+      # - humidity
+      # - fog
+      - cloudiness
+      # - lowClouds
+      # - mediumClouds
+      # - highClouds
+      # - dewpointTemperature
+
+  # - platform: openweathermap
+  #   api_key: !secret api_key_openweathermap
+  #   monitored_conditions:
+  #     - clouds
+  #     - rain
+
+  - platform: derivative
+    source: sensor.dark_sky_apparent_temperature
+    name: Temperature change per hour
+    round: 1
+    unit_time: h
+    time_window: "00:30:00" # we look at the change over the last half hour
+
+  - platform: statistics
+    entity_id: sensor.htw_wetter_wind_speed
+    name: HTW Wetter Wind Speed statistics
+    precision: 1
+    sampling_size: 25
+    max_age:
+      minutes: 120
+
+  - platform: statistics
+    entity_id: sensor.htw_wetter_solar_radiation
+    name: HTW Wetter Solar Radiation statistics
+    precision: 1
+    sampling_size: 25
+    max_age:
+      minutes: 120
+
+  - platform: template
+    sensors:
+      htw_wetter_wind_speed_max:
+        friendly_name: "Wind Speed max"
+        unit_of_measurement: "m/s"
+        value_template: "{{ state_attr('sensor.htw_wetter_wind_speed_statistics', 'max_value') }}"
+
+      htw_wetter_solar_radiation_max:
+        friendly_name: "Solar Radiation max"
+        unit_of_measurement: "W/m2"
+        value_template: "{{ state_attr('sensor.htw_wetter_solar_radiation_statistics', 'max_value') }}"
+
+      aqi:
+        friendly_name: "Air Quality Index"
+        value_template: >
+          {% set aqi = states('sensor.waqi') | int %}
+          {% if aqi < 50 %}
+            Good
+          {% elif aqi < 100 %}
+            Moderate
+          {% else %}
+            Unhealthy
+          {% endif %}
+
+binary_sensor:
+  - platform: template
+    sensors:
+      rain:
+        friendly_name: "Raining?"
+        value_template: "{{ states('sensor.weather_yr_precipitation') | float > 0.05 }}"
+        device_class: moisture
+
+      weather_favorite_polina:
+        friendly_name: "Polina's favorite weather"
+        value_template: "{{ states('sensor.weather_yr_low_clouds') | float >= 75.0 and states('sensor.dark_sky_precip_intensity') | float < 0.05 and states('sensor.dark_sky_precip_probability') | int < 5 and states('sensor.dark_sky_wind_speed') | float < 8.0 and states('sensor.dark_sky_apparent_temperature') | float >= 15.0 | float <= 20.0 }}"
+        icon_template: "{% if is_state('binary_sensor.weather_favorite_polina', 'on') %}mdi:heart{% else %}mdi:heart-outline{% endif %}"
+
+  - platform: trend
+    sensors:
+      trend_dark_sky_precip:
+        friendly_name: "Rain Trend"
+        entity_id: sensor.weather_yr_precipitation
+        device_class: moisture
+
+luftdaten:
+  sensor_id: !secret luftdaten_sensorid_airquality
+  show_on_map: false
+  sensors:
+    monitored_conditions:
+      - P1
+      - P2
+
+openuv:
+  api_key: !secret api_key_openuv
+
+camera:
+  - platform: generic
+    name: Rain radar
+    still_image_url: !secret rain_radar_url
+    scan_interval: 600
+  - platform: generic
+    name: Meteogram
+    still_image_url: !secret meteogram_url
+    content_type: "image/svg+xml"
+    scan_interval: 1800
+
+# wwlln:
+#   radius: 100
+#   window: '01:00:00'
+
+# history_graph:
+#   gr2:
+#     name: Temperature & Precipitation
+#     hours_to_show: 24
+#     refresh: 1800
+#     entities:
+#       - sensor.dark_sky_temperature
+#       - sensor.dark_sky_precip_intensity
+#       - sensor.dark_sky_precip_probability
+#       - sensor.pws_temp_c
+#       - sensor.pws_precip_1d_mm
+#       - sensor.pws_precip_1d
+
+automation:
+  # - alias: rain alert
+  #   id: rain_alert
+  #   trigger:
+  #     platform: state
+  #     entity_id: sensor.dark_sky_precip_intensity
+  #     from: '0'
+  #   condition:
+  #     # only warn during the daytime (not during bedtime hours)
+  #     # - condition: time
+  #     #   after: '08:00:00'
+  #     #   before: '23:59:59'
+  #     #   weekday:
+  #     #     - mon
+  #     #     - tue
+  #     #     - wed
+  #     #     - thu
+  #     #     - fri
+  #     # - condition: time
+  #     #   after: '11:00:00'
+  #     #   before: '23:59:59'
+  #     #   weekday:
+  #     #     - sat
+  #     #     - sun
+  #     - condition: numeric_state
+  #       entity_id: sensor.dark_sky_precip_intensity
+  #       above: 0.1
+  #     - condition: numeric_state
+  #       entity_id: sensor.dark_sky_precip_probability
+  #       above: 30
+  #     - condition: state
+  #       entity_id: input_boolean.present
+  #       state: 'on'
+  #     - condition: state
+  #       entity_id: input_boolean.sleeping
+  #       state: 'off'
+  #   action:
+  #     - service: notify.telegram
+  #       data_template:
+  #         message: >
+  #           It is currently {{ states('sensor.dark_sky_precip.state }}ing and it is {{ states.sensor.dark_sky_temperature.state | int }}°C outside. Forecast says {{ states.sensor.dark_sky_hourly_summary') }}.
+  #     - delay: 00:00:03
+  #     - service: notify.ga_broadcast
+  #       data_template:
+  #         message: >
+  #           Excuse me Salomon, but it is currently {{ states('sensor.dark_sky_precip.state }}ing and the temperature is {{ states.sensor.dark_sky_temperature.state | int }}°C outside. Forecast says {{ states.sensor.dark_sky_hourly_summary') }}.
+  #         # {{states ('sensor.dark_sky_hourly_summary') }}
+  #         # It's currently {{states('sensor.dark_sky_summary.state}} and {{states.sensor.dark_sky_temperature')|round}} degrees.
+  #         # {% if is_state("sensor.allergy_season", "True")  %}
+  #         # The pollen level for today is {{states('sensor.pollen_level.state}} or {{states.sensor.pollen_index')}} percent.
+  #         # {% endif %}
+  #         # {% if is_state("sensor.flu_season", "True") %}
+  #         # The flu risk for today is {{states('sensor.cold_flu_risk.state}} or {{states.sensor.cold_flu_percentage')}} percent.
+  #         # {% endif %}
+  #         # Today you can expect {{states('sensor.dark_sky_hourly_summary')}}.
+  #         # With a high of {{states('sensor.dark_sky_daily_high_temperature.state|round|int}} and a low of {{states.sensor.dark_sky_daily_low_temperature')|round|int}}.
+  #         # {% if states('sensor.dark_sky_wind_speed')|int > 10 %}
+  #         # Be advised it is windy outside.
+  #         # {% endif %}
+  #         # {% if states('sensor.to_lafontaine')|int > 40 %}
+  #         # Be advised the travel time to lafontaine is over 40 mintues today.
+  #         # {% endif %}
+  #     # - service: automation.turn_off
+  #     #   entity_id: automation.raining
+  #     # - delay: 00:30:00
+  #     # - service: automation.turn_on
+  #     #   entity_id: automation.raining
+
+  # - alias: Weather alert rain
+  #   id: weather_alert_rain
+  #   trigger:
+  #     - platform: state
+  #       entity_id: sensor.dark_sky_precip
+  #       from: 'unknown'
+  #       # to: 'rain'
+  #   condition:
+  #     - condition: template
+  #       value_template: "{{ states('sensor.dark_sky_precip') not in ['unknown', 'unavailable'] }}"
+  #     - condition: template
+  #       value_template: "{{ states('sensor.dark_sky_precip_probability') | int > 0 }}"
+  #     - condition: template
+  #       value_template: "{{ states('sensor.dark_sky_precip_intensity') | float > 0 }}"
+  #     - condition: state
+  #       entity_id: input_boolean.sleeping
+  #       state: 'off'
+  #     # - condition: time
+  #     #   after: '8:00'
+  #     #   before: '22:00'
+  #   action:
+  #     - service: notify.mobile_app_disrupted_iphone
+  #       data_template:
+  #         data:
+  #           push:
+  #             thread-id: "weather-alert"
+  #         title: "{{ states('sensor.dark_sky_precip') }} alert"
+  #         message: >
+  #           {{ states('sensor.dark_sky_precip_probability') | int }}%, {{ states('sensor.dark_sky_precip_intensity') | float }} mm/h
+  #           {{ states('sensor.dark_sky_summary') }}
+  #           {{ states('sensor.dark_sky_hourly_summary') }}
+
+  - alias: Weather alert rain
+    id: weather_alert_rain
+    trigger:
+      - platform: state
+        entity_id: sensor.weather_yr_precipitation
+        from: "0.0"
+    condition:
+      - condition: template
+        value_template: "{{ states('sensor.weather_yr_precipitation') | float > 0 }}"
+      - condition: state
+        entity_id: input_boolean.sleeping
+        state: "off"
+    action:
+      - service: notify.mobile_app_disrupted_iphone
+        data_template:
+          data:
+            push:
+              thread-id: "weather-alert"
+          title: >-
+            {%- if states('sensor.weather_yr_precipitation') | float > 0.95 -%}heavy rain
+            {%- elif states('sensor.weather_yr_precipitation') | float > 0.45 -%}rain showers
+            {%- elif states('sensor.weather_yr_precipitation') | float > 0.2 -%}rain
+            {%- elif states('sensor.weather_yr_precipitation') | float > 0.01 -%}light rain
+            {%- endif %} alert
+          message: >
+            {{ states('sensor.weather_yr_precipitation') | float }} mm/h
+
+  # - alias: weather alert rain 0h
+  #   id: weather_alert_rain_0h
+  #   trigger:
+  #     - platform: state
+  #       entity_id: sensor.dark_sky_precip_0h
+  #       from: 'unknown'
+  #       # to: 'rain'
+  #   condition:
+  #     - condition: template
+  #       value_template: "{{ states('sensor.dark_sky_precip_0h') not in ['unknown', 'unavailable'] }}"
+  #     - condition: template
+  #       value_template: "{{ states('sensor.dark_sky_precip_probability_0h') | int > 0 }}"
+  #     - condition: template
+  #       value_template: "{{ states('sensor.dark_sky_precip_intensity_0h') | float > 0 }}"
+  #     - condition: state
+  #       entity_id: input_boolean.sleeping
+  #       state: 'off'
+  #     # - condition: time
+  #     #   after: '8:00'
+  #     #   before: '22:00'
+  #   action:
+  #     - service: notify.mobile_app_disrupted_iphone
+  #       data_template:
+  #         data:
+  #           push:
+  #             thread-id: "weather-alert"
+  #         title: "{{ states('sensor.dark_sky_precip_0h') }} alert (forecast)"
+  #         message: >
+  #           {{ states('sensor.dark_sky_precip_probability_0h') | int }}%, {{ states('sensor.dark_sky_precip_intensity_0h') | float }} mm/h
+  #           {{ states('sensor.dark_sky_summary_0h') }}
+  #           {{ states('sensor.dark_sky_hourly_summary') }}
+
+  - alias: weather alert rain 1h
+    id: weather_alert_rain_1h
+    trigger:
+      - platform: state
+        entity_id: sensor.weather_yr_1h_precipitation
+        from: "0.0"
+    condition:
+      # precipitation intensity
+      - condition: template
+        value_template: "{{ states('sensor.weather_yr_1h_precipitation') | float > 0 }}"
+      # not already raining (new alert)
+      - condition: template
+        value_template: "{{ states('sensor.weather_yr_precipitation') | float == 0 }}"
+      - condition: state
+        entity_id: input_boolean.sleeping
+        state: "off"
+      # - condition: time
+      #   after: '8:00'
+      #   before: '22:00'
+    action:
+      - service: notify.mobile_app_disrupted_iphone
+        data_template:
+          data:
+            push:
+              thread-id: "weather-alert"
+          title: >-
+            {%- if states('sensor.weather_yr_1h_precipitation') | float > 0.95 -%}heavy rain
+            {%- elif states('sensor.weather_yr_1h_precipitation') | float > 0.45 -%}rain showers
+            {%- elif states('sensor.weather_yr_1h_precipitation') | float > 0.2 -%}rain
+            {%- elif states('sensor.weather_yr_1h_precipitation') | float > 0.01 -%}light rain
+            {%- endif %} in 1h
+          message: >
+            {{ states('sensor.weather_yr_1h_precipitation') | float }} mm/h
+
+  # - alias: dwd_weather_warnings
+  #   id: dwd_weather_warnings
+  #   trigger:
+  #     - platform: numeric_state
+  #       entity_id: sensor.dwd_weather_warnings_current_warning_level #sensor.dwd_weather_warnings_advance_warning_level
+  #       above: 1
+  #   action:
+  #     - service: telegram_bot.send_message
+  #       data_template:
+  #         message: >-
+  #           DWD Weather warning level {{ states('sensor.dwd_weather_warnings_current_warning_level') }}:
+
+  #           *{{ states.sensor.dwd_weather_warnings_current_warning_level.attributes.warning_1_headline }}*
+
+  #           {{ states.sensor.dwd_weather_warnings_current_warning_level.attributes.warning_1_description }}
+
+  #           Beginn: {{ as_timestamp(states.sensor.dwd_weather_warnings_current_warning_level.attributes.warning_1_start) | timestamp_custom('%A, %b %d %H:%M', true) }}
+
+  #           Ende: {{ as_timestamp(states.sensor.dwd_weather_warnings_current_warning_level.attributes.warning_1_end) | timestamp_custom('%A, %b %d %H:%M', true) }}
+
+  #           Dauer: {{ (as_timestamp(states.sensor.dwd_weather_warnings_current_warning_level.attributes.warning_1_end) - as_timestamp(states.sensor.dwd_weather_warnings_current_warning_level.attributes.warning_1_start)) | timestamp_custom('%H', true) }}h
+
+  - alias: DWD Wetterwarnungen mobile
+    id: dwd_weather_warnings_mobile
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.dwd_weather_warnings_current_warning_level # sensor.dwd_weather_warnings_advance_warning_level
+        above: 1
+    # condition:
+    #   - condition: template
+    #     value_template: '{{ trigger.from_state.state != trigger.to_state.state }}'
+    action:
+      - service: notify.mobile_app_disrupted_iphone
+        data_template:
+          data:
+            push:
+              thread-id: "dwd-weather-warnings"
+          title: "{{ state_attr('sensor.dwd_weather_warnings_current_warning_level', 'warning_1_headline') }}"
+          message: >-
+            {{ state_attr('sensor.dwd_weather_warnings_current_warning_level', 'warning_1_description') }}
+
+            {{ as_timestamp(state_attr('sensor.dwd_weather_warnings_current_warning_level', 'warning_1_start')) | timestamp_custom('%a %H:%M', true) }} - {{ as_timestamp(states.sensor.dwd_weather_warnings_current_warning_level.attributes.warning_1_end) | timestamp_custom('%a %H:%M', true) }}
+
+  - alias: OpenUV mobile
+    id: openuv_mobile
+    trigger:
+      - platform: state
+        entity_id: sensor.current_uv_level
+        to: "High"
+    action:
+      - service: notify.mobile_app_disrupted_iphone
+        data_template:
+          data:
+            push:
+              thread-id: "openuv"
+          title: "{{ states('sensor.current_uv_level') }} UV Level"
+          message: >-
+            UV-Index {{ states('sensor.current_uv_index') | float | round(1) }}
+
+            Max exposure time for skin type 3 is {{ states('sensor.skin_type_3_safe_exposure_time') }} minutes today
+
+  - alias: OpenUV alert max exposure reached
+    trigger:
+      platform: template
+      value_template: >
+        {{ not is_state('sensor.skin_type_3_safe_exposure_time', 'unknown') and states('sensor.total_time_outside_today') | float == (states('sensor.skin_type_3_safe_exposure_time') | int / 60) | round(2) }}
+    condition:
+      - condition: template
+        value_template: "{{ not is_state('sensor.skin_type_3_safe_exposure_time', 'unknown') }}"
+      - condition: template
+        value_template: "{{ is_state('person.salomon', 'not_home') }}"
+      # - condition: template
+      #   value_template: "{{ states('sensor.weather_bad_weather') in ['clear'] }}"
+    action:
+      - service: notify.mobile_app_disrupted_iphone
+        data_template:
+          data:
+            push:
+              thread-id: "openuv"
+          title: "UV Warning: Max Exposure time reached"
+          message: >-
+            please be careful if you stay in the sun. Max safe exposure time is {{ states('sensor.skin_type_3_safe_exposure_time') }} minutes at current UV level.
+
+  - alias: OpenUV Update during daytime
+    id: openuv_update_during_daytime
+    trigger:
+      platform: time_pattern
+      minutes: "/60"
+    condition:
+      - condition: template
+        value_template: "{{ state_attr('sun.sun', 'elevation') > 10 }}"
+      - condition: template
+        value_template: "{{ (now() - states.sensor.current_uv_index.last_updated).total_seconds() >= 3600 }}"
+    action:
+      service: openuv.update_uv_index_data
+
+  - alias: OpenUV Update protection window once a day
+    trigger:
+      platform: time
+      at: "07:12:00"
+    action:
+      service: openuv.update_protection_data
+
+  - alias: daylight remaining go outside reminder
+    trigger:
+      platform: template
+      value_template: >
+        {{ states('sensor.time') == (as_timestamp(state_attr('sun.sun', 'next_setting')) - 2 * 3600) | timestamp_custom('%H:%M') }}
+    condition:
+      # - condition: state
+      #   entity_id: person.salomon
+      #   state: 'home'
+      - condition: template
+        value_template: "{{ not is_state('person.salomon', 'not_home') }}"
+      - condition: template
+        value_template: "{{ states('sensor.total_time_outside_today') | float < 0.5 }}"
+      - condition: template
+        value_template: "{{ states('sensor.weather_bad_weather') in ['clear'] }}"
+    action:
+      - service: notify.telegram
+        data_template:
+          message: "Hey, go outside pal. There's still time to do something fun before it gets dark. {% if states('sensor.total_time_outside_today') | float < 1 %}You haven't been out in the sun at all today.{% else %}You've only been out for {{ state_attr('sensor.total_time_outside_today', 'value') }} today.{% endif %}"
+
+  # - alias: Weather Lightning Alert
+  #   trigger:
+  #     platform: geo_location
+  #     source: wwlln
+  #     zone: zone.lightning_alert
+  #     event: enter
+  #   # condition:
+  #   #   condition: template
+  #   #   value_template: "{{ trigger.to_state.attributes.type == 'Lightning' }}"
+  #   action:
+  #     - service: persistent_notification.create
+  #       data_template:
+  #         message: "{{ trigger.to_state.name }} - {{ as_timestamp(trigger.to_state.attributes.publication_date) | timestamp_local }}"
+  #         title: "Lightning Alert"
+
+  - alias: Weather dark_sky nearest storm alert
+    trigger:
+      platform: numeric_state
+      entity_id: sensor.dark_sky_nearest_storm_distance
+      below: 100
+    # condition:
+    # - condition: template
+    #   value_template: "{{ not is_state('sensor.dark_sky_nearest_storm_distance', 'unknown') }}"
+    action:
+      - service: notify.mobile_app_disrupted_iphone
+        data_template:
+          message: >
+            Storm active {{ states('sensor.dark_sky_nearest_storm_distance') }} away.
+
+  # WIP
+  - alias: Weather favorite polina
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.weather_favorite_polina
+        from: "off"
+        to: "on"
+      - platform: state
+        entity_id: input_boolean.sleeping
+        from: "on"
+        to: "off"
+    condition:
+      - condition: state
+        entity_id: binary_sensor.weather_favorite_polina
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.sleeping
+        state: "off"
+      - condition: state
+        entity_id: sun.sun
+        state: "above_horizon"
+      - condition: template
+        value_template: "{{ not is_state_attr('automation.weather_favorite_polina', 'last_triggered', 'Never') and (now() - state_attr('automation.weather_favorite_polina', 'last_triggered')).total_seconds() / 3600 > 6 }}" # last triggered more than 6 hours ago
+    action:
+      - service: notify.mobile_app_disrupted_iphone
+        data_template:
+          message: "It's Polinas favorite weather!!"
+
+  - alias: Weather alert temperature dropping
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.temperature_change_per_hour
+        below: -3.0
+    condition:
+      - condition: state
+        entity_id: input_boolean.sleeping
+        state: "off"
+    action:
+      - service: notify.mobile_app_disrupted_iphone
+        data_template:
+          data:
+            push:
+              thread-id: "weather-alert"
+          message: "Temperature is dropping quickly at {{ states('sensor.temperature_change_per_hour') }} °C/h"
