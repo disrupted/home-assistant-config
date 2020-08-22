@@ -1,0 +1,23 @@
+sensor:
+  - platform: rest
+    name: Tree
+    resource: !secret tree_api_url
+    scan_interval: 7200
+    value_template: "{{ (value_json.radolan_sum / 10) | round(0) }}"
+    json_attributes:
+      - watered
+    unit_of_measurement: "l"
+
+automation:
+  - alias: Tree water
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.tree
+        below: 50
+    condition:
+      - condition: template
+        value_template: "{{ states('sensor.tree') | int >= 0 }}"
+    action:
+      - service: notify.mobile_app_disrupted_iphone
+        data_template:
+          message: "The Tree outside needs some water!"
