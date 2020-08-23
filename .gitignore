@@ -19,6 +19,10 @@
 deps
 tts
 node_modules
+node-red
+hacs
+custom_components
+www/community
 
 # Ensure these YAML files containing secrets/credentials are ignored.
 secrets.yaml
@@ -53,3 +57,10 @@ __pycache__
 *.vim
 *.bkp
 *.sql
+.DS_Store
+
+# Images
+*.jpg
+*.jpeg
+*.png
+*.svg
