@@ -1,0 +1,8 @@
+{
+  "domain": "htw_wetter",
+  "name": "HTW Wetter sensor",
+  "documentation": "https://github.com/disrupted/htw-wetter",
+  "dependencies": [],
+  "codeowners": ["@disrupted"],
+  "requirements": []
+}

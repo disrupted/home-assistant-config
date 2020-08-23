@@ -1,0 +1,1 @@
+"""The HTW Wetter component."""

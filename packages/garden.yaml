@@ -1,3 +1,8 @@
+homeassistant:
+  customize:
+    sensor.tree:
+      icon: mdi:tree-outline
+
 sensor:
   - platform: rest
     name: Tree

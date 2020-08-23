@@ -1,0 +1,41 @@
+homeassistant:
+  customize:
+    sensor.populartimes_rewe:
+      friendly_name: REWE
+      icon: mdi:cart
+
+sensor:
+  - platform: htw_wetter
+
+  - platform: dwd_wetter
+
+  - platform: flatastic
+    api_key: !secret flatastic_api_key
+    user_id: !secret flatastic_user_id
+
+  - platform: populartimes
+    api_key: !secret api_key_googlemaps_geocoding
+    id: !secret location_rewe_place_id
+    name: "populartimes_rewe"
+
+  - platform: template
+    sensors:
+      populartimes_rewe_usual:
+        friendly_name: Usual Popularity REWE
+        entity_id: sensor.populartimes_rewe
+        unit_of_measurement: "%"
+        value_template: >
+          {% set days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] %}
+          {{ state_attr('sensor.populartimes_rewe', 'popularity_' + days[now().weekday()] | lower)[now().hour] }}
+      populartimes_rewe_usual_difference:
+        friendly_name: Usual Popularity REWE Difference
+        entity_id: sensor.populartimes_rewe
+        unit_of_measurement: "%"
+        value_template: >
+          {% set days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] %}
+          {% set usual = state_attr('sensor.populartimes_rewe', 'popularity_' + days[now().weekday()] | lower)[now().hour] | int %}
+          {% if usual > 0 %}
+            {{ (states('sensor.populartimes_rewe') | int / usual * 100 - 100) | round(0) }}
+          {% else %}
+            0
+          {% endif %}

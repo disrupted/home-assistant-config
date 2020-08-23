@@ -1,0 +1,8 @@
+{
+  "domain": "dwd_wetter",
+  "name": "DWD Wetter sensor",
+  "documentation": "https://github.com/home-assistant/example-custom-config/tree/master/custom_components/example_sensor/",
+  "dependencies": [],
+  "codeowners": ["@disrupted"],
+  "requirements": []
+}

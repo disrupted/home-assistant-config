@@ -58,6 +58,7 @@ __pycache__
 *.bkp
 *.sql
 .DS_Store
+package-lock.json
 
 # Images
 *.jpg
