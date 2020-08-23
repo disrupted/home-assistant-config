@@ -1,0 +1,218 @@
+homeassistant:
+  customize_glob:
+    automation.plants_*:
+      icon: mdi:leaf
+  customize:
+    plant.miflora_1:
+      friendly_name: large Monstera
+    sensor.miflora_1_moisture:
+      friendly_name: large Monstera Moisture
+    binary_sensor.miflora_1_moisture_trend:
+      friendly_name: large Monstera Moisture Trend
+    sensor.miflora_1_temperature:
+      friendly_name: large Monstera Temperature
+    sensor.miflora_1_soil_conductivity:
+      friendly_name: large Monstera Soil Conductivity
+    sensor.miflora_1_illuminance:
+      friendly_name: large Monstera Illuminance
+    plant.miflora_2:
+      friendly_name: Basil
+    sensor.miflora_2_moisture:
+      friendly_name: Basil Moisture
+    binary_sensor.miflora_2_moisture_trend:
+      friendly_name: Basil Moisture Trend
+    sensor.miflora_2_temperature:
+      friendly_name: Basil Temperature
+    sensor.miflora_2_soil_conductivity:
+      friendly_name: Basil Soil Conductivity
+    sensor.miflora_2_illuminance:
+      friendly_name: Basil Illuminance
+    plant.miflora_3:
+      friendly_name: small Monstera
+    sensor.miflora_3_moisture:
+      friendly_name: small Monstera Moisture
+    binary_sensor.miflora_3_moisture_trend:
+      friendly_name: small Monstera Moisture Trend
+    sensor.miflora_3_temperature:
+      friendly_name: small Monstera Temperature
+    sensor.miflora_3_soil_conductivity:
+      friendly_name: small Monstera Soil Conductivity
+    sensor.miflora_3_illuminance:
+      friendly_name: small Monstera Illuminance
+    plant.miflora_4:
+      friendly_name: Rubber tree
+    sensor.miflora_4_moisture:
+      friendly_name: Rubber tree Moisture
+    binary_sensor.miflora_4_moisture_trend:
+      friendly_name: Rubber tree Moisture Trend
+    sensor.miflora_4_temperature:
+      friendly_name: Rubber tree Temperature
+    sensor.miflora_4_soil_conductivity:
+      friendly_name: Rubber tree Soil Conductivity
+    sensor.miflora_4_illuminance:
+      friendly_name: Rubber tree Illuminance
+
+plant:
+  miflora_1:
+    sensors:
+      moisture: sensor.miflora_1_moisture
+      temperature: sensor.miflora_1_temperature
+      conductivity: sensor.miflora_1_soil_conductivity
+      brightness: sensor.miflora_1_illuminance
+    min_moisture: 15
+    max_moisture: 60
+    min_conductivity: 350
+    max_conductivity: 2000
+    min_temperature: 12
+    max_temperature: 32
+    min_brightness: 800
+    max_brightness: 15000
+  miflora_2:
+    sensors:
+      moisture: sensor.miflora_2_moisture
+      temperature: sensor.miflora_2_temperature
+      conductivity: sensor.miflora_2_soil_conductivity
+      brightness: sensor.miflora_2_illuminance
+    min_moisture: 15
+    max_moisture: 60
+    min_conductivity: 350
+    max_conductivity: 2000
+    min_temperature: 8
+    max_temperature: 32
+    min_brightness: 2500
+    max_brightness: 60000
+  miflora_3:
+    sensors:
+      moisture: sensor.miflora_3_moisture
+      temperature: sensor.miflora_3_temperature
+      conductivity: sensor.miflora_3_soil_conductivity
+      brightness: sensor.miflora_3_illuminance
+    min_moisture: 15
+    max_moisture: 60
+    min_conductivity: 350
+    max_conductivity: 2000
+    min_temperature: 12
+    max_temperature: 32
+    min_brightness: 800
+    max_brightness: 15000
+  miflora_4:
+    sensors:
+      moisture: sensor.miflora_4_moisture
+      temperature: sensor.miflora_4_temperature
+      conductivity: sensor.miflora_4_soil_conductivity
+      brightness: sensor.miflora_4_illuminance
+    min_moisture: 15
+    max_moisture: 60
+    min_conductivity: 350
+    max_conductivity: 2000
+    min_temperature: 10
+    max_temperature: 35
+    min_brightness: 1000
+    max_brightness: 30000
+
+# sensor:
+#   - platform: integration
+#     source: sensor.miflora_1_illuminance
+#     name: illuminance
+#     unit_prefix: k
+#     round: 2
+#   - platform: derivative
+#     source: sensor.miflora_1_moisture
+#     name: Miflora 1 Moisture change per hour
+#     round: 1
+#     unit_time: h
+#     time_window:
+#       minutes: 60 # we look at the change over the last hour
+
+binary_sensor:
+  - platform: trend
+    sensors:
+      miflora_1_moisture_trend:
+        entity_id: sensor.miflora_1_moisture
+        sample_duration: 600
+        max_samples: 2
+        min_gradient: 0.04
+        device_class: moisture
+      miflora_2_moisture_trend:
+        entity_id: sensor.miflora_2_moisture
+        sample_duration: 600
+        max_samples: 2
+        min_gradient: 0.04
+        device_class: moisture
+      miflora_3_moisture_trend:
+        entity_id: sensor.miflora_3_moisture
+        sample_duration: 600
+        max_samples: 2
+        min_gradient: 0.04
+        device_class: moisture
+      miflora_4_moisture_trend:
+        entity_id: sensor.miflora_4_moisture
+        sample_duration: 600
+        max_samples: 2
+        min_gradient: 0.04
+        device_class: moisture
+
+automation:
+  - alias: Plants need help notification
+    trigger:
+      - platform: time
+        at: "11:00:00"
+    condition:
+      - condition: template
+        value_template: "{{ (now() - state_attr('automation.telegram_bot_plants', 'last_triggered')).total_seconds() / 86400 > 0.8 }}" # last report almost or more than 1 day ago
+    action:
+      - service: automation.trigger
+        entity_id: automation.telegram_bot_plants
+      # - service: notify.mobile_app_disrupted_iphone
+      #   data_template:
+      #     data:
+      #       push:
+      #         thread-id: "plants"
+      #       apns_headers:
+      #         "apns-collapse-id": "plants-summary"
+      #     message: >
+      #       {%- for plant in states.plant -%}
+      #         <b>{{ plant.attributes.friendly_name }}</b>
+      #         {%- set data = namespace(problems=[]) %}
+      #         {%- for problem in plant.attributes.problem.split(', ') if ((problem not in ['none','brightness low'])) -%}
+      #           {%- set data.problems = data.problems + [problem] -%}
+      #         {%- endfor %}
+      #         {%- if data.problems | length > 0 -%}
+      #           {%- if 'moisture low' in data.problems -%}
+      #           {{ '\n- Moisture ' }}{{ states[plant.attributes.sensors.moisture].state_with_unit -}}
+      #           {% endif %}
+      #           {%- if 'conductivity low' in data.problems -%}
+      #           {{ '\n- Conductivity ' }}{{ states[plant.attributes.sensors.conductivity].state_with_unit -}}
+      #           {{ '\n   '}}needs at least {{ (350 / states(plant.attributes.sensors.conductivity) | int * 100 - 100) | round }}% more fertilizer
+      #             {%- if not 'moisture low' in data.problems and states(plant.attributes.sensors.moisture) | int > 30 -%}
+      #               {{ '\n   Moisture is at ' }}{{ states(plant.attributes.sensors.moisture) }}% though so don't water it too much
+      #             {% endif %}
+      #           {% endif %}
+      #           {%- if 'brightness low' in data.problems and state_attr('sun.sun', 'elevation')|float < 20 %}
+      #           {% endif %}
+      #         {%- else -%}
+      #           {{ '\n  ' }}<i>all good</i> {{ "\U0001f33f" }}
+      #         {% endif %}
+      #       {% endfor %}
+
+  - alias: Plants thanks for water
+    trigger:
+      - platform: state
+        entity_id:
+          - binary_sensor.miflora_1_moisture_trend
+          - binary_sensor.miflora_2_moisture_trend
+          - binary_sensor.miflora_3_moisture_trend
+          - binary_sensor.miflora_4_moisture_trend
+        from: "off"
+        to: "on"
+    condition:
+      - condition: template
+        value_template: "{{ not is_state_attr('automation.plants_thanks_for_water', 'last_triggered', 'Never') and (now() - state_attr('automation.plants_thanks_for_water', 'last_triggered')).total_seconds() / 3600 > 2 }}" # last thanks more than 2 hours ago
+      # - condition: template
+      #   value_template: "{{ states(trigger.to_state.attributes.entity_id) | int > 30 }}"
+    action:
+      # - service: notify.mobile_app_disrupted_iphone
+      - service: telegram_bot.send_message
+        data_template:
+          message: >
+            Thanks for watering the plants! {{ "\U0001f331" }}
