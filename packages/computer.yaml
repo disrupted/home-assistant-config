@@ -1,25 +1,25 @@
-binary_sensor:
-  - platform: mqtt
-    state_topic: "macbookpro/power"
-    name: MacBookPro power
+# binary_sensor:
+#   - platform: mqtt
+#     state_topic: "macbookpro/power"
+#     name: MacBookPro power
 
-    # force_update: true
-  - platform: mqtt
-    state_topic: "macbookpro/active"
-    name: MacBookPro active
+#     # force_update: true
+#   - platform: mqtt
+#     state_topic: "macbookpro/active"
+#     name: MacBookPro active
 
-  - platform: mqtt
-    state_topic: "macbookpro/screensaver"
-    name: MacBookPro screensaver
+#   - platform: mqtt
+#     state_topic: "macbookpro/screensaver"
+#     name: MacBookPro screensaver
 
-  - platform: mqtt
-    state_topic: "macbookpro/screens"
-    name: MacBookPro screens
+#   - platform: mqtt
+#     state_topic: "macbookpro/screens"
+#     name: MacBookPro screens
 
 sensor:
   - platform: history_stats
-    name: MacBookPro usage today
-    entity_id: binary_sensor.macbookpro_active
+    name: disrupted-MBP usage today
+    entity_id: binary_sensor.disrupted_mbp_active
     state: "on"
     type: time
     # start: '{{ now().replace(hour=8, minute=0, second=0) }}'
