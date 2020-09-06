@@ -409,9 +409,9 @@ views:
     title: Desk
     icon: "mdi:monitor"
     badges:
-      - device_tracker.disrupted_mbp_wifi
+      - device_tracker.disrupted_mbp
       - device_tracker.disrupted_ipad
-      - device_tracker.disrupted_iphone_wifi
+      - device_tracker.disrupted_iphone
     cards:
       - type: entities
         show_header_toggle: false
@@ -434,9 +434,8 @@ views:
           - sensor.printer
           - sensor.printer_black_toner_cartridge
           - sensor.printer_black_image_drum_unit
-          - binary_sensor.macbookpro_power
-          - binary_sensor.macbookpro_active
-          - sensor.macbookpro_usage_today
+          - binary_sensor.disrupted_mbp_active
+          - sensor.disrupted_mbp_usage_today
       - type: entities
         title: Uni
         entities:
