@@ -143,15 +143,15 @@ sensor:
   #   select: 'a[href="#all"]'
   #   value_template: '{{ value.split("(")[1].split(")")[0] | int }}'
 
-  - platform: rest
-    resource: https://s3.amazonaws.com/hassio-version/stable.json
-    name: Home Assistant Version
-    value_template: "{{ value_json.homeassistant.default }}"
-    headers:
-      Content-Type: application/json
-      User-Agent: Home Assistant REST sensor
-      Time-Zone: !secret timezone
-    scan_interval: 3600
+  # - platform: rest
+  #   resource: https://s3.amazonaws.com/hassio-version/stable.json
+  #   name: Home Assistant Version
+  #   value_template: "{{ value_json.homeassistant.default }}"
+  #   headers:
+  #     Content-Type: application/json
+  #     User-Agent: Home Assistant REST sensor
+  #     Time-Zone: !secret timezone
+  #   scan_interval: 3600
 
   - platform: rest
     resource: https://api.github.com/repos/coreelec/coreelec/releases/latest
@@ -191,7 +191,25 @@ sensor:
     unit_of_measurement: "°C"
     value_template: "{{ value | multiply(0.001) | round(1)  }}"
 
+    # local
   - platform: version
+    # latest stable
+  - platform: version
+    name: latest Stable version
+    source: hassio
+    # latest beta
+  - platform: version
+    name: latest Beta version
+    beta: true
+    source: hassio
+  - platform: command_line
+    name: Supervisor updates
+    command: 'curl http://supervisor/supervisor/info -H "Authorization: Bearer $(printenv SUPERVISOR_TOKEN)" | jq ''{"newest_version":.data.version_latest,"current_version":.data.version,"addons":[.data.addons[] | select(.version != .installed)]}'''
+    value_template: "{{ value_json.addons | length }}"
+    json_attributes:
+      - newest_version
+      - current_version
+      - addons
   - platform: systemmonitor
     resources:
       # - type: last_boot
@@ -282,7 +300,7 @@ automation:
     id: ha_new_version
     trigger:
       - platform: state
-        entity_id: sensor.home_assistant_version
+        entity_id: sensor.latest_beta_version
     condition:
       - condition: template
         value_template: "{{ trigger.from_state.state not in ['unknown', 'unavailable'] }}"
@@ -291,7 +309,40 @@ automation:
     action:
       service: telegram_bot.send_message
       data_template:
-        message: "v{{ states('sensor.home_assistant_version') }} available on AWS"
+        message: "v{{ states('sensor.latest_beta_version') }} available"
+
+  - alias: Supervisor updates available
+    id: supervisor_updates_available
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.supervisor_updates
+        above: 0
+    condition:
+      - condition: template
+        value_template: "{{ (trigger.from_state.state | int) < (trigger.to_state.state | int) }}"
+    action:
+      service: telegram_bot.send_message
+      data_template:
+        message: >
+          {{ states('sensor.supervisor_updates') }} Supervisor updates available
+          {%- for addon in state_attr('sensor.supervisor_updates', 'addons') %}
+          *{{ addon.name }}*
+          {{ addon.installed }} → {{ addon.version }}
+          {% endfor %}
+
+  - alias: HACS updates available
+    id: hacs_updates_available
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.hacs
+        above: 0
+    condition:
+      - condition: template
+        value_template: "{{ (trigger.from_state.state | int) < (trigger.to_state.state | int) }}"
+    action:
+      service: telegram_bot.send_message
+      data_template:
+        message: "{{ states('sensor.hacs') }} HACS updates available"
 
   - alias: GitHub CoreELEC new release tag
     id: github_coreelec_new_release_tag
