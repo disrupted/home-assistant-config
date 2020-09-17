@@ -296,11 +296,13 @@ automation:
   #       data:
   #         message: 'Going Offline'
 
-  - alias: HA new version
-    id: ha_new_version
+  - alias: Hass new version
+    id: hass_new_version
     trigger:
       - platform: state
-        entity_id: sensor.latest_beta_version
+        entity_id: 
+          - sensor.latest_beta_version
+          - sensor.latest_stable_version
     condition:
       - condition: template
         value_template: "{{ trigger.from_state.state not in ['unknown', 'unavailable'] }}"
@@ -309,7 +311,7 @@ automation:
     action:
       service: telegram_bot.send_message
       data_template:
-        message: "v{{ states('sensor.latest_beta_version') }} available"
+        message: "v{{ trigger.to_state.state }} available"
 
   - alias: Supervisor updates available
     id: supervisor_updates_available
@@ -393,10 +395,6 @@ automation:
       from: "off"
       to: "on"
     action:
-      # - service: notify.all
-      #   data_template:
-      #     message: >
-      #       Update {{ state_attr('binary_sensor.updater', 'newest_version') }} is now available for install.
       - service: notify.mobile_app_disrupted_iphone
         data_template:
           title: "Home Assistant"
