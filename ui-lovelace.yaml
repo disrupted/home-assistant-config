@@ -1404,18 +1404,18 @@ views:
           #     method: last_changed  # last_updated
           #     # count: 5
 
-  - id: 12
-    title: Misc
-    icon: "mdi:garage"
-    cards:
-      - type: "custom:auto-entities"
-        card:
-          show_header_toggle: true
-          type: entities
-          title: Shared
-        filter:
-          include:
-            - area: Shared
-            - entity_id: binary_sensor.lights_left_on
-          # exclude:
-          #   - state: unavailable
+  # - id: 12
+  #   title: Misc
+  #   icon: "mdi:garage"
+  #   cards:
+  #     - type: "custom:auto-entities"
+  #       card:
+  #         show_header_toggle: true
+  #         type: entities
+  #         title: Shared
+  #       filter:
+  #         include:
+  #           - area: Shared
+  #           - entity_id: binary_sensor.lights_left_on
+  #         # exclude:
+  #         #   - state: unavailable

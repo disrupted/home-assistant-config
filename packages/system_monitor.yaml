@@ -300,7 +300,7 @@ automation:
     id: hass_new_version
     trigger:
       - platform: state
-        entity_id: 
+        entity_id:
           - sensor.latest_beta_version
           - sensor.latest_stable_version
     condition:
