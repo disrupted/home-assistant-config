@@ -3,73 +3,11 @@ homeassistant:
     "*.kodi*":
       icon: mdi:kodi
 
-media_player:
-  - platform: kodi
-    name: Kodi
-    host: !secret ip_kodi
-    port: !secret kodi_port
-    username: !secret kodi_username
-    password: !secret kodi_password
-    # turn_on_action:
-    #   - service: wake_on_lan.send_magic_packet
-    #     data:
-    #       mac: !secret mac_kodi
-    #       broadcast_address: !secret ip_broadcast
-    # turn_off_action:
-    #   service: kodi.call_method
-    #   data:
-    #     entity_id: '{{ entity_id }}'
-    #     method: System.Suspend
-    # enable_websocket: true
-    turn_on_action:
-      - service: kodi.call_method
-        data:
-          entity_id: media_player.kodi
-          method: Addons.ExecuteAddon
-          addonid: script.json-cec
-          params:
-            command: activate
-    turn_off_action:
-      - service: media_player.media_stop
-        data:
-          entity_id: media_player.kodi
-      - service: kodi.call_method
-        data:
-          entity_id: media_player.kodi
-          method: GUI.ActivateWindow
-          params:
-            window: screensaver
-      # - service: media_player.kodi_call_method
-      #   data:
-      #     entity_id: media_player.kodi
-      #     method: Addons.ExecuteAddon
-      #     addonid: script.json-cec
-      #     params:
-      #       command: standby
-
 input_boolean:
   movietime:
     name: Movie Time
     initial: false
     icon: mdi:theater
-
-switch:
-  - platform: template
-    switches:
-      kodi:
-        friendly_name: Kodi
-        value_template: "{{ is_state('media_player.kodi', 'playing') }}"
-        turn_on:
-          service: media_player.kodi_call_method
-          data:
-            entity_id: media_player.kodi
-            method: Addons.ExecuteAddon
-            addonid: script.json-cec
-            params:
-              command: activate
-        turn_off:
-          service: media_player.turn_off
-          entity_id: media_player.tv
 
 notify:
   - platform: kodi
@@ -195,10 +133,6 @@ automation:
   - alias: Kodi Startup → Turn on TV & Amplifier
     id: kodi_startup_turn_on_tv_and_amp
     trigger:
-      - platform: state
-        entity_id: switch.kodi
-        from: "off"
-        to: "on"
       - platform: state
         entity_id: media_player.kodi
         from: "off"
