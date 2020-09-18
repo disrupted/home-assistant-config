@@ -23,6 +23,7 @@ node-red
 hacs
 custom_components
 www/community
+neighbours
 
 # Ensure these YAML files containing secrets/credentials are ignored.
 secrets.yaml
