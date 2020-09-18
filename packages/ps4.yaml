@@ -1,7 +1,7 @@
 homeassistant:
   customize_glob:
     automation.ps4_*:
-      icon: mdi:playstation
+      icon: mdi:sony-playstation
 
 switch:
   - platform: template

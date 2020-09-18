@@ -345,7 +345,7 @@ automation:
       entity_id: vacuum.nono
 
   - alias: Vacuum empty bin reminder
-    initial_state: "off"
+    initial_state: false
     trigger:
       platform: state
       entity_id: person.salomon # input_boolean.present
@@ -397,7 +397,7 @@ automation:
     #     entity_id: input_boolean.present
     #     state: 'off'
     action:
-      - service_template: >-
+      - service: >-
           {% if is_state('person.salomon', 'home') %}
           automation.trigger
           {% else %}

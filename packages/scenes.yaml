@@ -78,137 +78,156 @@ scene:
   - name: Normal
     entities:
       light.floor_lamp:
-        state: on
+        state: "on"
         brightness: 255
         transition: 1
       light.bed_lamp:
-        state: on
+        state: "on"
         # profile: standard
         brightness: 255
         transition: 1
       light.desk_lamp:
-        state: on
+        state: "on"
         brightness_pct: 55
         transition: 1
       switch.chandelier:
-        state: off
-      switch.circadian_lighting_floor: on
-      switch.circadian_lighting_bed: on
-      switch.circadian_lighting_desk: on
+        state: "off"
+      switch.circadian_lighting_floor:
+        state: "on"
+      switch.circadian_lighting_bed:
+        state: "on"
+      switch.circadian_lighting_desk:
+        state: "on"
 
   - name: Sunset
     entities:
-      switch.circadian_lighting_floor: on
-      switch.circadian_lighting_bed: on
-      switch.circadian_lighting_desk: on
+      switch.circadian_lighting_floor:
+        state: "on"
+      switch.circadian_lighting_bed:
+        state: "on"
+      switch.circadian_lighting_desk:
+        state: "on"
       light.floor_lamp:
-        state: on
+        state: "on"
         brightness: 255
         transition: 6
       light.bed_lamp:
-        state: on
+        state: "on"
         # profile: standard
         brightness: 255
         transition: 10
       light.desk_lamp:
-        state: on
+        state: "on"
         brightness: 102
         transition: 10
 
   - name: Dim
     entities:
-      switch.circadian_lighting_bed_no_brightness: on
+      switch.circadian_lighting_bed_no_brightness:
+        state: "on"
       light.floor_lamp:
-        state: on
+        state: "on"
         transition: 4
         brightness: 38
         # brightness_pct: 15
       light.bed_lamp:
-        state: on
+        state: "on"
         transition: 8
         brightness: 38
       light.desk_lamp:
-        state: off
+        state: "off"
         transition: 3
-      switch.chandelier: off
+      switch.chandelier:
+        state: "off"
       light.candle:
-        state: on
+        state: "on"
         brightness: 255
         effect: Flicker
 
   - name: Undim
     entities:
-      switch.circadian_lighting_bed: on
+      switch.circadian_lighting_bed:
+        state: "on"
       light.floor_lamp:
-        state: on
+        state: "on"
         transition: 10
         brightness: 77
 
   - name: Relax
     entities:
       light.floor_lamp:
-        state: on
+        state: "on"
         transition: 6
         brightness_pct: 40
         # kelvin: 2200
-      switch.chandelier: off
+      switch.chandelier:
+        state: "off"
       light.bed_lamp:
-        state: on
+        state: "on"
         profile: orange
 
   - name: Bedtime
     entities:
-      switch.circadian_lighting_floor: off
+      switch.circadian_lighting_floor:
+        state: "off"
       light.floor_lamp:
-        state: on
+        state: "on"
         transition: 4
         brightness: 51
         kelvin: 2200
-      switch.circadian_lighting_bed: off
-      switch.circadian_lighting_bed_no_brightness: off
+      switch.circadian_lighting_bed:
+        state: "off"
+      switch.circadian_lighting_bed_no_brightness:
+        state: "off"
       light.bed_lamp:
-        state: on
+        state: "on"
         profile: bedtime
         # flash: long
         transition: 4
       light.desk_lamp:
-        state: off
+        state: "off"
         # brightness: 50
         # transition: 4
         # flash: long
-      switch.chandelier: off
+      switch.chandelier:
+        state: "off"
 
   - name: Daytime
     entities:
       light.floor_lamp:
-        state: on
+        state: "on"
         transition: 1
         brightness: 255
         # kelvin: 4000
-      # switch.chandelier: off
+      # switch.chandelier: "off"
 
   - name: Max
     entities:
       switch.chandelier:
-        state: on
+        state: "on"
 
   - name: Night
     entities:
-      switch.amp: false
-      switch.tv: false
+      switch.amp:
+        state: "off"
+      switch.tv:
+        state: "off"
       # switch.kodi:
-      #   state: off
+      #   state: "off"
       light.livingroom:
-        state: off
+        state: "off"
         transition: 3
-      light.candle: off
-      # switch.chandelier: false
-      # switch.circadian_lighting_bed: true
+      light.candle:
+        state: "off"
+      # switch.chandelier:
+      #   state: "off"
+      # switch.circadian_lighting_bed:
+      #   state: "on"
 
   # - name: Nightlight
   #   entities:
   #     light.bed_lamp:
-  #       state: on
+  #       state: "on"
   #       brightness: 1
   #       rgb_color: [255, 0, 0]
 
@@ -217,26 +236,33 @@ scene:
       media_player.google_home:
         state: paused
       light.livingroom:
-        state: off
+        state: "off"
         transition: 1
-      light.candle: off
+      light.candle:
+        state: "off"
       climate.thermostat:
         state: heat
         temperature: "17"
       media_player.kodi:
         state: paused
-      switch.amp: off
-      media_player.tv: off
-      media_player.ps4: off
-      # switch.chandelier: off
+      switch.amp:
+        state: "off"
+      media_player.tv:
+        state: "off"
+      media_player.ps4:
+        state: "off"
+      # switch.chandelier:
+      #   state: "off"
 
   - name: "OFF"
     entities:
       light.livingroom:
-        state: off
+        state: "off"
         transition: 1
-      light.chandelier: off
-      light.candle: off
+      light.chandelier:
+        state: "off"
+      light.candle:
+        state: "off"
 
 input_select:
   scene:

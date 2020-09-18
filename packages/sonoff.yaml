@@ -199,7 +199,7 @@ automation:
   #   action:
   #   # - service: light.toggle
   #   #   entity_id: light.livingroom
-  #   - service_template: >-
+  #   - service: >-
   #       {% if is_state('light.livingroom', 'on') %}
   #       scene.turn_on
   #       {% else %}
@@ -251,7 +251,7 @@ automation:
       #   platform: state
       #   to: 'HOLD'
     action:
-      # - service_template: >
+      # - service: >
       #       {% if is_state('light.livingroom', 'off') %}
       #         scene.turn_on
       #       {% else %}
