@@ -21,6 +21,38 @@ notify:
       icon: "/local/ha_kodi.png"
 
 automation:
+  - alias: Kodi turn on
+    trigger:
+      - platform: device
+        device_id: bbabe9eaf90e11ea99ad37313b90d800
+        domain: kodi
+        entity_id: media_player.kodi
+        type: turn_on
+    action:
+      - service: kodi.call_method
+        data:
+          entity_id: media_player.kodi
+          method: Addons.ExecuteAddon
+          addonid: script.json-cec
+          params:
+            command: activate
+  - alias: Kodi turn off
+    trigger:
+      - platform: device
+        device_id: bbabe9eaf90e11ea99ad37313b90d800
+        domain: kodi
+        entity_id: media_player.kodi
+        type: turn_off
+    action:
+      - service: media_player.media_stop
+        data:
+          entity_id: media_player.kodi
+      - service: kodi.call_method
+        data:
+          entity_id: media_player.kodi
+          method: GUI.ActivateWindow
+          params:
+            window: screensaver
   - alias: Kodi movietime on
     id: kodi_movietime_on
     trigger:
