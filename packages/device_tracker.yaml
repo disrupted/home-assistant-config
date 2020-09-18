@@ -83,7 +83,7 @@ zone:
   #   latitude: !secret location_work_lat
   #   longitude: !secret location_work_lon
   #   radius: !secret location_work_radius
-  #   icon: mdi:worker
+  #   icon: mdi:briefcase
   #  - name: Neighbourhood
   #    latitude: !secret location_home_lat
   #    longitude: !secret location_home_lon

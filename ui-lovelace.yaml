@@ -352,7 +352,7 @@ views:
             type: "custom:mini-media-player"
   - id: 2
     title: Bed
-    icon: "mdi:hotel"
+    icon: "mdi:bed-king"
     cards:
       - type: entities
         entities:
@@ -1241,6 +1241,58 @@ views:
         show_header_toggle: false
         title: System
         type: entities
+      - entities:
+          - entity: zone.home
+            icon: "mdi:home-assistant"
+            name: HA
+            tap_action:
+              action: call-service
+              service: homeassistant.restart
+          - entity: zone.home
+            icon: "mdi:cogs"
+            name: Automation
+            tap_action:
+              action: call-service
+              service: automation.reload
+          - entity: zone.home
+            icon: "mdi:script-text"
+            name: Script
+            tap_action:
+              action: call-service
+              service: script.reload
+          - entity: zone.home
+            icon: "mdi:group"
+            name: Groups
+            tap_action:
+              action: call-service
+              service: group.reload
+        show_header_toggle: false
+        show_state: false
+        title: false
+        type: glance
+      - entities:
+          - entity: sensor.count_automations
+            name: Automations
+          - entity: sensor.count_scripts
+            name: Scripts
+          - entity: sensor.count_device_trackers
+            name: Device trackers
+          - entity: sensor.count_binary_sensors
+            name: Binary sensors
+          - entity: sensor.count_sensors
+            name: Sensors
+          - entity: sensor.count_switches
+            name: Switches
+          - entity: sensor.count_zones
+            name: Zones
+          - entity: sensor.count_input_booleans
+            name: Input booleans
+        entity_id: sensor.date
+        value_template: "{{ states.input_boolean | list | length }}"
+        show_header_toggle: false
+        show_icon: false
+        title: false
+        type: glance
       - type: vertical-stack
         cards:
           - type: "custom:auto-entities"
@@ -1403,7 +1455,6 @@ views:
           #   sort:
           #     method: last_changed  # last_updated
           #     # count: 5
-
   # - id: 12
   #   title: Misc
   #   icon: "mdi:garage"

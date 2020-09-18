@@ -1,7 +1,7 @@
 homeassistant:
   customize_glob:
-    sensor.github_*:
-      icon: mdi:github-circle
+    "*.github_*":
+      icon: mdi:github
     sensor.ha_*:
       icon: mdi:home-assistant
   customize:
@@ -176,6 +176,45 @@ sensor:
   #     User-Agent: Home Assistant REST sensor
   #     Time-Zone: !secret timezone
   #   scan_interval: 3600
+
+  - platform: template
+    sensors:
+      count_automations:
+        entity_id: sensor.date
+        value_template: "{{ states.automation | list | length }}"
+      count_scripts:
+        entity_id: sensor.date
+        value_template: "{{ states.script | list | length }}"
+      count_device_trackers:
+        entity_id: sensor.date
+        value_template: "{{ states.device_tracker | list | length }}"
+      count_binary_sensors:
+        entity_id: sensor.date
+        value_template: "{{ states.binary_sensor | list | length }}"
+      count_sensors:
+        entity_id: sensor.date
+        value_template: "{{ states.sensor | list | length }}"
+      count_switches:
+        entity_id: sensor.date
+        value_template: "{{ states.switch | list | length }}"
+      count_zones:
+        entity_id: sensor.date
+        value_template: "{{ states.zone | list | length }}"
+      count_input_booleans:
+        entity_id: sensor.date
+        value_template: "{{ states.input_boolean | list | length }}"
+      # count_input_numbers:
+      #   entity_id: sensor.date
+      #   value_template: "{{ states.input_number | list | length }}"
+      # count_input_texts:
+      #   entity_id: sensor.date
+      #   value_template: "{{ states.input_text | list | length }}"
+      # count_input_selects:
+      #   entity_id: sensor.date
+      #   value_template: "{{ states.input_select | list | length }}"
+      # count_input_datetimes:
+      #   entity_id: sensor.date
+      #   value_template: "{{ states.input_datetime | list | length }}"
 
   - platform: rest
     resource: https://api.github.com/repos/coreelec/coreelec/releases/latest
