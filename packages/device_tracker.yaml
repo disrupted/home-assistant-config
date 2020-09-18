@@ -132,13 +132,13 @@ sensor:
   #     mode: transit
   #     departure_time: now
 
-  - platform: template
-    sensors:
-      icloud_last_update:
-        friendly_name: "Last iCloud refresh"
-        entity_id: sensor.time
-        unit_of_measurement: "minutes"
-        value_template: "{{ ((as_timestamp(now()) - as_timestamp(states.device_tracker.polina_iphone_icloud.last_updated)) / 60 ) | round }}"
+  # - platform: template
+  #   sensors:
+  #     icloud_last_update:
+  #       friendly_name: "Last iCloud refresh"
+  #       entity_id: sensor.time
+  #       unit_of_measurement: "minutes"
+  #       value_template: "{{ ((as_timestamp(now()) - as_timestamp(states.device_tracker.polina_iphone_icloud.last_updated)) / 60 ) | round }}"
 
   - platform: history_stats
     name: total time outside today
