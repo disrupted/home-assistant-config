@@ -787,7 +787,7 @@ automation:
     id: openuv_update_during_daytime
     trigger:
       platform: time_pattern
-      minutes: "/60"
+      hours: "/1"
     condition:
       - condition: template
         value_template: "{{ state_attr('sun.sun', 'elevation') > 10 }}"
