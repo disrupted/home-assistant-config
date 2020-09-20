@@ -396,12 +396,12 @@ automation:
       service: telegram_bot.send_message
       data_template:
         message: >
-          {{ states('sensor.supervisor_updates') }} Supervisor updates available
+          {{ states('sensor.supervisor_updates') }} Supervisor update{% if states('sensor.supervisor_updates') > 1 %}s{% endif %} available
           {% if state_attr('sensor.supervisor_updates', 'newest_version') | int > state_attr('sensor.supervisor_updates', 'current_version') | int %}
           Supervisor {{ state_attr('sensor.supervisor_updates', 'current_version') }} → {{ state_attr('sensor.supervisor_updates', 'newest_version') }}
           {% endif %}
           {%- for addon in state_attr('sensor.supervisor_updates', 'addons') %}
-          *{{ addon.name }}*
+          {{ '\n' }}*{{ addon.name }}*
           {{ addon.installed }} → {{ addon.version }}
           {% endfor %}
 
@@ -413,11 +413,16 @@ automation:
         above: 0
     condition:
       - condition: template
-        value_template: "{{ (trigger.from_state.state | int) < (trigger.to_state.state | int) }}"
+        value_template: "{{ trigger.from_state.state | int < trigger.to_state.state | int }}"
     action:
       service: telegram_bot.send_message
       data_template:
-        message: "{{ states('sensor.hacs') }} HACS updates available"
+        message: >
+          {{ states('sensor.hacs') }} HACS update{% if states('sensor.hacs') > 1 %}s{% endif %} available
+          {%- for component in state_attr('sensor.hacs', 'repositories') %}
+          {{ '\n' }}*{{ component.display_name }}*
+          {{ component.installed_version }} → {{ component.available_version }}
+          {% endfor %}
 
   - alias: GitHub CoreELEC new release tag
     id: github_coreelec_new_release_tag
@@ -495,10 +500,14 @@ automation:
       - condition: template
         value_template: "{{ trigger.to_state.state != 'None' }}"
     action:
-      - service: notify.telegram
-        data_template:
-          title: "{{ state_attr('persistent_notification.http_login', 'message') }}"
-          message: "url: https://whatismyipaddress.com/ip/{{ state_attr('persistent_notification.http_login', 'message').split('from ')[1] }}"
+      - choose:
+          - conditions: >
+              {{ not state_attr('persistent_notification.http_login', 'message').split('from ')[1] | regex_match('172\.', ignorecase=False) }}
+            sequence:
+              - service: notify.telegram
+                data_template:
+                  title: "{{ state_attr('persistent_notification.http_login', 'message') }}"
+                  message: "url: https://whatismyipaddress.com/ip/{{ state_attr('persistent_notification.http_login', 'message').split('from ')[1] }}"
       - service: persistent_notification.dismiss
         data:
           notification_id: http_login
