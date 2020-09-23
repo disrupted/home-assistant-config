@@ -1,0 +1,14 @@
+alias: Vacuum clean desk
+icon: "mdi:monitor"
+description: 'Zone cleanup Desk'
+sequence:
+  - service: vacuum.set_fan_speed
+    entity_id: vacuum.nono
+    data:
+      fan_speed: medium
+  - service: vacuum.send_command
+    entity_id: vacuum.nono
+    data:
+      command: 'zoned_cleanup'
+      params:
+        'zone_ids': ['Desk']

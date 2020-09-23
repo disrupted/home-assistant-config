@@ -1,0 +1,7 @@
+alias: Companion update Polina
+icon: "mdi:apple"
+description: Request Update from iOS Companion app on Polinas phone
+sequence:
+  - service: notify.mobile_app_polina_iphone
+    data:
+      message: "request_location_update"

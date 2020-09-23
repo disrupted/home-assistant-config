@@ -1,0 +1,7 @@
+alias: iCloud Update
+icon: "mdi:apple-icloud"
+description: 'updates all device_trackers provided by iCloud component'
+sequence:
+  service: icloud.update
+  data:
+    account: !secret icloud_username

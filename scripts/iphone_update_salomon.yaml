@@ -1,0 +1,7 @@
+alias: Companion update Salomon
+icon: "mdi:apple"
+description: Request Update from iOS Companion app on Salomons phone
+sequence:
+  - service: notify.mobile_app_disrupted_iphone
+    data:
+      message: "request_location_update"

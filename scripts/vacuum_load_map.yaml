@@ -1,0 +1,27 @@
+alias: Vacuum load map
+icon: "mdi:robot-vacuum"
+description: 'loads previously stored vacuum map'
+fields:
+  map_name:
+    description: 'name of the map to load'
+    example: 'v1'
+sequence:
+  # - service: vacuum.send_command
+  #   entity_id: vacuum.nono
+  #   data:
+  #     command: custom_command
+  #     params:
+  #       command: load_map
+  #       name: "{{ map_name }}"
+  - service: vacuum.send_command
+    entity_id: vacuum.nono
+    data:
+      command: load_map
+      params:
+        'name': "{{ map_name }}"
+  - event: LOGBOOK_ENTRY
+    event_data:
+      name: Map
+      message: loaded
+      entity_id: vacuum.nono
+      domain: vacuum

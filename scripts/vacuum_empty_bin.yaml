@@ -1,0 +1,16 @@
+alias: Vacuum empty bin
+icon: "mdi:robot-vacuum"
+description: 'tells vacuum to come to the pickup point for emptying out the bin'
+sequence:
+  - service: vacuum.send_command
+    entity_id: vacuum.nono
+    data:
+      command: 'go_to'
+      params:
+        'spot_id': 'pickup'
+  # - event: LOGBOOK_ENTRY
+  #   event_data:
+  #     name: Bin
+  #     message: emptied
+  #     entity_id: vacuum.nono
+  #     domain: vacuum
