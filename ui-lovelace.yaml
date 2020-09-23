@@ -410,7 +410,7 @@ views:
     icon: "mdi:monitor"
     badges:
       - device_tracker.disrupted_mbp
-      - device_tracker.disrupted_ipad
+      - device_tracker.disrupted_ipadpro
       - device_tracker.disrupted_iphone
     cards:
       - type: entities
