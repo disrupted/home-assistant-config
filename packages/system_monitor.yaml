@@ -396,7 +396,7 @@ automation:
       service: telegram_bot.send_message
       data_template:
         message: >
-          {{ states('sensor.supervisor_updates') }} Supervisor update{% if states('sensor.supervisor_updates') > 1 %}s{% endif %} available
+          {{ states('sensor.supervisor_updates') }} Supervisor update{% if states('sensor.supervisor_updates') | int > 1 %}s{% endif %} available
           {% if state_attr('sensor.supervisor_updates', 'newest_version') | int > state_attr('sensor.supervisor_updates', 'current_version') | int %}
           Supervisor {{ state_attr('sensor.supervisor_updates', 'current_version') }} → {{ state_attr('sensor.supervisor_updates', 'newest_version') }}
           {% endif %}
@@ -418,7 +418,7 @@ automation:
       service: telegram_bot.send_message
       data_template:
         message: >
-          {{ states('sensor.hacs') }} HACS update{% if states('sensor.hacs') > 1 %}s{% endif %} available
+          {{ states('sensor.hacs') }} HACS update{% if states('sensor.hacs') | int > 1 %}s{% endif %} available
           {%- for component in state_attr('sensor.hacs', 'repositories') %}
           {{ '\n' }}*{{ component.display_name }}*
           {{ component.installed_version }} → {{ component.available_version }}
