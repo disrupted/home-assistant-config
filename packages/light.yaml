@@ -273,6 +273,17 @@ automation:
       service: light.turn_off
       entity_id: light.string
 
+  - alias: Light switch bed sleep
+    trigger:
+      - platform: device
+        device_id: 26e2dec1fe6f42caafb738958bc3b26a
+        domain: zha
+        type: remote_button_long_press
+        subtype: turn_off
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.sleeping
+
   - alias: Light switch bed nightlight
     trigger:
       - platform: device
