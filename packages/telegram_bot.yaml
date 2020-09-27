@@ -596,6 +596,9 @@ automation:
           command: "/ip"
       - platform: state
         entity_id: sensor.wan_ip
+    condition:
+      - condition: template
+        value_template: "{{ states('sensor.wan_ip') not in ['unknown', 'unavailable'] }}"
     action:
       - service: notify.telegram
         data_template:
