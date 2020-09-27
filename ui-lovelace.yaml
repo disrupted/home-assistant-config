@@ -283,8 +283,8 @@ views:
                   - type: "custom:slider-entity-row"
                     name: Bottom
                     entity: light.floor_lamp_bottom
-                  - entity: switch.circadian_lighting_floor
-                    name: Circadian
+                  - entity: switch.adaptive_lighting_floor
+                    name: Adaptive
               - light.chandelier
               - light.string
               - light.candle
@@ -365,10 +365,10 @@ views:
               toggle: true
               type: "custom:slider-entity-row"
             entities:
-              - entity: switch.circadian_lighting_bed
-                name: Circadian
-              - entity: switch.circadian_lighting_bed_no_brightness
-                name: Circadian (no brightness)
+              - entity: switch.adaptive_lighting_bed
+                name: Adaptive
+              - entity: switch.adaptive_lighting_bed_no_brightness
+                name: Adaptive (no brightness)
         show_header_toggle: false
       - entities:
           - type: custom:secondaryinfo-entity-row
@@ -425,8 +425,8 @@ views:
               toggle: true
               hide_when_off: false
             entities:
-              - entity: switch.circadian_lighting_desk
-                name: Circadian
+              - entity: switch.adaptive_lighting_desk
+                name: Adaptive
       - type: entities
         entities:
           - switch.printer

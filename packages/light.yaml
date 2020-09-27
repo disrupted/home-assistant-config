@@ -49,55 +49,55 @@ sun:
 #       allow_unreachable: true
 #       allow_hue_groups: true
 
-circadian_lighting:
-  min_colortemp: 2400 # 2200
-  max_colortemp: 6500
-  sunset_offset: "+01:15:00"
-  # sunset_time: "20:30:00"
-  sunrise_time: "06:00:00"
-  interval: 180
-  transition: 3
+# circadian_lighting:
+#   min_colortemp: 2400 # 2200
+#   max_colortemp: 6500
+#   sunset_offset: "+01:15:00"
+#   # sunset_time: "20:30:00"
+#   sunrise_time: "06:00:00"
+#   interval: 180
+#   transition: 3
 
-switch:
-  - platform: circadian_lighting
-    name: Floor
-    disable_brightness_adjust: true
-    lights_ct:
-      - light.floor_lamp
-  - platform: circadian_lighting
-    name: Bed
-    # disable_entity: input_boolean.movietime
-    # disable_state: 'on'
-    lights_ct:
-      - light.bed_lamp
-  - platform: circadian_lighting
-    name: Bed no brightness
-    lights_ct:
-      - light.bed_lamp
-    disable_brightness_adjust: true
-  - platform: circadian_lighting
-    name: Desk
-    disable_brightness_adjust: true
-    # min_brightness: 15
-    # max_brightness: 60
-    # disable_entity: input_boolean.movietime
-    # disable_state: 'on'
-    lights_ct:
-      - light.desk_lamp
-  # - platform: flux
-  #   lights:
-  #     - light.floor_lamp
-  #     - light.desk_lamp
-  #   name: Flux
-  #   start_time: '16:00' # '06:00'
-  #   stop_time: '01:00'
-  #   start_colortemp: 4000
-  #   sunset_colortemp: 3400
-  #   stop_colortemp: 2400
-  #   disable_brightness_adjust: True
-  #   mode: mired
-  #   transition: 3
-  #   interval: 180
+# switch:
+#   - platform: circadian_lighting
+#     name: Floor
+#     disable_brightness_adjust: true
+#     lights_ct:
+#       - light.floor_lamp
+#   - platform: circadian_lighting
+#     name: Bed
+#     # disable_entity: input_boolean.movietime
+#     # disable_state: 'on'
+#     lights_ct:
+#       - light.bed_lamp
+#   - platform: circadian_lighting
+#     name: Bed no brightness
+#     lights_ct:
+#       - light.bed_lamp
+#     disable_brightness_adjust: true
+#   - platform: circadian_lighting
+#     name: Desk
+#     disable_brightness_adjust: true
+#     # min_brightness: 15
+#     # max_brightness: 60
+#     # disable_entity: input_boolean.movietime
+#     # disable_state: 'on'
+#     lights_ct:
+#       - light.desk_lamp
+#   # - platform: flux
+#   #   lights:
+#   #     - light.floor_lamp
+#   #     - light.desk_lamp
+#   #   name: Flux
+#   #   start_time: '16:00' # '06:00'
+#   #   stop_time: '01:00'
+#   #   start_colortemp: 4000
+#   #   sunset_colortemp: 3400
+#   #   stop_colortemp: 2400
+#   #   disable_brightness_adjust: True
+#   #   mode: mired
+#   #   transition: 3
+#   #   interval: 180
 
 sensor:
   - platform: history_stats
