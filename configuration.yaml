@@ -87,7 +87,7 @@ lovelace:
       url: /hacsfiles/secondaryinfo-entity-row/secondaryinfo-entity-row.js
     # - type: module
     #   url: /hacsfiles/hass-bha-icons/hass-bha-icons.js
-    - url: /hacsfiles/zha-network-card/zha-network-card.js
+    - url: /local/zha-network-visualization-card/zha-network-visualization-card.js
       type: module
 
 config:

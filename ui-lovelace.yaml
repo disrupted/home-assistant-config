@@ -1347,12 +1347,12 @@ views:
       #   entities:
       #     - entity: sensor.disrupted_iphone_battery_state
       #     - entity: sensor.disrupted_ipadpro_battery_state
-      - type: entities
-        title: iCloud
-        show_header_toggle: false
-        entities:
-          - sensor.icloud_last_update
-          - script.icloud_update
+      # - type: entities
+      #   title: iCloud
+      #   show_header_toggle: false
+      #   entities:
+      #     - sensor.icloud_last_update
+      #     - script.icloud_update
       # - type: entities
       #   title: Sonoff Update
       #   show_header_toggle: false
@@ -1470,3 +1470,9 @@ views:
   #           - entity_id: binary_sensor.lights_left_on
   #         # exclude:
   #         #   - state: unavailable
+  - id: 13
+    title: ZHA
+    icon: "mdi:network"
+    panel: true
+    cards:
+      - type: "custom:zha-network-visualization-card"
