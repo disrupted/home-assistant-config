@@ -1,11 +1,11 @@
-"""Adaptive Lighting Component in Home-Assistant.
+"""Adaptive Lighting integration in Home-Assistant.
 
-This component calculates color temperature and brightness to synchronize
+This integration calculates color temperature and brightness to synchronize
 your color-changing lights with the perceived color temperature of the sky
 throughout the day. This gives your environment a more natural feel, with
 cooler whites during the midday and warmer tints near twilight and dawn.
 
-Additionally, the component sets your lights to a nice warm white at 1% in
+Additionally, the integration sets your lights to a nice warm white at 1% in
 "Sleep mode", which is far brighter than starlight but won't reset your
 circadian rhythm or break down too much rhodopsin in your eyes.
 
@@ -20,15 +20,15 @@ Resources:
 
 ## Notes
 * Only your location is taken into account to calculate the the sun's position.
-* Weather and altitude are not considered.
-* The component does not calculate a true "Blue Hour" -- it just sets the
+* Weather is not considered.
+* The integration does not calculate a true "Blue Hour" -- it just sets the
   lights to 2700K (warm white) until your hub goes into "Sleep mode".
 """
-import asyncio
 import logging
 
 import voluptuous as vol
 
+from homeassistant.components.switch import DOMAIN as SWITCH_DOMAIN
 from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
 import homeassistant.helpers.config_validation as cv
 
@@ -68,11 +68,10 @@ async def async_setup(hass, config):
 
 async def async_setup_entry(hass, config_entry: ConfigEntry):
     """Set up the component."""
-    hass.data.setdefault(DOMAIN, {})
+    data = hass.data.setdefault(DOMAIN, {})
 
     undo_listener = config_entry.add_update_listener(async_update_options)
-    hass.data[DOMAIN][config_entry.entry_id] = {UNDO_UPDATE_LISTENER: undo_listener}
-
+    data[config_entry.entry_id] = {UNDO_UPDATE_LISTENER: undo_listener}
     for platform in PLATFORMS:
         hass.async_create_task(
             hass.config_entries.async_forward_entry_setup(config_entry, platform)
@@ -88,17 +87,15 @@ async def async_update_options(hass, config_entry: ConfigEntry):
 
 async def async_unload_entry(hass, config_entry: ConfigEntry) -> bool:
     """Unload a config entry."""
-    unload_ok = all(
-        await asyncio.gather(
-            *[
-                hass.config_entries.async_forward_entry_unload(config_entry, platform)
-                for platform in PLATFORMS
-            ]
-        )
+    unload_ok = await hass.config_entries.async_forward_entry_unload(
+        config_entry, "switch"
     )
-    hass.data[DOMAIN][config_entry.entry_id][UNDO_UPDATE_LISTENER]()
+    data = hass.data[DOMAIN]
+    data[config_entry.entry_id][UNDO_UPDATE_LISTENER]()
+    switch = data[config_entry.entry_id][SWITCH_DOMAIN]
+    switch._unsub_trackers()  # pylint: disable=protected-access
 
     if unload_ok:
-        hass.data[DOMAIN].pop(config_entry.entry_id)
+        data.pop(config_entry.entry_id)
 
     return unload_ok
