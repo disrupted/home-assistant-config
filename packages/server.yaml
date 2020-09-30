@@ -29,6 +29,11 @@ rtorrent:
     - "downloading_torrents"
     - "active_torrents"
   scan_interval: 30
+
+sensor:
+  - platform: rest
+    name: Wireguard
+    resource: http://a0d7b954-wireguard
 # - platform: sonarr
 #  host: sonarr # !secret ip_vault
 #  api_key: !secret api_key_sonarr
