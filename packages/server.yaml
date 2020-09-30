@@ -29,14 +29,6 @@ rtorrent:
     - "downloading_torrents"
     - "active_torrents"
   scan_interval: 30
-# sensor:
-#   - platform: rtorrent
-#     name: rTorrent
-#     url: !secret rtorrent_url
-#     monitored_variables:
-#       - 'current_status'
-#       - 'download_speed'
-#       - 'upload_speed'
 # - platform: sonarr
 #  host: sonarr # !secret ip_vault
 #  api_key: !secret api_key_sonarr

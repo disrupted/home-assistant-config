@@ -3,6 +3,7 @@ custom_header:
   options: clock
   clock_format: 24
   hide_config: true
+  # footer_mode: true
   # default_tab_template: >
   #   if (states["input_boolean.home"].state == "off") "home";
   #   else if (states["input_boolean.away"].state == "on") 2;
@@ -173,26 +174,26 @@ views:
                   id: "https://st02.sslstream.dlf.de/dlf/02/high/opus/stream.opus"
       # - type: thermostat
       #   entity: climate.thermostat
-      - type: entities
-        show_header_toggle: false
-        entities:
-          - type: custom:secondaryinfo-entity-row
-            entity: binary_sensor.washing_machine
-            secondary_info: "[[ sensor.washing_machine_power.state ]] W | runtime [[ sensor.washing_machine_runtime.state ]] h"
-          - entity: switch.washing_machine_our_laundry
-            name: our Laundry?
-          # - input_datetime.washing_machine_started
-          # - input_datetime.washing_machine_finished
-          # - sensor.washing_machine_voltage
-          # - sensor.washing_machine_current
-          # - sensor.washing_machine_power
-          - entity: sensor.washing_machine_total_daily_energy
-            name: Energy Usage today
-            # secondary_info: "total runtime today [[ sensor.washing_machine_runtime_today.state ]] h"
-          - entity: sensor.washing_machine_total_daily_energy_cost
-            name: Energy Cost today
-          - entity: sensor.washing_machine_runtime_today
-            name: Runtime today
+      # - type: entities
+      #   show_header_toggle: false
+      #   entities:
+      #     - type: custom:secondaryinfo-entity-row
+      #       entity: binary_sensor.washing_machine
+      #       secondary_info: "[[ sensor.washing_machine_power.state ]] W | runtime [[ sensor.washing_machine_runtime.state ]] h"
+      #     - entity: switch.washing_machine_our_laundry
+      #       name: our Laundry?
+      #     # - input_datetime.washing_machine_started
+      #     # - input_datetime.washing_machine_finished
+      #     # - sensor.washing_machine_voltage
+      #     # - sensor.washing_machine_current
+      #     # - sensor.washing_machine_power
+      #     - entity: sensor.washing_machine_total_daily_energy
+      #       name: Energy Usage today
+      #       # secondary_info: "total runtime today [[ sensor.washing_machine_runtime_today.state ]] h"
+      #     - entity: sensor.washing_machine_total_daily_energy_cost
+      #       name: Energy Cost today
+      #     - entity: sensor.washing_machine_runtime_today
+      #       name: Runtime today
       - type: vertical-stack
         cards:
           - type: entities
@@ -252,10 +253,10 @@ views:
       #   # floor_color: darkgrey
       #   obstacle_weak_color: yellow
       #   obstacle_strong_color: green #'#A1DBFE'
-      - type: picture-glance
-        entities: []
-        camera_image: camera.xiaofang
-        show_state: false
+      # - type: picture-glance
+      #   entities: []
+      #   camera_image: camera.xiaofang
+      #   show_state: false
   - id: 1
     title: Sofa
     icon: "mdi:sofa"

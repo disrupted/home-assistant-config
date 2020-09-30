@@ -21,8 +21,8 @@ homekit:
       - switch.ps4
       - person.salomon
       - person.polina
-      - person.luke
-      - person.franzi
+      - person.max
+      - person.emmi
       - light.floor_lamp
       - light.bed_lamp
       - light.desk_lamp
@@ -30,7 +30,7 @@ homekit:
       - media_player.tv
       - media_player.kodi
       - media_player.google_home
-      - camera.xiaofang
+      # - camera.xiaofang
   entity_config:
     media_player.google_home:
       feature_list:

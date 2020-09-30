@@ -178,16 +178,6 @@ group:
       - sensor.dwd_weather_warnings_advance_warning_level
       - sensor.dwd_weather_warnings_current_warning_level
 
-  # luftdaten:
-  #   name: Luftdaten
-  #   icon: mdi:weather-windy
-  #   entities:
-  #     - sensor.waqi
-  #     - sensor.luftdaten_pm10
-  #     - sensor.luftdaten_pm25
-  #     - sensor.luftdaten_temperature
-  #     - sensor.luftdaten_humidity
-
 sensor:
   - platform: dwd_weather_warnings
     name: DWD Weather Warnings
@@ -468,13 +458,13 @@ binary_sensor:
         entity_id: sensor.weather_yr_precipitation
         device_class: moisture
 
-luftdaten:
-  sensor_id: !secret luftdaten_sensorid_airquality
-  show_on_map: false
-  sensors:
-    monitored_conditions:
-      - P1
-      - P2
+# luftdaten:
+#   sensor_id: !secret luftdaten_sensorid_airquality
+#   show_on_map: false
+#   sensors:
+#     monitored_conditions:
+#       - P1
+#       - P2
 
 openuv:
   api_key: !secret api_key_openuv
