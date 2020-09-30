@@ -405,6 +405,21 @@ automation:
           {{ addon.installed }} → {{ addon.version }}
           {% endfor %}
 
+  - alias: Supervisor updates installed
+    id: supervisor_updates_installed
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.supervisor_updates
+        below: 1
+    condition:
+      - condition: template
+        value_template: "{{ trigger.from_state.state | int > trigger.to_state.state | int }}"
+    action:
+      service: telegram_bot.send_message
+      data_template:
+        message: >
+          Supervisor updates installed
+
   - alias: HACS updates available
     id: hacs_updates_available
     trigger:
@@ -423,6 +438,21 @@ automation:
           {{ '\n' }}*{{ component.display_name }}*
           {{ component.installed_version }} → {{ component.available_version }}
           {% endfor %}
+
+  - alias: HACS updates installed
+    id: hacs_updates_installed
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.hacs
+        below: 1
+    condition:
+      - condition: template
+        value_template: "{{ trigger.from_state.state | int > trigger.to_state.state | int }}"
+    action:
+      service: telegram_bot.send_message
+      data_template:
+        message: >
+          HACS updates installed
 
   - alias: GitHub CoreELEC new release tag
     id: github_coreelec_new_release_tag
