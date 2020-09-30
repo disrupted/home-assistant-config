@@ -5,10 +5,10 @@ sensor:
         friendly_name: "Day Phase"
         value_template: >-
           {% if now() >= now().replace(hour=0, minute=0, second=0) and
-              now() < now().replace(hour=8, minute=0, second=0) %}
+              now() < now().replace(hour=7, minute=59, second=0) %}
               Night
-          {% elif now() >= now().replace(hour=8, minute=0, second=0) and
-              now() < now().replace(hour=11, minute=0, second=0) %}
+          {% elif now() >= now().replace(hour=7, minute=59, second=0) and
+              now() < now().replace(hour=10, minute=59, second=0) %}
               Morning
           {% elif is_state('sun.sun', 'above_horizon') %}
               Day
@@ -19,32 +19,77 @@ sensor:
           {% if is_state('sun.sun', 'above_horizon') %}mdi:white-balance-sunny{% else %}mdi:moon-waxing-crescent{% endif %}
 
 automation:
+  - alias: Day phase update
+    trigger:
+      - platform: homeassistant
+        event: start
+      - platform: time
+        at:
+          - "00:00:00"
+          - "08:00:00"
+          - "11:00:00"
+      # - platform: sun  # happens automatically due to sun.sun being in the template
+      #   event: sunrise
+      # - platform: sun
+      #   event: sunset
+    action:
+      - service: homeassistant.update_entity
+        data:
+          entity_id: sensor.day_phase
+
   - alias: Routine Bedtime
     trigger:
       - platform: time
         at: "00:30:00"
     condition:
+      # make sure I am at home and not sleeping
       - condition: state
         entity_id: input_boolean.present
         state: "on"
+      - condition: state
+        entity_id: person.salomon
+        state: "home"
       - condition: state
         entity_id: input_boolean.sleeping
         state: "off"
       - condition: state
         entity_id: binary_sensor.bayesian_sleeping
         state: "off"
+      # since we'll be changing the light scene make sure those lights are not off
       - condition: state
         entity_id: light.livingroom
         state: "on"
       - condition: state
-        entity_id: binary_sensor.workday_sensor
+        entity_id: light.bed_lamp
         state: "on"
       - condition: state
-        entity_id: binary_sensor.movietime
+        entity_id: light.floor_lamp
+        state: "on"
+      # only do this on workdays
+      - condition: state
+        entity_id: binary_sensor.workday_sensor
+        state: "on"
+      # don't do it in the middle of a movie, perhaps at some point
+      - condition: state
+        entity_id: input_boolean.movietime
         state: "off"
+      # if guests are over it's ok to stay up :)
+      - condition: state
+        entity_id: group.guests
+        state: "not_home"
     action:
       - service: scene.turn_on
         entity_id: scene.bedtime
-      - service: notify.mobile_app_disrupted_iphone
-        data_template:
-          message: "It's getting pretty late. Don't forget to go to bed soon."
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: binary_sensor.disrupted_mbp_active
+                state: "on"
+            sequence:
+              - service: notify.mobile_app_disrupted_mbp
+                data_template:
+                  message: "It's getting pretty late. Don't forget to go to bed soon."
+        default:
+          - service: notify.mobile_app_disrupted_iphone
+            data_template:
+              message: "It's getting pretty late. Don't forget to go to bed soon."
