@@ -513,7 +513,7 @@ automation:
     action:
       - choose:
           - conditions: >
-              {{ not state_attr('persistent_notification.http_login', 'message').split('from ')[1] | regex_match('172\.', ignorecase=False) }}
+              {{ not state_attr('persistent_notification.http_login', 'message').split('from ')[1] | regex_match('172\.|192\.168\.', ignorecase=False) }}
             sequence:
               - service: notify.telegram
                 data_template:
