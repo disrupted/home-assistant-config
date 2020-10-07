@@ -6,6 +6,7 @@ ignore: |
   scenes.yaml
   themes/**
   .github/
+  node_modules
 rules:
   braces:
     level: error
