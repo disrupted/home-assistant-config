@@ -14,8 +14,8 @@ automation:
     trigger:
       platform: state
       entity_id: input_boolean.present
-      from: 'off'
-      to: 'on'
+      from: "off"
+      to: "on"
     action:
       - service: input_boolean.turn_off
         entity_id: input_boolean.away
@@ -25,8 +25,8 @@ automation:
     trigger:
       platform: state
       entity_id: input_boolean.away
-      from: 'off'
-      to: 'on'
+      from: "off"
+      to: "on"
     action:
       - service: input_boolean.turn_off
         entity_id: input_boolean.present
@@ -40,8 +40,8 @@ automation:
     trigger:
       platform: state
       entity_id: input_boolean.away
-      from: 'on'
-      to: 'off'
+      from: "on"
+      to: "off"
     action:
       - service: climate.set_away_mode
         data:
@@ -53,17 +53,17 @@ automation:
     trigger:
       platform: state
       entity_id: input_boolean.present
-      from: 'on'
-      to: 'off'
+      from: "on"
+      to: "off"
       for:
         hours: 24
     condition:
       - condition: state
         entity_id: input_boolean.away
-        state: 'off'
+        state: "off"
     action:
       - service: input_boolean.turn_on
         entity_id: input_boolean.away
       - service: notify.all
         data:
-          message: 'Away Mode activated after 24h absence.'
+          message: "Away Mode activated after 24h absence."

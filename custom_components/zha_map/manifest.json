@@ -4,7 +4,5 @@
   "documentation": "https://github.com/zha-ng/zha-map",
   "requirements": [],
   "dependencies": ["zha"],
-  "codeowners": [
-    "@adminiuga"
-  ]
+  "codeowners": ["@adminiuga"]
 }

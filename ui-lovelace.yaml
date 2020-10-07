@@ -1227,7 +1227,6 @@ views:
     icon: "mdi:raspberry-pi"
     cards:
       - entities:
-          - script.ha_restart
           - sensor.wan_ip
           - sensor.connected_clients
           # - sensor.processor_use

@@ -1,5 +1,5 @@
 alias: Restart Home Assistant
 icon: "mdi:home-assistant"
-description: 'restarts Home Assistant'
+description: "restarts Home Assistant"
 sequence:
   service: homeassistant.restart

@@ -95,9 +95,7 @@ class ZHANetworkVisualizationCard extends HTMLElement {
 
   _updateTimestamp(timestamp) {
     var date = new Date(timestamp * 1000);
-    var iso = date
-      .toISOString()
-      .match(/(\d{4}\-\d{2}\-\d{2})T(\d{2}:\d{2}:\d{2})/);
+    var iso = date.toISOString().match(/(\d{4}\-\d{2}\-\d{2})T(\d{2}:\d{2}:\d{2})/);
     this.timelabel.innerHTML = iso[1] + " " + iso[2];
   }
 
@@ -194,10 +192,7 @@ class ZHANetworkVisualizationCard extends HTMLElement {
   }
 
   set hass(hass) {
-    if (
-      this.lastUpdated &&
-      new Date(this.lastUpdated + this.bufferTime) > Date.now()
-    ) {
+    if (this.lastUpdated && new Date(this.lastUpdated + this.bufferTime) > Date.now()) {
       return;
     }
     hass
@@ -224,7 +219,4 @@ class ZHANetworkVisualizationCard extends HTMLElement {
   }
 }
 
-customElements.define(
-  "zha-network-visualization-card",
-  ZHANetworkVisualizationCard
-);
+customElements.define("zha-network-visualization-card", ZHANetworkVisualizationCard);
