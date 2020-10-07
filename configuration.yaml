@@ -9,7 +9,7 @@ homeassistant:
   external_url: !secret external_url
   # customize_domain: {}
   packages: !include_dir_named packages
-  whitelist_external_dirs:
+  allowlist_external_dirs:
     - /tmp
     - /config
 
