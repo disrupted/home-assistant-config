@@ -1,0 +1,192 @@
+substitutions:
+  name: "washing_machine"
+  friendly_name: "Washing Machine"
+
+esphome:
+  name: ${name}
+  platform: ESP8266
+  board: esp8285
+  arduino_version: 2.4.2
+
+  # on_boot:
+  #   priority: 100 # Highest priority, ensures light turns on without delay.
+  #   then:
+  #     - switch.turn_on: relay
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  fast_connect: true
+  reboot_timeout: 0s
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${friendly_name} Fallback Hotspot"
+    password: !secret esphome_washingmachine_hotspot_pass
+
+# captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  reboot_timeout: 0s
+
+ota:
+
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+switch:
+  - platform: gpio
+    name: "${friendly_name} Relay"
+    icon: "mdi:power-socket-eu"
+    pin: GPIO12
+    id: relay
+    restore_mode: ALWAYS_ON
+
+  - platform: restart
+    name: "${friendly_name} Restart"
+
+  - platform: template
+    name: "${friendly_name} our laundry"
+    id: "switch_our_laundry"
+    icon: mdi:human-male-female
+    restore_state: true
+    lambda: |-
+      if (id(binary_our_laundry).state) {
+        return true;
+      } else {
+        return false;
+      }
+    turn_on_action:
+      - binary_sensor.template.publish:
+          id: "binary_our_laundry"
+          state: !lambda "return true;"
+    turn_off_action:
+      - binary_sensor.template.publish:
+          id: "binary_our_laundry"
+          state: !lambda "return false;"
+
+sensor:
+  - platform: wifi_signal
+    name: "${friendly_name} WiFi Signal"
+    update_interval: 60s
+
+  - platform: hlw8012
+    sel_pin: 5
+    cf_pin: 14
+    cf1_pin: 13
+    current:
+      name: "${friendly_name} Current"
+      accuracy_decimals: 3
+      filters:
+        # Make everything below 0.3A appear as 0A.
+        - lambda: if (x < 0.3) return 0; else return x;
+    voltage:
+      name: "${friendly_name} Voltage"
+      accuracy_decimals: 0
+    power:
+      name: "${friendly_name} Power"
+      unit_of_measurement: W
+      id: "${name}_power"
+      # icon: mdi:flash-circle
+      # accuracy_decimals: 3
+      # filters:
+      #  Multiplication factor from W to kW is 0.001
+      #   - multiply: 0.001
+      # filters:
+      #  Make everything below 2W appear as just 0W.
+      #  Furthermore it corrects 1.0W for the power usage of the plug.
+      # - lambda: if (x < (2 + 1)) return 0; else return (x - 1);
+      filters:
+        # Make everything below 3W appear as just 0W.
+        # Furthermore it corrects 1.0W for the power usage of the plug.
+        - lambda: if (x < 3) return 0; else return x;
+    update_interval: 10s
+
+  - platform: total_daily_energy
+    name: "${friendly_name} Total Daily Energy"
+    power_id: "${name}_power"
+    id: "${name}_total_daily_energy"
+    icon: mdi:counter
+    accuracy_decimals: 3
+    unit_of_measurement: kWh
+    filters:
+      - multiply: 0.001
+
+  - platform: template
+    name: "${friendly_name} Total Daily Energy Cost"
+    lambda: |-
+      return (id(${name}_total_daily_energy).state) * 0.30;
+    update_interval: 60s
+    unit_of_measurement: €
+    accuracy_decimals: 2
+    icon: mdi:cash-multiple
+
+binary_sensor:
+  - platform: status
+    name: "${friendly_name} Status"
+
+  # Binary sensor for the button press
+  - platform: gpio
+    name: "${friendly_name} Button"
+    pin:
+      number: GPIO0
+      inverted: true
+    filters:
+      - delayed_off: 100ms
+    on_press:
+      then:
+        - binary_sensor.template.publish:
+            id: "binary_our_laundry"
+            # state: !lambda 'return id(${name}_our_laundry).state == 'OFF';'
+            state: !lambda |-
+              if (id(binary_our_laundry).state) {
+                return false;
+              } else {
+                return true;
+              }
+
+  - platform: template
+    name: "${friendly_name}"
+    lambda: |-
+      if (id(${name}_power).state > 7) {
+        // Washing machine is running.
+        return true;
+      } else {
+        // Washing machine is not running.
+        return false;
+      }
+    filters:
+      - delayed_on: 10s
+      - delayed_off: 240s
+
+  - platform: template
+    name: "${friendly_name} our laundry"
+    id: "binary_our_laundry"
+    internal: true
+    on_press:
+      - then:
+          - light.turn_on: sonoff_pow_blue_led
+    on_release:
+      - then:
+          - light.turn_off: sonoff_pow_blue_led
+
+output:
+  - platform: esp8266_pwm
+    id: sonoff_pow_blue_led_output
+    pin:
+      number: GPIO15
+
+light:
+  - platform: monochromatic
+    name: "${friendly_name} Status LED"
+    id: sonoff_pow_blue_led
+    output: sonoff_pow_blue_led_output
+    default_transition_length: 200ms
+    internal: true
+# status_led:
+#   pin: GPIO15
