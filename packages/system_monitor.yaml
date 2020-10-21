@@ -356,9 +356,11 @@ automation:
           - sensor.latest_stable_version
     condition:
       - condition: template
-        value_template: "{{ trigger.from_state.state not in ['unknown', 'unavailable'] }}"
+        value_template: "{{ trigger.from_state.state not in ['unknown', 'unavailable', None] }}"
       - condition: template
-        value_template: "{{ trigger.to_state.state not in ['unknown', 'unavailable'] }}"
+        value_template: "{{ trigger.to_state.state not in ['unknown', 'unavailable', None] }}"
+      - condition: template
+        value_template: "{{ trigger.to_state.state != states('sensor.current_version') }}"
     action:
       service: telegram_bot.send_message
       data_template:
@@ -442,9 +444,9 @@ automation:
       entity_id: sensor.github_coreelec_tag
     condition:
       - condition: template
-        value_template: "{{ trigger.from_state.state not in ['unknown', 'unavailable'] }}"
+        value_template: "{{ trigger.from_state.state not in ['unknown', 'unavailable', None] }}"
       - condition: template
-        value_template: "{{ trigger.to_state.state not in ['unknown', 'unavailable'] }}"
+        value_template: "{{ trigger.to_state.state not in ['unknown', 'unavailable', None] }}"
     action:
       service: notify.all
       data_template:
@@ -457,9 +459,9 @@ automation:
       entity_id: sensor.github_home_assistant_release
     condition:
       - condition: template
-        value_template: "{{ trigger.from_state.state not in ['unavailable', 'unknown'] }}"
+        value_template: "{{ trigger.from_state.state not in ['unavailable', 'unknown', None] }}"
       - condition: template
-        value_template: "{{ trigger.to_state.state not in ['unavailable', 'unknown'] }}"
+        value_template: "{{ trigger.to_state.state not in ['unavailable', 'unknown', None] }}"
       - condition: template
         value_template: "{{ trigger.to_state.state != state_attr('binary_sensor.updater', 'newest_version') }}"
       - condition: template
