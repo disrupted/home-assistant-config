@@ -119,6 +119,7 @@ recorder:
       - zone
       - zha
       - history_graph
+      - history_stats
       - plant
     entities:
       - sun.sun
@@ -173,6 +174,7 @@ recorder:
       - sensor.rtorrent_downloading_torrents
       - sensor.rtorrent_uploading_torrents
       - sensor.nzbget_speed
+      - sensor.disrupted_mbp_usage_today
 
 influxdb:
   host: a0d7b954-influxdb

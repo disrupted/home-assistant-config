@@ -22,8 +22,8 @@ sensor:
     entity_id: binary_sensor.disrupted_mbp_active
     state: "on"
     type: time
-    # start: '{{ now().replace(hour=8, minute=0, second=0) }}'
+    start: "{{ now().replace(hour=8, minute=0, second=0) }}"
     # start: '{{ (as_timestamp(now().replace(hour=20, minute=0, second=0)) - 24 * 3600) }}'
     end: "{{ now() }}"
-    duration:
-      hours: 16
+    # duration:
+    #   hours: 16
