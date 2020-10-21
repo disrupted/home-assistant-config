@@ -1,0 +1,17 @@
+alias: Adaptive Lighting apply
+icon: mdi:image-filter-frames
+description: "Update light color temperature using Adaptive Lighting"
+fields:
+  transition:
+    description: "duration of transition"
+    example: 10
+sequence:
+  - service: adaptive_lighting.apply
+    data:
+      entity_id: switch.adaptive_lighting_default
+      adapt_brightness: false
+      transition: "{{ transition }}"
+      lights:
+        - light.bed_lamp
+        - light.desk_lamp
+        - light.floor_lamp

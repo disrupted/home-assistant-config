@@ -115,6 +115,60 @@ sensor:
   #       value_template: "{{ state_attr('sensor.adaptive_values', 'colortemp') }}"
 
 automation:
+  - id: light_adaptive_apply
+    alias: Light Adaptive apply
+    trigger:
+      - platform: time_pattern
+        minutes: "/10"
+      - platform: homeassistant
+        event: start
+      - platform: state
+        entity_id:
+          - light.bed_lamp
+          - light.desk_lamp
+          - light.floor_lamp
+        from: "off"
+        to: "on"
+    condition:
+      - condition: state
+        entity_id:
+          - switch.adaptive_lighting_bed
+          - switch.adaptive_lighting_desk
+          - switch.adaptive_lighting_floor
+        state: "off"
+    action:
+      # - service: script.adaptive_lighting_apply
+      #   data:
+      #     transition: 10
+      - service: script.adaptive_lighting
+        data:
+          entities:
+            - light.bed_lamp
+            - light.desk_lamp
+            - light.floor_lamp
+
+  # - id: light_adaptive_apply_turn_on
+  #   alias: Light Adaptive apply when light turns on
+  #   trigger:
+  #     - platform: state
+  #       entity_id:
+  #         - light.bed_lamp
+  #         - light.desk_lamp
+  #         - light.floor_lamp
+  #       from: "off"
+  #       to: "on"
+  #   condition:
+  #     - condition: state
+  #       entity_id:
+  #         - switch.adaptive_lighting_bed
+  #         - switch.adaptive_lighting_desk
+  #         - switch.adaptive_lighting_floor
+  #       state: "off"
+  #   action:
+  #     - service: script.adaptive_lighting_apply
+  #       data:
+  #         transition: 1
+
   # - id: light_adaptive_off_when_hue_scene
   #   alias: Light Adaptive OFF when Hue Scene
   #   trigger:

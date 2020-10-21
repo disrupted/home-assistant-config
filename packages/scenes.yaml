@@ -92,21 +92,21 @@ scene:
         transition: 1
       switch.chandelier:
         state: "off"
-      switch.adaptive_lighting_floor:
-        state: "on"
-      switch.adaptive_lighting_bed:
-        state: "on"
-      switch.adaptive_lighting_desk:
-        state: "on"
+      # switch.adaptive_lighting_floor:
+      #   state: "on"
+      # switch.adaptive_lighting_bed:
+      #   state: "on"
+      # switch.adaptive_lighting_desk:
+      #   state: "on"
 
   - name: Sunset
     entities:
-      switch.adaptive_lighting_floor:
-        state: "on"
-      switch.adaptive_lighting_bed:
-        state: "on"
-      switch.adaptive_lighting_desk:
-        state: "on"
+      # switch.adaptive_lighting_floor:
+      #   state: "on"
+      # switch.adaptive_lighting_bed:
+      #   state: "on"
+      # switch.adaptive_lighting_desk:
+      #   state: "on"
       light.floor_lamp:
         state: "on"
         brightness: 255
@@ -123,10 +123,10 @@ scene:
 
   - name: Dim
     entities:
-      switch.adaptive_lighting_bed:
-        state: "off"
-      switch.adaptive_lighting_bed_no_brightness:
-        state: "on"
+      # switch.adaptive_lighting_bed:
+      #   state: "off"
+      # switch.adaptive_lighting_bed_no_brightness:
+      #   state: "on"
       light.floor_lamp:
         state: "on"
         transition: 4
@@ -149,8 +149,8 @@ scene:
 
   - name: Undim
     entities:
-      switch.adaptive_lighting_bed:
-        state: "on"
+      # switch.adaptive_lighting_bed:
+      #   state: "on"
       light.floor_lamp:
         state: "on"
         transition: 10
@@ -171,17 +171,17 @@ scene:
 
   - name: Bedtime
     entities:
-      switch.adaptive_lighting_floor:
-        state: "off"
+      # switch.adaptive_lighting_floor:
+      #   state: "off"
       light.floor_lamp:
         state: "on"
         transition: 4
         brightness: 51
         kelvin: 2200
-      switch.adaptive_lighting_bed:
-        state: "off"
-      switch.adaptive_lighting_bed_no_brightness:
-        state: "off"
+      # switch.adaptive_lighting_bed:
+      #   state: "off"
+      # switch.adaptive_lighting_bed_no_brightness:
+      #   state: "off"
       light.bed_lamp:
         state: "on"
         profile: bedtime
