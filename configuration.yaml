@@ -35,8 +35,6 @@ lovelace:
   mode: yaml
   resources:
     - type: module
-      url: /hacsfiles/custom-header/custom-header.js
-    - type: module
       url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js
     - type: module
       url: /hacsfiles/mini-media-player/mini-media-player-bundle.js
