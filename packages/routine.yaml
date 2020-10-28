@@ -78,8 +78,10 @@ automation:
         entity_id: group.guests
         state: "not_home"
     action:
-      - service: scene.turn_on
-        entity_id: scene.bedtime
+      - service: script.scene
+        data:
+          scene: bedtime
+          transition: 4
       - choose:
           - conditions:
               - condition: state

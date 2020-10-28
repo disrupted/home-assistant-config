@@ -9,9 +9,6 @@ homeassistant:
     automation.sunset_*:
       icon: mdi:weather-sunset-down
   customize:
-    switch.flux:
-      friendly_name: Flux
-      icon: mdi:image-filter-frames
     light.floor_lamp:
       icon: mdi:floor-lamp
     # light.floor_lamp_top:
@@ -129,6 +126,8 @@ automation:
           - light.floor_lamp
         from: "off"
         to: "on"
+        for:
+          seconds: 1
     condition:
       - condition: state
         entity_id:
@@ -281,8 +280,12 @@ automation:
         value_template: >
           {{ is_state('light.floor_lamp', 'off') or is_state('light.bed_lamp', 'off') or is_state('light.desk_lamp', 'off') }}
     action:
-      - service: scene.turn_on
-        entity_id: scene.sunset
+      # - service: scene.turn_on
+      #   entity_id: scene.sunset
+      - service: script.scene
+        data:
+          scene: sunset
+          transition: 10
 
   - alias: Light Sunset lightchain
     trigger:

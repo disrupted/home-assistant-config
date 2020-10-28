@@ -74,7 +74,7 @@ automation:
           - condition: template
             value_template: '{{ is_state_attr("media_player.ps4", "media_content_type", "movie") }}'
     action:
-      - service: scene.turn_on
-        data_template:
-          entity_id: scene.dim
-          # brightness: "{{ states('input_number.scene_brightness') | int }}"
+      - service: script.scene
+        data:
+          scene: dim
+          transition: 5

@@ -80,17 +80,17 @@ scene:
       light.floor_lamp:
         state: "on"
         brightness: 255
-        transition: 1
+        # transition: 1
       light.bed_lamp:
         state: "on"
         # profile: standard
         brightness: 255
-        transition: 1
+        # transition: 1
       light.desk_lamp:
         state: "on"
-        brightness_pct: 55
-        transition: 1
-      switch.chandelier:
+        brightness: 140
+        # transition: 1
+      light.chandelier:
         state: "off"
       # switch.adaptive_lighting_floor:
       #   state: "on"
@@ -110,16 +110,16 @@ scene:
       light.floor_lamp:
         state: "on"
         brightness: 255
-        transition: 6
+        # transition: 6
       light.bed_lamp:
         state: "on"
         # profile: standard
         brightness: 255
-        transition: 10
+        # transition: 10
       light.desk_lamp:
         state: "on"
         brightness: 102
-        transition: 10
+        # transition: 10
 
   - name: Dim
     entities:
@@ -129,22 +129,21 @@ scene:
       #   state: "on"
       light.floor_lamp:
         state: "on"
-        transition: 4
+        # transition: 4
         brightness: 38
-        # brightness_pct: 15
       light.bed_lamp:
         state: "on"
-        transition: 8
+        # transition: 8
         brightness: 38
       light.desk_lamp:
         state: "off"
-        transition: 3
-      switch.chandelier:
+        # transition: 3
+      light.chandelier:
         state: "off"
       light.candle:
         state: "on"
         brightness: 255
-        transition: 2
+        # transition: 2
         effect: Flicker
 
   - name: Undim
@@ -153,17 +152,17 @@ scene:
       #   state: "on"
       light.floor_lamp:
         state: "on"
-        transition: 10
-        brightness: 77
+        # transition: 10
+        brightness: 168 # 77
 
   - name: Relax
     entities:
       light.floor_lamp:
         state: "on"
         transition: 6
-        brightness_pct: 40
+        brightness: 102
         # kelvin: 2200
-      switch.chandelier:
+      light.chandelier:
         state: "off"
       light.bed_lamp:
         state: "on"
@@ -175,7 +174,7 @@ scene:
       #   state: "off"
       light.floor_lamp:
         state: "on"
-        transition: 4
+        # transition: 4
         brightness: 51
         kelvin: 2200
       # switch.adaptive_lighting_bed:
@@ -184,15 +183,17 @@ scene:
       #   state: "off"
       light.bed_lamp:
         state: "on"
-        profile: bedtime
+        # profile: bedtime
+        xy_color: [0.656, 0.34]
+        brightness: 15
         # flash: long
-        transition: 4
+        # transition: 4
       light.desk_lamp:
         state: "off"
         # brightness: 50
         # transition: 4
         # flash: long
-      switch.chandelier:
+      light.chandelier:
         state: "off"
 
   - name: Daytime
@@ -202,11 +203,11 @@ scene:
         transition: 1
         brightness: 255
         # kelvin: 4000
-      # switch.chandelier: "off"
+      # light.chandelier: "off"
 
   - name: Max
     entities:
-      switch.chandelier:
+      light.chandelier:
         state: "on"
 
   - name: Night
@@ -219,10 +220,10 @@ scene:
       #   state: "off"
       light.livingroom:
         state: "off"
-        transition: 3
+        # transition: 3
       light.candle:
         state: "off"
-      # switch.chandelier:
+      # light.chandelier:
       #   state: "off"
       # switch.adaptive_lighting_bed:
       #   state: "on"
@@ -240,7 +241,7 @@ scene:
         state: paused
       light.livingroom:
         state: "off"
-        transition: 1
+        # transition: 1
       light.candle:
         state: "off"
       climate.thermostat:
@@ -254,7 +255,7 @@ scene:
         state: "off"
       media_player.ps4:
         state: "off"
-      # switch.chandelier:
+      # light.chandelier:
       #   state: "off"
 
   - name: "OFF"
@@ -305,34 +306,10 @@ automation:
       condition: template
       value_template: "{{ not is_state('input_select.scene', 'Select') }}"
     action:
-      # - service: automation.turn_off
-      #   entity_id: automation.scene_event
-      - service: scene.turn_on
+      - service: script.scene
         data_template:
-          entity_id: "scene.{{ trigger.to_state.state.replace(' ', '_').replace('&', 'and') | lower }}"
-          # brightness: "{{ states('input_number.scene_brightness') | int }}"
-      # - delay: '00:00:02'
-      # - service: automation.turn_on
-      #   entity_id: automation.scene_event
-
-  # - id: hue_scene_event
-  #   alias: Hue Scene Event
-  #   trigger:
-  #     - platform: event
-  #       event_type: call_service
-  #       event_data:
-  #         domain: hue
-  #         service: hue_activate_scene
-  #         # service_data:
-  #         #   entity_id: [scene.test]
-  #   action:
-  #     - service: persistent_notification.create
-  #       data_template:
-  #         title: "Hue Scene"
-  #         message: "{{ trigger.event.data.service_data.scene_name }}"
-  #     - service: notify.kodi
-  #       data_template:
-  #         message: "Hue Scene '{{ trigger.event.data.service_data.scene_name }}'"
+          scene: "scene.{{ trigger.to_state.state.replace(' ', '_').replace('&', 'and') | lower }}"
+          transition: 2
 
   - id: scene_event
     alias: scene_event

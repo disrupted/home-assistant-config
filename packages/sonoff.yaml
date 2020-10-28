@@ -19,7 +19,7 @@ homeassistant:
     light.string:
       friendly_name: Lightstring
       icon: mdi:string-lights
-    # switch.chandelier:
+    # light.chandelier:
     #   icon: 'bha:chandelier' #mdi:ceiling-light
     #   assumed_state: false
     #   aliases:
@@ -52,61 +52,61 @@ group:
       - sensor.sonoff_15_version
       - script.update_sonoffs
 
-switch:
-  # - platform: mqtt
-  #   name: 'Christmas Lights'
-  #   state_topic: 'home/tasmota/christmas_lights/stat/POWER'
-  #   command_topic: 'home/tasmota/christmas_lights/cmnd/POWER'
-  #   availability_topic: 'home/tasmota/christmas_lights/tele/LWT'
-  #   qos: 1
-  #   payload_on: 'ON'
-  #   payload_off: 'OFF'
-  #   payload_available: 'Online'
-  #   payload_not_available: 'Offline'
-  #   retain: false
-  #   optimistic: true
-  # - platform: mqtt
-  #   name: 'Sonoff power'
-  #   state_topic: 'home/tasmota/sonoff_pow/stat/POWER'
-  #   command_topic: 'home/tasmota/sonoff_pow/cmnd/POWER'
-  #   availability_topic: 'home/tasmota/sonoff_pow/tele/LWT'
-  #   qos: 1
-  #   payload_on: 'ON'
-  #   payload_off: 'OFF'
-  #   payload_available: 'Online'
-  #   payload_not_available: 'Offline'
-  #   retain: false
-  #   optimistic: true
-  # - platform: mqtt
-  #   name: 'Amp'
-  #   state_topic: 'home/tasmota/amp/stat/POWER'
-  #   command_topic: 'home/tasmota/amp/cmnd/POWER'
-  #   availability_topic: 'home/tasmota/amp/tele/LWT'
-  #   qos: 1
-  #   payload_on: 'ON'
-  #   payload_off: 'OFF'
-  #   payload_available: 'Online'
-  #   payload_not_available: 'Offline'
-  #   retain: false
-  #   optimistic: false
-  # - platform: mqtt
-  #   name: Chandelier
-  #   state_topic: 'home/tasmota/chandelier/stat/POWER'
-  #   command_topic: 'home/tasmota/chandelier/cmnd/POWER1'
-  #   availability_topic: 'home/tasmota/chandelier/tele/LWT'
-  #   qos: 1
-  #   payload_on: 'ON'
-  #   payload_off: 'OFF'
-  #   payload_available: 'Online'
-  #   payload_not_available: 'Offline'
-  #   retain: false
-  #   optimistic: true
-  #   # assumed_state: false
+#switch:
+# - platform: mqtt
+#   name: 'Christmas Lights'
+#   state_topic: 'home/tasmota/christmas_lights/stat/POWER'
+#   command_topic: 'home/tasmota/christmas_lights/cmnd/POWER'
+#   availability_topic: 'home/tasmota/christmas_lights/tele/LWT'
+#   qos: 1
+#   payload_on: 'ON'
+#   payload_off: 'OFF'
+#   payload_available: 'Online'
+#   payload_not_available: 'Offline'
+#   retain: false
+#   optimistic: true
+# - platform: mqtt
+#   name: 'Sonoff power'
+#   state_topic: 'home/tasmota/sonoff_pow/stat/POWER'
+#   command_topic: 'home/tasmota/sonoff_pow/cmnd/POWER'
+#   availability_topic: 'home/tasmota/sonoff_pow/tele/LWT'
+#   qos: 1
+#   payload_on: 'ON'
+#   payload_off: 'OFF'
+#   payload_available: 'Online'
+#   payload_not_available: 'Offline'
+#   retain: false
+#   optimistic: true
+# - platform: mqtt
+#   name: 'Amp'
+#   state_topic: 'home/tasmota/amp/stat/POWER'
+#   command_topic: 'home/tasmota/amp/cmnd/POWER'
+#   availability_topic: 'home/tasmota/amp/tele/LWT'
+#   qos: 1
+#   payload_on: 'ON'
+#   payload_off: 'OFF'
+#   payload_available: 'Online'
+#   payload_not_available: 'Offline'
+#   retain: false
+#   optimistic: false
+# - platform: mqtt
+#   name: Chandelier
+#   state_topic: 'home/tasmota/chandelier/stat/POWER'
+#   command_topic: 'home/tasmota/chandelier/cmnd/POWER1'
+#   availability_topic: 'home/tasmota/chandelier/tele/LWT'
+#   qos: 1
+#   payload_on: 'ON'
+#   payload_off: 'OFF'
+#   payload_available: 'Online'
+#   payload_not_available: 'Offline'
+#   retain: false
+#   optimistic: true
+#   # assumed_state: false
 
 # light:
 #   - platform: switch
 #     name: Chandelier
-#     entity_id: switch.chandelier
+#     entity_id: light.chandelier
 # - platform: switch
 #   name: String
 #   entity_id: switch.christmas_lights
@@ -251,21 +251,9 @@ automation:
       #   platform: state
       #   to: 'HOLD'
     action:
-      # - service: >
-      #       {% if is_state('light.livingroom', 'off') %}
-      #         scene.turn_on
-      #       {% else %}
-      #         light.turn_off
-      #       {% endif %}
-      - service: scene.turn_on
+      - service: script.scene
         data_template:
-          # entity_id: >
-          #   {% if is_state('light.livingroom', 'off') %}
-          #     scene.normal
-          #   {% else %}
-          #     light.livingroom
-          #   {% endif %}
-          entity_id: >
+          scene: >
             {% if is_state('light.livingroom', 'off') %}
               scene.normal
             {% else %}

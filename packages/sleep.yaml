@@ -179,8 +179,10 @@ automation:
         entity_id: media_player.google_home
         data:
           volume_level: 0.1
-      - service: scene.turn_on
-        entity_id: scene.night
+      - service: script.scene
+        data:
+          scene: night
+          transition: 3
 
   - alias: Sleeping End
     id: sleeping_end

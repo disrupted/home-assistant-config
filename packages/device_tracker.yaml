@@ -224,8 +224,14 @@ automation:
       #     - switch.circadian_lighting_floor
       #     - switch.circadian_lighting_bed
       #     - switch.circadian_lighting_desk
-      - service: scene.turn_on
-        entity_id: scene.normal
+      # - service: scene.turn_on
+      #   data:
+      #     entity_id: scene.normal
+      #     transition: 1
+      - service: script.scene
+        data:
+          scene: normal
+          transition: 1
 
   - alias: Leaving Home
     id: leaving_home

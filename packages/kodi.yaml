@@ -103,10 +103,10 @@ automation:
       - condition: template
         value_template: "{{ state_attr('sun.sun', 'elevation') < -4.0 }}"
     action:
-      - service: scene.turn_on
-        entity_id: scene.dim
-      - service: switch.turn_on
-        entity_id: switch.circadian_lighting_bed_no_brightness
+      - service: script.scene
+        data:
+          scene: dim
+          transition: 5
 
   - alias: Kodi pause other players
     id: kodi_pause_other_players
@@ -159,10 +159,12 @@ automation:
       - condition: template
         value_template: "{{ not is_state('input_select.scene', 'Bedtime') }}"
     action:
-      - service: scene.turn_on
-        entity_id: scene.undim
+      - service: script.scene
+        data:
+          scene: undim
+          transition: 10
 
-  - alias: Kodi Startup → Turn on TV & Amplifier
+  - alias: Kodi Startup Turn on TV & Amplifier
     id: kodi_startup_turn_on_tv_and_amp
     trigger:
       - platform: state
