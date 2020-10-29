@@ -1,1 +1,6 @@
+zha:
+  zigpy_config:
+    ota:
+      ikea_provider: true # Auto update Trådfri devices
+
 zha_map:
