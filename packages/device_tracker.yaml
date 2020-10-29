@@ -312,8 +312,8 @@ automation:
   #   action:
   #     service: script.icloud_update
 
-  - alias: device_tracker companion request update Salomon
-    id: device_tracker_companion_request_update_salomon
+  - alias: device_tracker iphone request update Salomon
+    id: device_tracker_iphone_request_update_salomon
     trigger:
       - platform: state
         entity_id: device_tracker.disrupted_iphone_wifi
@@ -331,12 +331,10 @@ automation:
       - service: notify.telegram
         data:
           message: "requesting location update from disrupted-iPhone"
-      - service: notify.mobile_app_disrupted_iphone
-        data:
-          message: "request_location_update"
+      - service: script.iphone_update_salomon
 
-  - alias: device_tracker companion request update Polina
-    id: device_tracker_companion_request_update_polina
+  - alias: device_tracker iphone request update Polina
+    id: device_tracker_iphone_request_update_polina
     trigger:
       - platform: state
         entity_id: device_tracker.polina_phone
@@ -356,7 +354,7 @@ automation:
       - service: notify.telegram
         data:
           message: "requesting location update from Polina-iPhone"
-      - service: script.companion_update_polina
+      - service: script.iphone_update_polina
 
   - alias: device_tracker force not home after timeout
     trigger:
@@ -376,17 +374,17 @@ automation:
     action:
       - service: telegram_bot.send_message
         data_template:
-          message: "Polina iPhone dropped off of WiFi but wasn't able to get an update from companion app for {{ trigger.for.minutes }}m"
+          message: "Polina iPhone dropped off of WiFi but wasn't able to get an update from iphone app for {{ trigger.for.minutes }}m"
       - service: input_boolean.turn_off
         entity_id: input_boolean.presence_polina
 
   - alias: device_tracker refresh health data at end of day
     trigger:
       platform: time
-      at: "23:45:00"
+      at: "23:55:00"
     action:
-      - service: script.companion_update_polina
-      - service: script.companion_update_salomon
+      - service: script.iphone_update_polina
+      - service: script.iphone_update_salomon
 
   - alias: device_tracker proximity coming back
     trigger:
