@@ -9,9 +9,9 @@ sensor:
 
   - platform: dwd_wetter
 
-  - platform: flatastic
-    api_key: !secret flatastic_api_key
-    user_id: !secret flatastic_user_id
+  # - platform: flatastic
+  #   api_key: !secret flatastic_api_key
+  #   user_id: !secret flatastic_user_id
 
   - platform: populartimes
     api_key: !secret api_key_googlemaps_geocoding
