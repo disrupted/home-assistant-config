@@ -12,6 +12,7 @@ homeassistant:
   allowlist_external_dirs:
     - /tmp
     - /config
+  legacy_templates: false
 
 http:
   # For extra security set this to only accept connections on localhost if NGINX is on the same machine
