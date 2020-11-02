@@ -9,21 +9,225 @@ views:
     #   - person.salomon
     #   - person.polina
     cards:
-      - type: "custom:auto-entities"
-        card:
-          type: glance
-          title: Who's at home
-          show_state: false
-        filter:
-          include:
-            - group: group.all_people
-              state: "home"
-      # - type: custom:layout-card
-      #   layout: horizontal
-      #   max_columns: 2
-      #   cards:
       - type: vertical-stack
         cards:
+          - type: horizontal-stack
+            cards:
+              - type: "custom:button-card"
+                entity: sensor.disrupted_iphone_battery_level
+                entity_picture: /local/memoji_salomon.png
+                show_entity_picture: true
+                aspect_ratio: 1/1
+                name: iPhone X
+                styles:
+                  card:
+                    - border-radius: 10%
+                    - padding: 7%
+                    - padding-bottom: 4%
+                    - font-size: 10px
+                  grid:
+                    - grid-template-areas: '"i battery" "n n" "steps steps" "wifi wifi" "update update"'
+                    - grid-template-columns: 1fr 1fr
+                    - grid-template-rows: 1fr min-content min-content min-content min-content
+                  name:
+                    - font-weight: bold
+                    - font-size: 15px
+                    - color: white
+                    - align-self: middle
+                    - justify-self: start
+                    - padding-bottom: 6px
+                  img_cell:
+                    - justify-content: start
+                    - align-items: start
+                    - margin: none
+                  icon:
+                    - width: 70%
+                  custom_fields:
+                    battery:
+                      - align-self: start
+                      - justify-self: end
+                      - font-size: 13px
+                    steps:
+                      - padding-bottom: 2px
+                      - align-self: middle
+                      - justify-self: start
+                      - font-size: 11px
+                      # - "--text-color-sensor": >-
+                      #     [[[ if (states['sensor.disrupted_iphone_connection_type'].state
+                      #     !== 'on') return "red"; ]]]
+                    wifi:
+                      - padding-bottom: 2px
+                      - align-self: middle
+                      - justify-self: start
+                      - font-size: 11px
+                      - "--text-color-sensor": >-
+                          [[[ if (states["sensor.disrupted_iphone_connection_type"].state !== 'Wi-Fi') return "red";
+                          ]]]
+                    # charging:
+                    #   - align-self: middle
+                    #   - padding-bottom: 2px
+                    #   - justify-self: start
+                    #   - font-size: 11px
+                    #   - "--text-color-sensor": >-
+                    #       [[[ if (states['sensor.disrupted_iphone_battery_state'].state !== 'Charging')
+                    #       return "red"; ]]]
+                    update:
+                      - align-self: middle
+                      - justify-self: end
+                      - font-size: 11px
+                custom_fields:
+                  battery: |
+                    [[[
+                      return `<ha-icon
+                        icon="${states['sensor.disrupted_iphone_battery_level'].attributes.icon}"
+                        style="width: 22px; height: 22px; color: white;">
+                        </ha-icon><span>${entity.state}%</span>`
+                    ]]]
+                  steps: |
+                    [[[
+                      return `<ha-icon
+                        icon="mdi:walk"
+                        style="width: 20px; height: 20px; color: white;">
+                        </ha-icon><span>  <span style="color: var(--text-color-sensor);">${states['sensor.disrupted_iphone_steps'].state}</span> steps</span>`
+                    ]]]
+                  wifi: |
+                    [[[
+                      return `<ha-icon
+                        icon="mdi:wifi"
+                        style="width: 20px; height: 20px; color: white;">
+                        </ha-icon><span>  <span style="color: var(--text-color-sensor);">${states['sensor.disrupted_iphone_ssid'].state}</span></span>`
+                    ]]]
+                  # charging: |
+                  #   [[[
+                  #     return `<ha-icon
+                  #       icon="mdi:battery-charging"
+                  #       style="width: 20px; height: 20px; color: white;">
+                  #       </ha-icon><span>  Charging: <span style="color: var(--text-color-sensor);">${states['sensor.disrupted_iphone_battery_state'].state}</span></span>`
+                  #   ]]]
+                  update: |
+                    [[[
+                      return html`
+                        <ha-relative-time
+                          id="label"
+                          class="ellipsis"
+                          .hass="${hass}"
+                          .datetime="${entity.last_updated}"
+                        ></ha-relative-time>`
+                    ]]]
+              - type: "custom:button-card"
+                entity: sensor.polina_iphone_battery_level
+                entity_picture: /local/memoji_polina.png
+                show_entity_picture: true
+                aspect_ratio: 1/1
+                name: iPhone 7
+                styles:
+                  card:
+                    - border-radius: 10%
+                    - padding: 7%
+                    - padding-bottom: 4%
+                    - font-size: 10px
+                  grid:
+                    - grid-template-areas: '"i battery" "n n" "steps steps" "wifi wifi" "update update"'
+                    - grid-template-columns: 1fr 1fr
+                    - grid-template-rows: 1fr min-content min-content min-content min-content
+                  name:
+                    - font-weight: bold
+                    - font-size: 15px
+                    - color: white
+                    - align-self: middle
+                    - justify-self: start
+                    - padding-bottom: 6px
+                  img_cell:
+                    - justify-content: start
+                    - align-items: start
+                    - margin: none
+                  icon:
+                    - width: 70%
+                  custom_fields:
+                    battery:
+                      - align-self: start
+                      - justify-self: end
+                      - font-size: 13px
+                    steps:
+                      - padding-bottom: 2px
+                      - align-self: middle
+                      - justify-self: start
+                      - font-size: 11px
+                      # - "--text-color-sensor": >-
+                      #     [[[ if (states['sensor.polina_iphone_connection_type'].state
+                      #     !== 'on') return "red"; ]]]
+                    wifi:
+                      - padding-bottom: 2px
+                      - align-self: middle
+                      - justify-self: start
+                      - font-size: 11px
+                      - "--text-color-sensor": >-
+                          [[[ if (states["sensor.polina_iphone_connection_type"].state !== 'Wi-Fi') return "red";
+                          ]]]
+                    # charging:
+                    #   - align-self: middle
+                    #   - padding-bottom: 2px
+                    #   - justify-self: start
+                    #   - font-size: 11px
+                    #   - "--text-color-sensor": >-
+                    #       [[[ if (states['sensor.polina_iphone_battery_state'].state !== 'Charging')
+                    #       return "red"; ]]]
+                    update:
+                      - align-self: middle
+                      - justify-self: end
+                      - font-size: 11px
+                custom_fields:
+                  battery: |
+                    [[[
+                      return `<ha-icon
+                        icon="${states['sensor.polina_iphone_battery_level'].attributes.icon}"
+                        style="width: 22px; height: 22px; color: white;">
+                        </ha-icon><span>${entity.state}%</span>`
+                    ]]]
+                  steps: |
+                    [[[
+                      return `<ha-icon
+                        icon="mdi:walk"
+                        style="width: 20px; height: 20px; color: white;">
+                        </ha-icon><span>  <span style="color: var(--text-color-sensor);">${states['sensor.polina_iphone_steps'].state}</span> steps</span>`
+                    ]]]
+                  wifi: |
+                    [[[
+                      return `<ha-icon
+                        icon="mdi:wifi"
+                        style="width: 20px; height: 20px; color: white;">
+                        </ha-icon><span>  <span style="color: var(--text-color-sensor);">${states['sensor.polina_iphone_ssid'].state}</span></span>`
+                    ]]]
+                  # charging: |
+                  #   [[[
+                  #     return `<ha-icon
+                  #       icon="mdi:battery-charging"
+                  #       style="width: 20px; height: 20px; color: white;">
+                  #       </ha-icon><span>  Charging: <span style="color: var(--text-color-sensor);">${states['sensor.polina_iphone_battery_state'].state}</span></span>`
+                  #   ]]]
+                  update: |
+                    [[[
+                      return html`
+                        <ha-relative-time
+                          id="label"
+                          class="ellipsis"
+                          .hass="${hass}"
+                          .datetime="${entity.last_updated}"
+                        ></ha-relative-time>`
+                    ]]]
+          # - type: custom:layout-card
+          #   layout: horizontal
+          #   max_columns: 2
+          #   cards:
+          - type: "custom:auto-entities"
+            card:
+              type: glance
+              title: Who's at home
+              show_state: false
+            filter:
+              include:
+                - group: group.all_people
+                  state: "home"
           - type: "custom:stack-in-card"
             mode: vertical
             cards:
@@ -48,8 +252,8 @@ views:
                   #   conditions:
                   #     - entity: input_boolean.present
                   #       state: 'off'
-                  - binary_sensor.telegram_online
-                  - binary_sensor.telegram_online_polina
+                  # - binary_sensor.telegram_online
+                  # - binary_sensor.telegram_online_polina
               - type: history-graph
                 hours_to_show: 12
                 refresh_interval: 60
@@ -57,35 +261,35 @@ views:
                   - input_boolean.present
                   - person.salomon
                   - person.polina
-          # - type: conditional
-          #   card:
-          #     type: entities
-          #     title: Scene
-          #     show_header_toggle: false
-          #     entities:
-          #       - input_select.scene
-          #       - input_number.scene_brightness
-          #       - input_select.hass_theme
-          #   conditions:
-          #     - entity: sun.sun
-          #       state: below_horizon
-          - type: entities
-            show_header_toggle: false
-            entities:
-              - input_select.scene
-              - input_number.scene_brightness
-          - type: "custom:stack-in-card"
-            mode: vertical
-            cards:
-              - type: entities
-                title: Climate
-                show_header_toggle: false
-                entities:
-                  - type: custom:secondaryinfo-entity-row
-                    entity: climate.thermostat
-                    secondary_info: "[[ sensor.thermostat_valve_state.state ]] %"
-                  # - sensor.thermostat_valve_state
-                  # - sensor.room_temperature
+      # - type: conditional
+      #   card:
+      #     type: entities
+      #     title: Scene
+      #     show_header_toggle: false
+      #     entities:
+      #       - input_select.scene
+      #       - input_number.scene_brightness
+      #       - input_select.hass_theme
+      #   conditions:
+      #     - entity: sun.sun
+      #       state: below_horizon
+      - type: entities
+        show_header_toggle: false
+        entities:
+          - input_select.scene
+          - input_number.scene_brightness
+      # - type: "custom:stack-in-card"
+      #   mode: vertical
+      #   cards:
+      #     - type: entities
+      #       title: Climate
+      #       show_header_toggle: false
+      #       entities:
+      #         - type: custom:secondaryinfo-entity-row
+      #           entity: climate.thermostat
+      #           secondary_info: "[[ sensor.thermostat_valve_state.state ]] %"
+      #         # - sensor.thermostat_valve_state
+      #         # - sensor.room_temperature
       # - type: 'custom:simple-thermostat'
       #   entity: climate.thermostat
       #   step_size: 1
@@ -184,47 +388,47 @@ views:
       #       name: Energy Cost today
       #     - entity: sensor.washing_machine_runtime_today
       #       name: Runtime today
-      - type: vertical-stack
-        cards:
-          - type: entities
-            entities:
-              - type: custom:secondaryinfo-entity-row
-                entity: vacuum.nono
-                secondary_info: "Last cleaning [[ sensor.vacuum_days_since_last_clean.state ]] days ago"
-          - type: custom:vacuum-card
-            entity: vacuum.nono
-            map: camera.nono_map
-            actions:
-              - name: Empty bin
-                service: script.vacuum_empty_bin
-                icon: mdi:delete-empty
-              - name: Load map
-                service: script.vacuum_load_map
-                icon: mdi:map-check-outline
-              - name: Clean living room
-                service: script.vacuum_clean_livingroom
-                icon: mdi:seat-recline-extra
-              - name: Clean sofa
-                service: script.vacuum_clean_sofa
-                icon: mdi:sofa
-              - name: Clean desk
-                service: script.vacuum_clean_desk
-                icon: mdi:desk
-              - name: Clean bathroom
-                service: script.vacuum_clean_bathroom
-                icon: mdi:shower
-            #   - name: Clean kitchen
-            #     service: script.clean_kitchen
-            #     icon: mdi:fridge   #mdi:chef-hat
-            #   - name: Clean corridor
-            #     service: script.clean_corridor
-            #     icon: mdi:door-closed
-          # - type: 'custom:xiaomi-vacuum-card'
-          #   entity: vacuum.nono
-          #   name: Nono
-          #   image: /local/img/xiaomi-vacuum-dark.jpg
-          #   buttons:
-          #     start: false
+      # - type: vertical-stack
+      #   cards:
+      #     - type: entities
+      #       entities:
+      #         - type: custom:secondaryinfo-entity-row
+      #           entity: vacuum.nono
+      #           secondary_info: "Last cleaning [[ sensor.vacuum_days_since_last_clean.state ]] days ago"
+      #     - type: custom:vacuum-card
+      #       entity: vacuum.nono
+      #       map: camera.nono_map
+      #       actions:
+      #         - name: Empty bin
+      #           service: script.vacuum_empty_bin
+      #           icon: mdi:delete-empty
+      #         - name: Load map
+      #           service: script.vacuum_load_map
+      #           icon: mdi:map-check-outline
+      #         - name: Clean living room
+      #           service: script.vacuum_clean_livingroom
+      #           icon: mdi:seat-recline-extra
+      #         - name: Clean sofa
+      #           service: script.vacuum_clean_sofa
+      #           icon: mdi:sofa
+      #         - name: Clean desk
+      #           service: script.vacuum_clean_desk
+      #           icon: mdi:desk
+      #         - name: Clean bathroom
+      #           service: script.vacuum_clean_bathroom
+      #           icon: mdi:shower
+      #   - name: Clean kitchen
+      #     service: script.clean_kitchen
+      #     icon: mdi:fridge   #mdi:chef-hat
+      #   - name: Clean corridor
+      #     service: script.clean_corridor
+      #     icon: mdi:door-closed
+      # - type: 'custom:xiaomi-vacuum-card'
+      #   entity: vacuum.nono
+      #   name: Nono
+      #   image: /local/img/xiaomi-vacuum-dark.jpg
+      #   buttons:
+      #     start: false
       #     - type: picture-glance
       #       entities: []
       #       camera_image: camera.nono_map
