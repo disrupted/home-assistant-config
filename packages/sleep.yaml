@@ -230,7 +230,7 @@ automation:
       from: "off"
       to: "on"
       for:
-        hours: 12
+        hours: 10
     condition:
       - condition: state
         entity_id: input_boolean.sleeping
@@ -240,7 +240,7 @@ automation:
         entity_id: input_boolean.sleeping
       - service: notify.all
         data:
-          message: "Sleeping Mode stopped after 12h without response."
+          message: "Sleeping Mode stopped after 10h without response."
 
   # - alias: Wakeup Light
   #   id: wakeup_light
