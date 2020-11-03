@@ -755,7 +755,7 @@ automation:
     trigger:
       platform: template
       value_template: >
-        {{ not is_state('sensor.skin_type_3_safe_exposure_time', 'unknown') and states('sensor.total_time_outside_today') | float == (states('sensor.skin_type_3_safe_exposure_time') | int / 60) | round(2) }}
+        {{ not is_state('sensor.skin_type_3_safe_exposure_time', 'unknown') and states('sensor.time_outside_salomon') | float == (states('sensor.skin_type_3_safe_exposure_time') | int / 60) | round(2) }}
     condition:
       - condition: template
         value_template: "{{ not is_state('sensor.skin_type_3_safe_exposure_time', 'unknown') }}"
@@ -805,13 +805,13 @@ automation:
       - condition: template
         value_template: "{{ not is_state('person.salomon', 'not_home') }}"
       - condition: template
-        value_template: "{{ states('sensor.total_time_outside_today') | float < 0.5 }}"
+        value_template: "{{ states('sensor.time_outside_salomon') | float < 0.5 }}"
       - condition: template
         value_template: "{{ states('sensor.weather_bad_weather') in ['clear'] }}"
     action:
       - service: notify.telegram
         data_template:
-          message: "Hey, go outside pal. There's still time to do something fun before it gets dark. {% if states('sensor.total_time_outside_today') | float < 1 %}You haven't been out in the sun at all today.{% else %}You've only been out for {{ state_attr('sensor.total_time_outside_today', 'value') }} today.{% endif %}"
+          message: "Hey, go outside pal. There's still time to do something fun before it gets dark. {% if states('sensor.time_outside_salomon') | float < 1 %}You haven't been out in the sun at all today.{% else %}You've only been out for {{ state_attr('sensor.time_outside_salomon', 'value') }} today.{% endif %}"
 
   # - alias: Weather Lightning Alert
   #   trigger:

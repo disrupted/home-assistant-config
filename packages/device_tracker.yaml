@@ -140,14 +140,23 @@ sensor:
   #       value_template: "{{ ((as_timestamp(now()) - as_timestamp(states.device_tracker.polina_iphone_icloud.last_updated)) / 60 ) | round }}"
 
   - platform: history_stats
-    name: total time outside today
+    name: time outside Salomon
     entity_id: person.salomon
     state: "not_home"
     type: time
-    # start: "{{ state_attr('sun.sun', 'next_dawn') }}"
-    # end: "{{ state_attr('sun.sun', 'next_dusk') }}"
-    # start: "{{ as_timestamp((as_timestamp(now()) | timestamp_custom('%Y-%m-%dT')) + (as_timestamp(state_attr('sun.sun', 'next_dawn')) | timestamp_custom('%H:%M:%S+00:00', False))) }}"
-    # end: "{{ as_timestamp((as_timestamp(now()) | timestamp_custom('%Y-%m-%dT')) + (as_timestamp(state_attr('sun.sun', 'next_dusk')) | timestamp_custom('%H:%M:%S+00:00', False))) }}"
+    start: >
+      {% if state_attr('sun.sun', 'elevation') < 0 and is_state_attr('sun.sun', 'rising', True) %}{{ now().replace(hour=0, minute=0, second=0) }}
+      {% else %}{{ as_timestamp((as_timestamp(now()) | timestamp_custom('%Y-%m-%dT')) + (as_timestamp(state_attr('sun.sun', 'next_dawn')) | timestamp_custom('%H:%M:%S+00:00', False))) }}
+      {% endif %}
+    end: >
+      {% if state_attr('sun.sun', 'elevation') < 0 and is_state_attr('sun.sun', 'rising', True) %}{{ now().replace(hour=0, minute=0, second=0) }}
+      {% else %}{{ as_timestamp((as_timestamp(now()) | timestamp_custom('%Y-%m-%dT')) + (as_timestamp(state_attr('sun.sun', 'next_dusk')) | timestamp_custom('%H:%M:%S+00:00', False))) }}
+      {% endif %}
+  - platform: history_stats
+    name: time outside Polina
+    entity_id: person.polina
+    state: "not_home"
+    type: time
     start: >
       {% if state_attr('sun.sun', 'elevation') < 0 and is_state_attr('sun.sun', 'rising', True) %}{{ now().replace(hour=0, minute=0, second=0) }}
       {% else %}{{ as_timestamp((as_timestamp(now()) | timestamp_custom('%Y-%m-%dT')) + (as_timestamp(state_attr('sun.sun', 'next_dawn')) | timestamp_custom('%H:%M:%S+00:00', False))) }}
@@ -163,6 +172,12 @@ proximity:
       - person.salomon
       - person.polina
     # tolerance: 50
+  home_salomon:
+    devices:
+      - person.salomon
+  home_polina:
+    devices:
+      - person.polina
 
 automation:
   - id: device_tracker_new_device
