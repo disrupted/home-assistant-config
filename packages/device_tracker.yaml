@@ -265,6 +265,8 @@ automation:
       entity_id:
         - person.salomon
         - person.polina
+        - device_tracker.disrupted_iphone_wifi
+        - device_tracker.polina_phone
     condition:
       - condition: template
         value_template: "{{ trigger.from_state.state != trigger.to_state.state }}"
@@ -412,3 +414,19 @@ automation:
         data_template:
           message: >
             Are you coming back home? (dir of travel: {{ state_attr('proximity.home', 'dir_of_travel') }})
+
+  - alias: device_tracker wifi arrival
+    trigger:
+      - platform: state
+        entity_id:
+          - device_tracker.disrupted_iphone_wifi
+          - device_tracker.polina_phone
+        from: "not_home"
+        to: "home"
+    condition:
+      - condition: state
+        entity_id: input_boolean.present
+        state: "off"
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.present
