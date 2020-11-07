@@ -101,6 +101,8 @@ scene:
 
   - name: Sunset
     entities:
+      automation.light_adaptive_apply:
+        state: on
       # switch.adaptive_lighting_floor:
       #   state: "on"
       # switch.adaptive_lighting_bed:
