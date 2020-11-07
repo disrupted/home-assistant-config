@@ -191,6 +191,25 @@ views:
                           .datetime="${entity.last_updated}"
                         ></ha-relative-time>`
                     ]]]
+          - type: conditional
+            conditions:
+              - entity: input_boolean.present
+                state_not: "on"
+            card:
+              - type: map
+                hours_to_show: 24
+                aspect_ratio: 16x10
+                default_zoom: 14
+                entities:
+                  - person.salomon
+                  - person.polina
+                  - zone.home
+                  - zone.school
+                  - zone.work
+                style: |
+                  div.leaflet-control-attribution {
+                    display: none;
+                  }
           # - type: custom:layout-card
           #   layout: horizontal
           #   max_columns: 2
@@ -710,6 +729,10 @@ views:
           - type: picture-glance
             entities: []
             camera_image: camera.rain_radar
+            style: |
+              div.box {
+                display: none;
+              }
           - break
           - type: picture # -glance
             # entities: []
@@ -1396,6 +1419,91 @@ views:
     title: System
     icon: "mdi:raspberry-pi"
     cards:
+      - type: custom:button-card
+        entity: sensor.cpu_temperature
+        icon: "mdi:raspberry-pi"
+        aspect_ratio: 1/1
+        name: Server
+        styles:
+          card:
+            # - background-color: '#000044'
+            - border-radius: 10%
+            - padding: 10%
+            # - color: ivory
+            - font-size: 10px
+            - text-shadow: 0px 0px 5px black
+            - text-transform: capitalize
+          grid:
+            - grid-template-areas: '"i temp" "n n" "cpu cpu" "ram ram" "sd sd"'
+            - grid-template-columns: 1fr 1fr
+            - grid-template-rows: 1fr min-content min-content min-content min-content
+          name:
+            - font-weight: bold
+            - font-size: 13px
+            # - color: white
+            - align-self: middle
+            - justify-self: start
+            - padding-bottom: 4px
+          img_cell:
+            - justify-content: start
+            - align-items: start
+            - margin: none
+          icon:
+            - color: >
+                [[[
+                  if (entity.state < 60) return 'lime';
+                  if (entity.state >= 60 && entity.state < 80) return 'orange';
+                  else return 'red';
+                ]]]
+            - width: 70%
+            - margin-top: -10%
+          custom_fields:
+            temp:
+              - align-self: start
+              - justify-self: end
+            cpu:
+              - padding-bottom: 2px
+              - align-self: middle
+              - justify-self: start
+              - --text-color-sensor: '[[[ if (states["sensor.cpu_temperature"].state > 80) return "red"; ]]]'
+            ram:
+              - padding-bottom: 2px
+              - align-self: middle
+              - justify-self: start
+              - --text-color-sensor: '[[[ if (states["sensor.memory_use_percent"].state > 80) return "red"; ]]]'
+            # sd:
+            #   - align-self: middle
+            #   - justify-self: start
+            #   - --text-color-sensor: '[[[ if (states["sensor.raspi_sd"].state > 80) return "red"; ]]]'
+        custom_fields:
+          temp: >
+            [[[
+              return `<ha-icon
+                icon="mdi:thermometer"
+                style="width: 12px; height: 12px; color: yellow;">
+                </ha-icon><span>${entity.state}°C</span>`
+            ]]]
+          cpu: >
+            [[[
+              return `<ha-icon
+                icon="mdi:server"
+                style="width: 12px; height: 12px; color: deepskyblue;">
+                </ha-icon><span>CPU: <span style="color: var(--text-color-sensor);">${states['sensor.processor_use'].state}%</span></span>`
+            ]]]
+          ram: >
+            [[[
+              return `<ha-icon
+                icon="mdi:memory"
+                style="width: 12px; height: 12px; color: deepskyblue;">
+                </ha-icon><span>RAM: <span style="color: var(--text-color-sensor);">${states['sensor.memory_use_percent'].state}%</span></span>`
+            ]]]
+          # sd: >
+          #   [[[
+          #     return `<ha-icon
+          #       icon="mdi:harddisk"
+          #       style="width: 12px; height: 12px; color: deepskyblue;">
+          #       </ha-icon><span>SD: <span style="color: var(--text-color-sensor);">${states['sensor.raspi_sd'].state}%</span></span>`
+          #   ]]]
       - entities:
           - sensor.wan_ip
           - sensor.connected_clients
@@ -1549,11 +1657,10 @@ views:
           # - zone.home
           - person.salomon
           - person.polina
-      # - type: map
-      #   hours_to_show: 6
-      #   entities:
-      #     - device_tracker.disrupted_iphone_icloud
-      #     - device_tracker.polina_iphone_icloud
+        style: |
+          div.leaflet-control-attribution {
+            display: none;
+          }
       - type: horizontal-stack
         cards:
           - type: "custom:button-card"
@@ -1594,6 +1701,9 @@ views:
                   - align-self: start
                   - justify-self: end
                   - font-size: 13px
+                  - "--text-color-sensor": >-
+                      [[[ if (entity.attributes['Low Power Mode']) return "#FFD616";
+                      ]]]
                 steps:
                   - padding-bottom: 2px
                   - align-self: middle
@@ -1618,8 +1728,8 @@ views:
               battery: |
                 [[[
                   return `<ha-icon
-                    icon="${states['sensor.disrupted_iphone_battery_level'].attributes.icon}"
-                    style="width: 22px; height: 22px;">
+                    icon="${entity.attributes.icon}"
+                    style="width: 22px; height: 22px; color: var(--text-color-sensor);">
                     </ha-icon><span>${entity.state}%</span>`
                 ]]]
               steps: |
@@ -1684,6 +1794,9 @@ views:
                   - align-self: start
                   - justify-self: end
                   - font-size: 13px
+                  - "--text-color-sensor": >-
+                      [[[ if (entity.attributes['Low Power Mode']) return "#FFD616";
+                      ]]]
                 steps:
                   - padding-bottom: 2px
                   - align-self: middle
@@ -1698,8 +1811,8 @@ views:
                   - justify-self: start
                   - font-size: 11px
                   - "--text-color-sensor": >-
-                      [[[ if (states["sensor.polina_iphone_connection_type"].state !== 'Wi-Fi') return "red";
-                      ]]]
+                      [[[ if (states['sensor.polina_iphone_connection_type'].state
+                      !== 'on') return "red"; ]]]
                 update:
                   - align-self: middle
                   - justify-self: end
@@ -1708,8 +1821,8 @@ views:
               battery: |
                 [[[
                   return `<ha-icon
-                    icon="${states['sensor.polina_iphone_battery_level'].attributes.icon}"
-                    style="width: 22px; height: 22px;">
+                    icon="${entity.attributes.icon}"
+                    style="width: 22px; height: 22px; color: var(--text-color-sensor);">
                     </ha-icon><span>${entity.state}%</span>`
                 ]]]
               steps: |
