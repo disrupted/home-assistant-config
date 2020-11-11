@@ -266,7 +266,7 @@ automation:
         - person.salomon
         - person.polina
         - device_tracker.disrupted_iphone_wifi
-        - device_tracker.polina_phone
+        - device_tracker.polina_iphone_wifi
     condition:
       - condition: template
         value_template: "{{ trigger.from_state.state != trigger.to_state.state }}"
@@ -305,14 +305,14 @@ automation:
   #     - platform: time_pattern
   #       minutes: '/20'
   #     - platform: state
-  #       entity_id: device_tracker.polina_phone
+  #       entity_id: device_tracker.polina_iphone_wifi
   #       from: 'home'
   #       to: 'not_home'
   #       # for:
   #       #   minutes: 5
   #   condition:
   #     - condition: state
-  #       entity_id: device_tracker.polina_phone
+  #       entity_id: device_tracker.polina_iphone_wifi
   #       state: not_home
   #       # for:
   #       #   minutes: 5
@@ -354,7 +354,7 @@ automation:
     id: device_tracker_iphone_request_update_polina
     trigger:
       - platform: state
-        entity_id: device_tracker.polina_phone
+        entity_id: device_tracker.polina_iphone_wifi
         from: "home"
         to: "not_home"
         # for:
@@ -377,7 +377,7 @@ automation:
     trigger:
       - platform: state
         entity_id:
-          - device_tracker.polina_phone
+          - device_tracker.polina_iphone_wifi
         from: "home"
         to: "not_home"
         for:
@@ -415,18 +415,18 @@ automation:
           message: >
             Are you coming back home? (dir of travel: {{ state_attr('proximity.home', 'dir_of_travel') }})
 
-  - alias: device_tracker wifi arrival
-    trigger:
-      - platform: state
-        entity_id:
-          - device_tracker.disrupted_iphone_wifi
-          - device_tracker.polina_phone
-        from: "not_home"
-        to: "home"
-    condition:
-      - condition: state
-        entity_id: input_boolean.present
-        state: "off"
-    action:
-      - service: input_boolean.turn_on
-        entity_id: input_boolean.present
+  # - alias: device_tracker wifi arrival
+  #   trigger:
+  #     - platform: state
+  #       entity_id:
+  #         - device_tracker.disrupted_iphone_wifi
+  #         - device_tracker.polina_iphone_wifi
+  #       from: "not_home"
+  #       to: "home"
+  #   condition:
+  #     - condition: state
+  #       entity_id: input_boolean.present
+  #       state: "off"
+  #   action:
+  #     - service: input_boolean.turn_on
+  #       entity_id: input_boolean.present
