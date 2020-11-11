@@ -25,7 +25,7 @@ binary_sensor:
 telegram_bot:
   - platform: polling
     api_key: !secret api_key_telegram
-    parse_mode: markdown
+    parse_mode: html
     allowed_chat_ids:
       - !secret telegram_chat_id
 
@@ -444,7 +444,6 @@ automation:
     action:
       - service: telegram_bot.send_message
         data_template:
-          parse_mode: markdown
           title: "people at home:"
           message: >-
             {% for entity in states.group.all_people.attributes.entity_id if is_state(entity, 'home') %}{% set parts = entity.split('.') -%}
