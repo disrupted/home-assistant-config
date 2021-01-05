@@ -12,6 +12,7 @@ wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_pass
   fast_connect: true
+  reboot_timeout: 0s
   manual_ip:
     static_ip: !secret ip_shelly_kitchen
     gateway: !secret ip_router
@@ -30,6 +31,7 @@ captive_portal:
 # Enable Home Assistant API
 api:
   password: !secret esphome_api_pass
+  reboot_timeout: 0s
 
 ota:
   password: !secret esphome_ota_pass
@@ -58,7 +60,7 @@ switch:
     id: relay
     name: "${friendly_name} Relay"
     pin: GPIO15
-    restore_mode: ALWAYS_ON
+    restore_mode: RESTORE_DEFAULT_ON
 
 sensor:
   - platform: wifi_signal
@@ -133,18 +135,15 @@ binary_sensor:
       then:
         - if:
             condition:
-              - switch.is_on: relay
+              and:
+                - switch.is_on: relay
+                - api.connected:
+                - binary_sensor.is_on: light_avail
             then:
-              - if:
-                  condition:
-                    - binary_sensor.is_on: light_avail
-                  then:
-                    - homeassistant.service:
-                        service: script.light_toggle
-                        data:
-                          entity_id: light.kitchen_ceiling
-                  else:
-                    - switch.toggle: relay
+              - homeassistant.service:
+                  service: script.light_toggle
+                  data:
+                    entity_id: light.kitchen_ceiling
             else:
               - switch.toggle: relay
     on_multi_click:
