@@ -1,0 +1,57 @@
+alias: Light toggle
+description: "toggle light using adaptive lighting"
+fields:
+  service:
+    description: service to use (optional, default toggle)
+    example: turn_on
+  entity_id:
+    description: Entity of light (required)
+    example: light.kitchen_ceiling
+  transition:
+    description: Transition time for changes (optional, default 0.5)
+    example: 0.5
+variables:
+  adaptive: switch.adaptive_lighting_default
+  service: "{{ service | default('toggle') }}"
+  entity_id: "{{ entity_id }}"
+  color_temp: "{{ state_attr(adaptive, 'color_temp_mired') | int }}"
+  transition: "{{ transition | default(0.5) }}"
+  automation: automation.light_adaptive_apply
+sequence:
+  - variables:
+      adaptive_status: "{{ is_state(automation, 'on') }}"
+  - choose:
+      - conditions: "{{ service in ['toggle', 'turn_on'] }}"
+        sequence:
+          - choose:
+              - conditions: "{{ is_state('sensor.day_phase', 'Night') }}"
+                sequence:
+                  - service: "light.{{ service }}"
+                    data:
+                      entity_id: "{{ entity_id }}"
+                      brightness: 128
+                      transition: 1
+                      color_temp: 350
+              - conditions: "{{ is_state('sensor.day_phase', 'Evening') }}"
+                # - conditions: "{{ is_state('sun.sun', 'below_horizon') }}"
+                sequence:
+                  - service: "light.{{ service }}"
+                    data:
+                      entity_id: "{{ entity_id }}"
+                      brightness: 255
+                      transition: 0.5
+                      color_temp: 320
+            default:
+              - service: "light.{{ service }}"
+                data_template:
+                  entity_id: "{{ entity_id }}"
+                  brightness: 255
+                  transition: 0.5
+                  color_temp: 250
+                  # color_temp: "{{ color_temp }}"
+      - conditions: "{{ service == 'turn_off' }}"
+        sequence:
+          - service: light.turn_off
+            data:
+              entity_id: "{{ entity_id }}"
+              transition: 0.5
