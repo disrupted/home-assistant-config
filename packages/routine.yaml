@@ -5,7 +5,7 @@ sensor:
         friendly_name: "Day Phase"
         value_template: >-
           {% if now() >= now().replace(hour=0, minute=0, second=0) and
-              now() < now().replace(hour=7, minute=59, second=0) %}
+              now() < now().replace(hour=5, minute=59, second=0) %}
               Night
           {% elif now() >= now().replace(hour=7, minute=59, second=0) and
               now() < now().replace(hour=10, minute=59, second=0) %}
@@ -26,7 +26,7 @@ automation:
       - platform: time
         at:
           - "00:00:00"
-          - "08:00:00"
+          - "06:00:00"
           - "11:00:00"
       # - platform: sun  # happens automatically due to sun.sun being in the template
       #   event: sunrise
@@ -60,7 +60,7 @@ automation:
         entity_id: light.livingroom
         state: "on"
       - condition: state
-        entity_id: light.bed_lamp
+        entity_id: light.bedroom_ceiling
         state: "on"
       - condition: state
         entity_id: light.floor_lamp

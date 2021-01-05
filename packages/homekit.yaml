@@ -14,8 +14,8 @@ homekit:
       - input_boolean.present
       - input_boolean.sleeping
       - input_boolean.movietime
-      - light.chandelier
       - light.string
+      - switch.s26_3
       - switch.tv
       - switch.amp
       - switch.ps4
@@ -24,12 +24,19 @@ homekit:
       - person.max
       - person.emmi
       - light.floor_lamp
-      - light.bed_lamp
+      - light.reading_lamp
+      - light.bedroom_ceiling
+      - light.bedside_lamp
       - light.desk_lamp
       - light.candle
+      - light.kitchen_ceiling
+      - light.bathroom_ceiling
+      - light.spots
       - media_player.tv
       - media_player.kodi
       - media_player.google_home
+      - fan.bathroom
+      - binary_sensor.bathroom_motion
       # - camera.xiaofang
   entity_config:
     media_player.google_home:

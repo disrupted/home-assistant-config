@@ -153,9 +153,6 @@ automation:
         state: "on"
       - condition: template
         value_template: "{{ state_attr('light.floor_lamp', 'brightness') < 77 }}"
-      - condition: state
-        entity_id: light.bed_lamp
-        state: "on"
       - condition: template
         value_template: "{{ not is_state('input_select.scene', 'Bedtime') }}"
     action:

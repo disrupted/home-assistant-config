@@ -80,48 +80,29 @@ scene:
       light.floor_lamp:
         state: "on"
         brightness: 255
-        # transition: 1
-      light.bed_lamp:
+      light.reading_lamp:
         state: "on"
-        # profile: standard
         brightness: 255
-        # transition: 1
-      light.desk_lamp:
+      light.spots:
         state: "on"
-        brightness: 140
-        # transition: 1
-      light.chandelier:
-        state: "off"
-      # switch.adaptive_lighting_floor:
-      #   state: "on"
-      # switch.adaptive_lighting_bed:
-      #   state: "on"
-      # switch.adaptive_lighting_desk:
-      #   state: "on"
+        brightness: 180
 
   - name: Sunset
     entities:
-      automation.light_adaptive_apply:
-        state: on
-      # switch.adaptive_lighting_floor:
-      #   state: "on"
-      # switch.adaptive_lighting_bed:
-      #   state: "on"
-      # switch.adaptive_lighting_desk:
-      #   state: "on"
+      # automation.light_adaptive_apply:
+      #   state: on
       light.floor_lamp:
         state: "on"
         brightness: 255
-        # transition: 6
-      light.bed_lamp:
+      light.reading_lamp:
         state: "on"
-        # profile: standard
         brightness: 255
-        # transition: 10
+      light.spots:
+        state: "on"
+        brightness: 180
       light.desk_lamp:
         state: "on"
         brightness: 102
-        # transition: 10
 
   - name: Dim
     entities:
@@ -131,22 +112,18 @@ scene:
       #   state: "on"
       light.floor_lamp:
         state: "on"
-        # transition: 4
         brightness: 38
-      light.bed_lamp:
-        state: "on"
-        # transition: 8
-        brightness: 38
-      light.desk_lamp:
+      light.reading_lamp:
         state: "off"
-        # transition: 3
-      light.chandelier:
+      light.desk_lamp:
         state: "off"
       light.candle:
         state: "on"
         brightness: 255
-        # transition: 2
         effect: Flicker
+      light.spots:
+        state: "on"
+        brightness: 25
 
   - name: Undim
     entities:
@@ -154,8 +131,10 @@ scene:
       #   state: "on"
       light.floor_lamp:
         state: "on"
-        # transition: 10
-        brightness: 168 # 77
+        brightness: 168
+      light.spots:
+        state: "on"
+        brightness: 128
 
   - name: Relax
     entities:
@@ -164,11 +143,9 @@ scene:
         transition: 6
         brightness: 102
         # kelvin: 2200
-      light.chandelier:
-        state: "off"
-      light.bed_lamp:
-        state: "on"
-        profile: orange
+      # light.bedroom_ceiling:
+      #   state: "on"
+      #   profile: orange
 
   - name: Bedtime
     entities:
@@ -183,7 +160,7 @@ scene:
       #   state: "off"
       # switch.adaptive_lighting_bed_no_brightness:
       #   state: "off"
-      light.bed_lamp:
+      light.bedroom_ceiling:
         state: "on"
         # profile: bedtime
         xy_color: [0.656, 0.34]
@@ -195,22 +172,13 @@ scene:
         # brightness: 50
         # transition: 4
         # flash: long
-      light.chandelier:
-        state: "off"
 
   - name: Daytime
     entities:
       light.floor_lamp:
         state: "on"
-        transition: 1
         brightness: 255
         # kelvin: 4000
-      # light.chandelier: "off"
-
-  - name: Max
-    entities:
-      light.chandelier:
-        state: "on"
 
   - name: Night
     entities:
@@ -222,17 +190,14 @@ scene:
       #   state: "off"
       light.livingroom:
         state: "off"
-        # transition: 3
       light.candle:
         state: "off"
-      # light.chandelier:
-      #   state: "off"
       # switch.adaptive_lighting_bed:
       #   state: "on"
 
   # - name: Nightlight
   #   entities:
-  #     light.bed_lamp:
+  #     light.bedroom_ceiling:
   #       state: "on"
   #       brightness: 1
   #       rgb_color: [255, 0, 0]
@@ -243,7 +208,14 @@ scene:
         state: paused
       light.livingroom:
         state: "off"
-        # transition: 1
+      light.desk_lamp:
+        state: "off"
+      light.kitchen_ceiling:
+        state: "off"
+      light.bedroom_ceiling:
+        state: "off"
+      light.bathroom_ceiling:
+        state: "off"
       light.candle:
         state: "off"
       climate.thermostat:
@@ -257,16 +229,14 @@ scene:
         state: "off"
       media_player.ps4:
         state: "off"
-      # light.chandelier:
-      #   state: "off"
+      fan.bathroom:
+        state: "off"
 
   - name: "OFF"
     entities:
       light.livingroom:
         state: "off"
         transition: 1
-      light.chandelier:
-        state: "off"
       light.candle:
         state: "off"
 
@@ -374,7 +344,7 @@ automation:
         data_template:
           entity_id:
             - light.floor_lamp
-            - light.bed_lamp
+            - light.bedroom_ceiling
             - light.desk_lamp
           # {% for entity in states.group.all_lights.attributes.entity_id if is_state(entity, 'on') %}
           # {{ entity }}

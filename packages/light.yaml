@@ -11,12 +11,18 @@ homeassistant:
   customize:
     light.floor_lamp:
       icon: mdi:floor-lamp
-    # light.floor_lamp_top:
-    #   hidden: true
-    # light.floor_lamp_bottom:
-    #   hidden: true
-    light.bed_lamp:
-      icon: mdi:lamp # mdi:webcam
+    light.bedroom_ceiling:
+      icon: mdi:ceiling-light
+    light.kitchen_ceiling:
+      icon: mdi:ceiling-light
+    light.bathroom_ceiling:
+      icon: mdi:ceiling-light
+    light.bedside_lamp:
+      icon: mdi:webcam
+    light.reading_lamp:
+      icon: mdi:desk-lamp
+    light.spots:
+      icon: mdi:spotlight-beam
     light.desk_lamp:
       icon: mdi:desk-lamp
     light.candle:
@@ -31,11 +37,21 @@ light:
   - platform: group
     name: Livingroom
     entities:
-      # - light.floor_lamp_top
-      # - light.floor_lamp_bottom
       - light.floor_lamp
-      - light.desk_lamp
-      - light.bed_lamp
+      - light.reading_lamp
+      - light.spots
+  - platform: group
+    name: Kitchen
+    entities:
+      - light.kitchen_ceiling
+  - platform: group
+    name: Bathroom
+    entities:
+      - light.bathroom_ceiling
+  - platform: group
+    name: Bedroom
+    entities:
+      - light.bedroom_ceiling
 
 # prettier-ignore
 sun:
@@ -66,11 +82,11 @@ sun:
 #     # disable_entity: input_boolean.movietime
 #     # disable_state: 'on'
 #     lights_ct:
-#       - light.bed_lamp
+#       - light.bedroom_ceiling
 #   - platform: circadian_lighting
 #     name: Bed no brightness
 #     lights_ct:
-#       - light.bed_lamp
+#       - light.bedroom_ceiling
 #     disable_brightness_adjust: true
 #   - platform: circadian_lighting
 #     name: Desk
@@ -121,9 +137,11 @@ automation:
         event: start
       - platform: state
         entity_id:
-          - light.bed_lamp
+          # - light.bedroom_ceiling
           - light.desk_lamp
           - light.floor_lamp
+          - light.spots
+          - light.reading_lamp
         from: "off"
         to: "on"
         for:
@@ -142,16 +160,17 @@ automation:
       - service: script.adaptive_lighting
         data:
           entities:
-            - light.bed_lamp
             - light.desk_lamp
             - light.floor_lamp
+            - light.spots
+            - light.reading_lamp
 
   # - id: light_adaptive_apply_turn_on
   #   alias: Light Adaptive apply when light turns on
   #   trigger:
   #     - platform: state
   #       entity_id:
-  #         - light.bed_lamp
+  #         - light.bedroom_ceiling
   #         - light.desk_lamp
   #         - light.floor_lamp
   #       from: "off"
@@ -189,7 +208,7 @@ automation:
     # initial_state: true
     trigger:
       platform: template
-      value_template: "{{ state_attr('light.bed_lamp', 'rgb_color') != None }}"
+      value_template: "{{ state_attr('light.bedroom_ceiling', 'rgb_color') != None }}"
     condition:
       - condition: or
         conditions:
@@ -278,7 +297,7 @@ automation:
       #   state: 'off'
       - condition: template
         value_template: >
-          {{ is_state('light.floor_lamp', 'off') or is_state('light.bed_lamp', 'off') or is_state('light.desk_lamp', 'off') }}
+          {{ is_state('light.floor_lamp', 'off') or is_state('light.bedroom_ceiling', 'off') or is_state('light.desk_lamp', 'off') }}
     action:
       # - service: scene.turn_on
       #   entity_id: scene.sunset
@@ -307,8 +326,10 @@ automation:
       #   entity_id: input_boolean.sleeping
       #   state: 'off'
     action:
-      service: light.turn_on
-      entity_id: light.string
+      service: homeassistant.turn_on
+      entity_id:
+        - light.string
+        - switch.christmas_star
 
   - alias: Light Sunrise lightchain
     trigger:
@@ -323,13 +344,11 @@ automation:
         to: "on"
         for:
           minutes: 30
-    condition:
-      - condition: state
-        entity_id: light.string
-        state: "on"
     action:
-      service: light.turn_off
-      entity_id: light.string
+      service: homeassistant.turn_off
+      entity_id:
+        - light.string
+        - switch.christmas_star
 
   - alias: Light switch bed sleep
     trigger:
@@ -356,7 +375,7 @@ automation:
       #   after: '00:00:00'
       #   before: '08:00:00'
       - condition: state
-        entity_id: light.bed_lamp
+        entity_id: light.bedroom_ceiling
         state: "off"
       - condition: state
         entity_id: binary_sensor.bayesian_sleeping
@@ -377,7 +396,7 @@ automation:
       #     group_name: 'Bed'
       #     scene_name: 'Nightlight'
       service: light.turn_on
-      entity_id: light.bed_lamp
+      entity_id: light.bedroom_ceiling
       data:
         profile: nightlight
 
@@ -406,20 +425,20 @@ automation:
           - condition: template
             value_template: "{{ state_attr('sun.sun', 'elevation') > -2.0 }}"
           - condition: state
-            entity_id: light.bed_lamp
+            entity_id: light.bedroom_ceiling
             state: "on"
     action:
       # - service: hue.hue_activate_scene
       #   data_template:
       #     group_name: 'Bed'
       #     scene_name: 'Concentrate'
-      - service: switch.turn_on
-        entity_id: switch.adaptive_lighting_bed
+      # - service: switch.turn_on
+      #   entity_id: switch.adaptive_lighting_bed
       - service: light.turn_on
         data_template:
-          entity_id: light.bed_lamp
-          kelvin: "{{ state_attr('sensor.adaptive_values', 'colortemp') | int }}"
-          brightness_pct: "{{ state_attr('switch.adaptive_lighting_bed', 'brightness') | int }}"
+          entity_id: light.bedroom_ceiling
+          color_temp: "{{ state_attr('switch.adaptive_lighting_default', 'color_temp_mired') | int }}"
+          brightness_pct: "{{ state_attr('switch.adaptive_lighting_default', 'brightness_pct') | int }}"
           transition: 0.5
 
   - alias: light switch bed evening
@@ -431,7 +450,7 @@ automation:
         subtype: turn_on
     condition:
       - condition: state
-        entity_id: light.bed_lamp
+        entity_id: light.bedroom_ceiling
         state: "off"
       # - condition: time
       #   after: '00:00:00'
@@ -453,7 +472,7 @@ automation:
       #     group_name: 'Bed'
       #     scene_name: 'Read'
       service: light.turn_on
-      entity_id: light.bed_lamp
+      entity_id: light.bedroom_ceiling
       data:
         profile: reading
         transition: 0.5
@@ -467,11 +486,11 @@ automation:
         subtype: turn_off
     condition:
       - condition: state
-        entity_id: light.bed_lamp
+        entity_id: light.bedroom_ceiling
         state: "on"
     action:
       - service: light.turn_off
-        entity_id: light.bed_lamp
+        entity_id: light.bedroom_ceiling
 
   # - alias: light switch bed going to sleep
   #   trigger:
@@ -538,13 +557,13 @@ automation:
         subtype: dim_up
     condition:
       - condition: state
-        entity_id: light.bed_lamp
+        entity_id: light.bedroom_ceiling
         state: "on"
       - condition: template
-        value_template: "{{ state_attr('light.bed_lamp', 'brightness') < 254 }}"
+        value_template: "{{ state_attr('light.bedroom_ceiling', 'brightness') < 254 }}"
     action:
       - service: light.turn_on
-        entity_id: light.bed_lamp
+        entity_id: light.bedroom_ceiling
         data:
           brightness_step_pct: 20
           transition: 0.5
@@ -558,13 +577,13 @@ automation:
         subtype: dim_up
     condition:
       - condition: state
-        entity_id: light.bed_lamp
+        entity_id: light.bedroom_ceiling
         state: "on"
       - condition: template
-        value_template: "{{ state_attr('light.bed_lamp', 'brightness') >= 254 }}"
+        value_template: "{{ state_attr('light.bedroom_ceiling', 'brightness') >= 254 }}"
     action:
       - service: light.turn_on
-        entity_id: light.bed_lamp
+        entity_id: light.bedroom_ceiling
         data:
           flash: short
 
@@ -577,11 +596,11 @@ automation:
         subtype: dim_down
     condition:
       - condition: state
-        entity_id: light.bed_lamp
+        entity_id: light.bedroom_ceiling
         state: "on"
     action:
       - service: light.turn_on
-        entity_id: light.bed_lamp
+        entity_id: light.bedroom_ceiling
         data:
           brightness_step_pct: -20
           transition: 0.5
@@ -682,3 +701,105 @@ automation:
         data:
           brightness_step_pct: -5
           transition: 0.5
+
+  - alias: light bathroom motion
+    # If motion is detected within the delay,
+    # we restart the script.
+    mode: restart
+    max_exceeded: silent
+    trigger:
+      platform: state
+      entity_id: binary_sensor.bathroom_motion
+      # from: "off"
+      to: "on"
+    condition:
+      - condition: template
+        value_template: "{{ state_attr('sun.sun', 'elevation') <= 8.0 }}"
+    action:
+      - service: script.bathroom_light_toggle
+        data:
+          service: turn_on
+      - wait_for_trigger:
+          platform: state
+          entity_id: binary_sensor.bathroom_motion
+          from: "on"
+          to: "off"
+      - delay: "00:10:00" # turn off after motion timeout
+      - service: script.bathroom_light_toggle
+        data:
+          service: turn_off
+
+  - alias: light bathroom switch toggle
+    trigger:
+      platform: state
+      entity_id: binary_sensor.bathroom_light_switch
+    condition:
+      - condition: template
+        value_template: "{{ trigger.from_state.state != 'unavailable' and trigger.to_state.state != 'unavailable' }}"
+    action:
+      service: script.bathroom_light_toggle
+      # - choose:
+      #     - conditions: "{{ is_state('sensor.day_phase', 'Night') }}"
+      #       sequence:
+      #         - service: light.toggle
+      #           data:
+      #             entity_id: light.bathroom_ceiling
+      #             brightness: 128
+      #             transition: 1
+      #             color_temp: 350
+      #     - conditions: "{{ is_state('sensor.day_phase', 'Evening') }}"
+      #     # - conditions: "{{ is_state('sun.sun', 'below_horizon') }}"
+      #       sequence:
+      #         - service: light.toggle
+      #           data:
+      #             entity_id: light.bathroom_ceiling
+      #             brightness: 255
+      #             transition: 0.5
+      #             color_temp: 320
+      #     default:
+      #       - service: light.toggle
+      #         data_template:
+      #           entity_id: light.bathroom_ceiling
+      #           brightness: 255
+      #           transition: 0.5
+      #           color_temp: 250
+
+  - alias: light bedroom switch toggle
+    trigger:
+      platform: state
+      entity_id: binary_sensor.bedroom_light_switch
+    condition:
+      - condition: template
+        value_template: "{{ trigger.from_state.state != 'unavailable' and trigger.to_state.state != 'unavailable' }}"
+    action:
+      service: light.toggle
+      data_template:
+        entity_id: light.bedroom_ceiling
+        brightness: 255
+        transition: 0.5
+        color_temp: >-
+          {% if is_state('sun.sun', 'above_horizon') %}
+            270
+          {% else %}
+            350
+          {% endif %}
+
+  - alias: light kitchen switch toggle
+    trigger:
+      platform: state
+      entity_id: binary_sensor.kitchen_light_switch
+    condition:
+      - condition: template
+        value_template: "{{ trigger.from_state.state != 'unavailable' and trigger.to_state.state != 'unavailable' }}"
+    action:
+      service: light.toggle
+      data_template:
+        entity_id: light.kitchen_ceiling
+        brightness: 255
+        transition: 0.5
+        color_temp: >-
+          {% if is_state('sun.sun', 'above_horizon') %}
+            270
+          {% else %}
+            350
+          {% endif %}
