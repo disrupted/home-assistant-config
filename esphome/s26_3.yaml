@@ -1,6 +1,6 @@
 substitutions:
-  name: "amp"
-  friendly_name: "Amp"
+  name: "s26_3" # "christmas_star"  # "s26_3"
+  friendly_name: "Christmas Star" # "S26_3"
 
 esphome:
   name: ${name}
@@ -15,7 +15,7 @@ wifi:
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "${friendly_name} Hotspot"
+    ssid: "${name} Hotspot"
     password: !secret esphome_fallback_hotspot_pass
 
 captive_portal:
@@ -46,6 +46,7 @@ binary_sensor:
     name: "${friendly_name} Button"
     on_press:
       - switch.toggle: relay
+    internal: true
 
 switch:
   - platform: restart
@@ -53,7 +54,7 @@ switch:
 
   - platform: gpio
     name: "${friendly_name}"
-    icon: mdi:audio-video
+    icon: mdi:string-lights
     pin: GPIO12
     id: relay
 
@@ -62,7 +63,21 @@ sensor:
     name: "${friendly_name} WiFi Signal"
     update_interval: 60s
 
-status_led:
-  pin:
-    number: GPIO13
-    inverted: true
+# status_led:
+#   pin:
+#     number: GPIO13
+#     inverted: True
+
+output:
+  # Register the green LED as a dimmable output ....
+  - platform: esp8266_pwm
+    id: s26_blue_led
+    pin:
+      number: GPIO13
+      inverted: true
+
+light:
+  - platform: monochromatic
+    name: "${friendly_name} Blue LED"
+    output: s26_blue_led
+    internal: true

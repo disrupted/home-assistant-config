@@ -15,13 +15,13 @@ wifi:
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "${friendly_name} Fallback Hotspot"
-    password: !secret esphome_lightstring_hotspot_pass
+    ssid: "${name} Hotspot"
+    password: !secret esphome_fallback_hotspot_pass
 
 captive_portal:
 
-# Enable logging
-logger:
+# Breaks WiFi connection
+# logger:
 
 # Enable Home Assistant API
 api:
