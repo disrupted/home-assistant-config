@@ -9,8 +9,6 @@ homeassistant:
       icon: mdi:restart
     script.hassio_reboot:
       icon: mdi:power
-    sensor.hass_uptime:
-      icon: mdi:home-assistant
     sensor.homeassistant_v2db:
       friendly_name: Database size
       icon: mdi:database-plus
@@ -97,7 +95,6 @@ sensor:
   #   name: Failed logins
   - platform: uptime
     name: HA Uptime
-    unit_of_measurement: minutes
   - platform: template
     sensors:
       ping_cloudflare_dns:
@@ -639,3 +636,10 @@ automation:
           # source: https://github.com/arsaboo/homeassistant-config/blob/master/automation_lab.yaml
           message: >
             hey, it's your smart home, remember me? you haven't checked me in a while. I wonder if everything is ok?
+
+  - alias: IP update DNS
+    trigger:
+      platform: state
+      entity_id: sensor.wan_ip
+    action:
+      service: cloudflare.update_records
