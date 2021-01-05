@@ -191,25 +191,25 @@ views:
                           .datetime="${entity.last_updated}"
                         ></ha-relative-time>`
                     ]]]
-          - type: conditional
-            conditions:
-              - entity: input_boolean.present
-                state_not: "on"
-            card:
-              - type: map
-                hours_to_show: 24
-                aspect_ratio: 16x10
-                default_zoom: 14
-                entities:
-                  - person.salomon
-                  - person.polina
-                  - zone.home
-                  - zone.school
-                  - zone.work
-                style: |
-                  div.leaflet-control-attribution {
-                    display: none;
-                  }
+          # - type: conditional
+          #   conditions:
+          #     - entity: input_boolean.present
+          #       state_not: "on"
+          #   card:
+          #     - type: map
+          #       hours_to_show: 24
+          #       aspect_ratio: 16x10
+          #       default_zoom: 14
+          #       entities:
+          #         - person.salomon
+          #         - person.polina
+          #         - zone.home
+          #         - zone.school
+          #         - zone.work
+          #       style: |
+          #         div.leaflet-control-attribution {
+          #           display: none;
+          #         }
           # - type: custom:layout-card
           #   layout: horizontal
           #   max_columns: 2
@@ -383,13 +383,13 @@ views:
       #       name: Energy Cost today
       #     - entity: sensor.washing_machine_runtime_today
       #       name: Runtime today
-      # - type: vertical-stack
-      #   cards:
-      #     - type: entities
-      #       entities:
-      #         - type: custom:secondaryinfo-entity-row
-      #           entity: vacuum.nono
-      #           secondary_info: "Last cleaning [[ sensor.vacuum_days_since_last_clean.state ]] days ago"
+      - type: vertical-stack
+        cards:
+          - type: entities
+            entities:
+              - type: custom:secondaryinfo-entity-row
+                entity: vacuum.nono
+                secondary_info: "Last cleaning [[ sensor.vacuum_days_since_last_clean.state ]] days ago"
       #     - type: custom:vacuum-card
       #       entity: vacuum.nono
       #       map: camera.nono_map
@@ -447,7 +447,7 @@ views:
       #   camera_image: camera.xiaofang
       #   show_state: false
   - id: 1
-    title: Sofa
+    title: Livingroom
     icon: "mdi:sofa"
     panel: true
     cards:
@@ -457,25 +457,26 @@ views:
           - type: entities
             show_header_toggle: false
             entities:
-              - type: custom:fold-entity-row
-                title: Light
-                head:
-                  entity: light.floor_lamp
-                  hide_when_off: false
-                  name: Floor lamp
-                  toggle: false
-                  hide_state: true
-                  type: "custom:slider-entity-row"
-                entities:
-                  - type: "custom:slider-entity-row"
-                    name: Top
-                    entity: light.floor_lamp_top
-                  - type: "custom:slider-entity-row"
-                    name: Bottom
-                    entity: light.floor_lamp_bottom
-                  - entity: switch.adaptive_lighting_floor
-                    name: Adaptive
-              - light.chandelier
+              # - type: custom:fold-entity-row
+              #   title: Light
+              #   head:
+              #     entity: light.floor_lamp
+              #     hide_when_off: false
+              #     toggle: false
+              #     hide_state: true
+              #     type: "custom:slider-entity-row"
+              #   entities:
+              #     - type: "custom:slider-entity-row"
+              #       name: Top
+              #       entity: light.floor_lamp_top
+              #     - type: "custom:slider-entity-row"
+              #       name: Bottom
+              #       entity: light.floor_lamp_bottom
+              #     - entity: switch.adaptive_lighting_floor
+              #       name: Adaptive
+              - light.floor_lamp
+              - light.reading_lamp
+              - light.spots
               - light.string
               - light.candle
           - entities:
@@ -541,7 +542,7 @@ views:
               volume: true
             type: "custom:mini-media-player"
   - id: 2
-    title: Bed
+    title: Bedroom
     icon: "mdi:bed-king"
     cards:
       - type: entities
@@ -549,9 +550,8 @@ views:
           - type: custom:fold-entity-row
             title: Light
             head:
-              entity: light.bed_lamp
+              entity: light.bedroom_ceiling
               hide_when_off: false
-              name: Bed lamp
               toggle: true
               type: "custom:slider-entity-row"
             entities:
@@ -559,6 +559,7 @@ views:
                 name: Adaptive
               - entity: switch.adaptive_lighting_bed_no_brightness
                 name: Adaptive (no brightness)
+          - light.bedside_lamp
         show_header_toggle: false
       - entities:
           - type: custom:secondaryinfo-entity-row
@@ -611,7 +612,6 @@ views:
             head:
               type: "custom:slider-entity-row"
               entity: light.desk_lamp
-              name: Desk lamp
               toggle: true
               hide_when_off: false
             entities:
@@ -626,6 +626,8 @@ views:
           - sensor.printer_black_image_drum_unit
           - binary_sensor.disrupted_mbp_active
           - sensor.disrupted_mbp_usage_today
+          - binary_sensor.disrupted_mbp_built_in_microphone
+          - binary_sensor.disrupted_mbp_facetime_hd_camera
       - type: entities
         title: Uni
         entities:
@@ -649,7 +651,51 @@ views:
           - sensor.days_to_next_holiday
           - sensor.next_birthday
           - sensor.days_to_next_birthday
-
+  - id: 4
+    title: Kitchen
+    icon: "mdi:food-variant"
+    cards:
+      - type: entities
+        show_header_toggle: false
+        entities:
+          - light.kitchen_ceiling
+          - switch.christmas_star
+          - binary_sensor.kitchen_light_switch
+      - type: "custom:auto-entities"
+        card:
+          show_header_toggle: false
+          type: entities
+          # title: Kitchen
+        filter:
+          include:
+            - entity_id: automation.*kitchen*
+            # - area: Kitchen
+  - id: 5
+    title: Bathroom
+    icon: "mdi:shower-head"
+    cards:
+      - type: entities
+        show_header_toggle: false
+        entities:
+          - light.bathroom_ceiling
+          - fan.bathroom
+          - binary_sensor.bathroom_motion
+      - type: entities
+        show_header_toggle: false
+        entities:
+          - type: custom:secondaryinfo-entity-row
+            entity: binary_sensor.washing_machine
+            icon: mdi:washing-machine
+            secondary_info: "[[ sensor.washing_machine_power.state ]] W"
+      - type: "custom:auto-entities"
+        card:
+          show_header_toggle: false
+          type: entities
+          # title: Bathroom
+        filter:
+          include:
+            # - area: Bathroom
+            - entity_id: automation.*bathroom*
   - id: 6
     title: Weather
     icon: "mdi:weather-partly-cloudy"
@@ -1935,9 +1981,3 @@ views:
   #           - entity_id: binary_sensor.lights_left_on
   #         # exclude:
   #         #   - state: unavailable
-  - id: 13
-    title: ZHA
-    icon: "mdi:network"
-    panel: true
-    cards:
-      - type: "custom:zha-network-visualization-card"
