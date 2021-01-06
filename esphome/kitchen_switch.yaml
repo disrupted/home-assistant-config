@@ -1,7 +1,8 @@
 # Shelly1PM
 substitutions:
-  name: "kitchen"
-  friendly_name: "Kitchen"
+  name: kitchen
+  friendly_name: Kitchen
+  light_entity: light.kitchen_ceiling
 
 esphome:
   name: ${name}
@@ -48,7 +49,7 @@ time:
 text_sensor:
   - platform: homeassistant
     name: "${friendly_name} Light Availablity Text"
-    entity_id: light.kitchen_ceiling
+    entity_id: "${light_entity}"
     id: light_avail_text
     internal: true
 
@@ -143,7 +144,7 @@ binary_sensor:
               - homeassistant.service:
                   service: script.light_toggle
                   data:
-                    entity_id: light.kitchen_ceiling
+                    entity_id: "${light_entity}"
             else:
               - switch.toggle: relay
     on_multi_click:
