@@ -1,0 +1,77 @@
+# Shelly1
+substitutions:
+  name: "bathroom"
+  friendly_name: "Bathroom"
+
+esphome:
+  name: ${name}
+  platform: ESP8266
+  board: esp01_1m
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  fast_connect: true
+  reboot_timeout: 0s
+  manual_ip:
+    static_ip: !secret ip_shelly_bathroom
+    gateway: !secret ip_router
+    subnet: !secret ip_subnet
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${friendly_name} Hotspot"
+    password: !secret esphome_fallback_hotspot_pass
+
+captive_portal:
+
+# Enable logging
+# logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret esphome_api_pass
+  reboot_timeout: 0s
+
+ota:
+  password: !secret esphome_ota_pass
+
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+binary_sensor:
+  - platform: status
+    name: "${friendly_name} Status"
+
+  - platform: gpio
+    pin:
+      number: GPIO5
+    name: "${friendly_name} Light Switch"
+    # on_state:
+    #   then:
+    #     - homeassistant.service:
+    #         service: light.toggle
+    #         data:
+    #           entity_id: "light.bathroom_ceiling"
+    #           brightness: "255"
+
+output:
+  - platform: gpio
+    pin: GPIO4
+    id: shelly_1_relay
+
+fan:
+  - platform: binary
+    name: "${friendly_name} Fan"
+    id: "${name}"
+    output: shelly_1_relay
+
+switch:
+  - platform: restart
+    name: "${friendly_name} Restart"
+
+sensor:
+  - platform: wifi_signal
+    name: "${friendly_name} WiFi Signal"
+    update_interval: 60s

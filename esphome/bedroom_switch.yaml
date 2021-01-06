@@ -1,0 +1,110 @@
+# Shelly1
+substitutions:
+  name: bedroom
+  friendly_name: Bedroom
+  light_entity: light.bedroom_ceiling
+
+esphome:
+  name: ${name}
+  platform: ESP8266
+  board: esp01_1m
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  fast_connect: true
+  reboot_timeout: 0s
+  manual_ip:
+    static_ip: !secret ip_shelly_bedroom
+    gateway: !secret ip_router
+    subnet: !secret ip_subnet
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${friendly_name} Hotspot"
+    password: !secret esphome_fallback_hotspot_pass
+
+captive_portal:
+
+# Enable logging
+# logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret esphome_api_pass
+  reboot_timeout: 0s
+
+ota:
+  password: !secret esphome_ota_pass
+
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+text_sensor:
+  - platform: homeassistant
+    name: "${friendly_name} Light Availablity Text"
+    entity_id: "${light_entity}"
+    id: light_avail_text
+    internal: true
+
+switch:
+  - platform: restart
+    name: "${friendly_name} Restart"
+
+  - platform: gpio
+    id: relay
+    name: "${friendly_name} Relay"
+    pin: GPIO4
+    restore_mode: RESTORE_DEFAULT_ON
+
+sensor:
+  - platform: wifi_signal
+    name: "${friendly_name} WiFi Signal"
+    update_interval: 60s
+
+binary_sensor:
+  - platform: status
+    name: "${friendly_name} Status"
+
+  - platform: template
+    name: "${friendly_name} Light Availability"
+    id: light_avail
+    lambda: |-
+      if ((id(light_avail_text).state == "on") or (id(light_avail_text).state == "off")) {
+        // Bulb is Available.
+        return true;
+      } else {
+        // Bulb is Unavailable.
+        return false;
+      }
+
+  # Binary sensor for the button press
+  - platform: gpio
+    name: "${friendly_name} Light Switch"
+    pin:
+      number: GPIO5
+    on_state:
+      then:
+        - if:
+            condition:
+              and:
+                - switch.is_on: relay
+                - api.connected:
+                - binary_sensor.is_on: light_avail
+            then:
+              - homeassistant.service:
+                  service: script.light_toggle
+                  data:
+                    entity_id: "${light_entity}"
+            else:
+              - switch.toggle: relay
+    on_multi_click:
+      - timing:
+          - ON for at most 1s
+          - OFF for at most 1s
+          - ON for at most 1s
+          - OFF for at most 0.2s
+        then:
+          - logger.log: "Double Click - Manual toggle relay"
+          - switch.toggle: relay
