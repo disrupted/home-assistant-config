@@ -41,6 +41,9 @@ plex.conf
 zigbee.db
 bvg_*.json
 .omv_cookies.json
+packages/person.yaml
+packages/shared.yaml
+packages/*internal.yaml
 
 # ESPHome
 esphome/secrets.yaml
