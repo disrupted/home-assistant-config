@@ -1,38 +1,38 @@
-sensor:
-  - platform: citybikes
-    name: Home
-    stations:
-      - !secret citybikes_station_1
-      - !secret citybikes_station_2
-      - !secret citybikes_station_3
+# sensor:
+#   - platform: citybikes
+#     name: Home
+#     stations:
+#       - !secret citybikes_station_1
+#       - !secret citybikes_station_2
+#       - !secret citybikes_station_3
 
-  # - platform: bvg
-  #   name: BVG 1
-  #   stop_id: !secret bvg_1_id
-  #   direction: !secret bvg_1_direction
-  #   walking_distance: !secret bvg_1_walking_distance
-  # - platform: bvg
-  #   name: BVG 2
-  #   stop_id: !secret bvg_2_id
-  #   direction: !secret bvg_2_direction
-  #   walking_distance: !secret bvg_2_walking_distance
-  # - platform: bvg
-  #   name: BVG 3
-  #   stop_id: !secret bvg_3_id
-  #   direction: !secret bvg_3_direction
-  #   walking_distance: !secret bvg_3_walking_distance
+# - platform: bvg
+#   name: BVG 1
+#   stop_id: !secret bvg_1_id
+#   direction: !secret bvg_1_direction
+#   walking_distance: !secret bvg_1_walking_distance
+# - platform: bvg
+#   name: BVG 2
+#   stop_id: !secret bvg_2_id
+#   direction: !secret bvg_2_direction
+#   walking_distance: !secret bvg_2_walking_distance
+# - platform: bvg
+#   name: BVG 3
+#   stop_id: !secret bvg_3_id
+#   direction: !secret bvg_3_direction
+#   walking_distance: !secret bvg_3_walking_distance
 
-  # - platform: template
-  #   sensors:
-  #     bvg_1_delay:
-  #       friendly_name: !secret bvg_1_delay_name
-  #       unit_of_measurement: min
-  #       value_template: "{{ state_attr('sensor.bvg_1', 'delay') }}"
-  #     bvg_2_delay:
-  #       friendly_name: !secret bvg_2_delay_name
-  #       unit_of_measurement: min
-  #       value_template: "{{ state_attr('sensor.bvg_2', 'delay') }}"
-  #     bvg_3_delay:
-  #       friendly_name: !secret bvg_3_delay_name
-  #       unit_of_measurement: min
-  #       value_template: "{{ state_attr('sensor.bvg_3', 'delay') }}"
+# - platform: template
+#   sensors:
+#     bvg_1_delay:
+#       friendly_name: !secret bvg_1_delay_name
+#       unit_of_measurement: min
+#       value_template: "{{ state_attr('sensor.bvg_1', 'delay') }}"
+#     bvg_2_delay:
+#       friendly_name: !secret bvg_2_delay_name
+#       unit_of_measurement: min
+#       value_template: "{{ state_attr('sensor.bvg_2', 'delay') }}"
+#     bvg_3_delay:
+#       friendly_name: !secret bvg_3_delay_name
+#       unit_of_measurement: min
+#       value_template: "{{ state_attr('sensor.bvg_3', 'delay') }}"

@@ -661,15 +661,6 @@ views:
           - light.kitchen_ceiling
           - switch.christmas_star
           - binary_sensor.kitchen_light_switch
-      - type: "custom:auto-entities"
-        card:
-          show_header_toggle: false
-          type: entities
-          # title: Kitchen
-        filter:
-          include:
-            - entity_id: automation.*kitchen*
-            # - area: Kitchen
   - id: 5
     title: Bathroom
     icon: "mdi:shower-head"
@@ -1911,38 +1902,38 @@ views:
               #   - state: unavailable
               sort:
                 method: last_changed # last_updated
-          - type: entities
-            entities:
-              - type: custom:secondaryinfo-entity-row
-                entity: sensor.bvg_1
-                name: !secret bvg_1_name_short
-                secondary_info: '[[ if(sensor.bvg_1.attributes.delay == 0, "On Time", sensor.bvg_1.attributes.delay) ]][[ if(sensor.bvg_1.attributes.delay == 0, "", " min delayed") ]]'
-              - type: custom:secondaryinfo-entity-row
-                entity: sensor.bvg_2
-                name: !secret bvg_2_name_short
-                secondary_info: '[[ if(sensor.bvg_2.attributes.delay == 0, "On Time", sensor.bvg_2.attributes.delay) ]][[ if(sensor.bvg_2.attributes.delay == 0, "", " min delayed") ]]'
-              - type: custom:secondaryinfo-entity-row
-                entity: sensor.bvg_3
-                name: !secret bvg_3_name_short
-                secondary_info: '[[ if(sensor.bvg_3.attributes.delay == 0, "On Time", sensor.bvg_3.attributes.delay) ]][[ if(sensor.bvg_3.attributes.delay == 0, "", " min delayed") ]]'
-          - type: entities
-            entities:
-              - type: custom:secondaryinfo-entity-row
-                entity: sensor.nextbike_berlin_home_d10c16ae8e0dae3ec9e6c1ba5a981399
-                name: Hertzbergplatz
-                secondary_info: "[[ sensor.nextbike_berlin_home_d10c16ae8e0dae3ec9e6c1ba5a981399.attributes.empty_slots ]] empty slots"
-              - type: custom:secondaryinfo-entity-row
-                entity: sensor.nextbike_berlin_home_5cecc6225df13d3d9cc9d83c33d7480f
-                secondary_info: "[[ sensor.nextbike_berlin_home_5cecc6225df13d3d9cc9d83c33d7480f.attributes.empty_slots ]] empty slots"
-              - type: custom:secondaryinfo-entity-row
-                entity: sensor.nextbike_berlin_home_9d84d6515d01344f3f2b280ca274a817
-                secondary_info: "[[ sensor.nextbike_berlin_home_9d84d6515d01344f3f2b280ca274a817.attributes.empty_slots ]] empty slots"
-          - type: entities
-            entities:
-              - type: custom:secondaryinfo-entity-row
-                entity: sensor.populartimes_rewe
-                secondary_info: "[[ sensor.populartimes_rewe_usual_difference ]] % compared to usually"
-              - sensor.tree
+          # - type: entities
+          #   entities:
+          #     - type: custom:secondaryinfo-entity-row
+          #       entity: sensor.bvg_1
+          #       name: !secret bvg_1_name_short
+          #       secondary_info: '[[ if(sensor.bvg_1.attributes.delay == 0, "On Time", sensor.bvg_1.attributes.delay) ]][[ if(sensor.bvg_1.attributes.delay == 0, "", " min delayed") ]]'
+          #     - type: custom:secondaryinfo-entity-row
+          #       entity: sensor.bvg_2
+          #       name: !secret bvg_2_name_short
+          #       secondary_info: '[[ if(sensor.bvg_2.attributes.delay == 0, "On Time", sensor.bvg_2.attributes.delay) ]][[ if(sensor.bvg_2.attributes.delay == 0, "", " min delayed") ]]'
+          #     - type: custom:secondaryinfo-entity-row
+          #       entity: sensor.bvg_3
+          #       name: !secret bvg_3_name_short
+          #       secondary_info: '[[ if(sensor.bvg_3.attributes.delay == 0, "On Time", sensor.bvg_3.attributes.delay) ]][[ if(sensor.bvg_3.attributes.delay == 0, "", " min delayed") ]]'
+          # - type: entities
+          #   entities:
+          #     - type: custom:secondaryinfo-entity-row
+          #       entity: sensor.nextbike_berlin_home_d10c16ae8e0dae3ec9e6c1ba5a981399
+          #       name: Hertzbergplatz
+          #       secondary_info: "[[ sensor.nextbike_berlin_home_d10c16ae8e0dae3ec9e6c1ba5a981399.attributes.empty_slots ]] empty slots"
+          #     - type: custom:secondaryinfo-entity-row
+          #       entity: sensor.nextbike_berlin_home_5cecc6225df13d3d9cc9d83c33d7480f
+          #       secondary_info: "[[ sensor.nextbike_berlin_home_5cecc6225df13d3d9cc9d83c33d7480f.attributes.empty_slots ]] empty slots"
+          #     - type: custom:secondaryinfo-entity-row
+          #       entity: sensor.nextbike_berlin_home_9d84d6515d01344f3f2b280ca274a817
+          #       secondary_info: "[[ sensor.nextbike_berlin_home_9d84d6515d01344f3f2b280ca274a817.attributes.empty_slots ]] empty slots"
+          # - type: entities
+          #   entities:
+          #     - type: custom:secondaryinfo-entity-row
+          #       entity: sensor.populartimes_rewe
+          #       secondary_info: "[[ sensor.populartimes_rewe_usual_difference ]] % compared to usually"
+          #     - sensor.tree
           # - type: 'custom:auto-entities'
           #   title: Popular Times
           #   card:
