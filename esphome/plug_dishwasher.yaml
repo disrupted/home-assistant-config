@@ -1,0 +1,147 @@
+substitutions:
+  name: "plug_dishwasher"
+  friendly_name: "Dishwasher"
+
+esphome:
+  name: ${name}
+  platform: ESP8266
+  board: esp8285
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  fast_connect: true
+  reboot_timeout: 0s
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${name} Hotspot"
+    password: !secret esphome_fallback_hotspot_pass
+
+captive_portal:
+
+# Enable Web server
+web_server:
+  port: 80
+
+# Breaks WiFi connection
+# logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret esphome_api_pass
+  reboot_timeout: 0s
+
+ota:
+  password: !secret esphome_ota_pass
+
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+binary_sensor:
+  - platform: status
+    name: "${friendly_name} Status"
+
+  # Binary sensor for the button press
+  - platform: gpio
+    name: "${friendly_name} Button"
+    pin:
+      number: GPIO3
+      inverted: true
+    # on_press:
+    #   - switch.toggle: relay
+
+  - platform: template
+    name: "${friendly_name}"
+    lambda: |-
+      if (id(power).state > 7) {
+        // Dishwasher is running.
+        return true;
+      } else {
+        // Dishwasher is not running.
+        return false;
+      }
+    filters:
+      - delayed_on: 10s
+      - delayed_off: 240s
+    on_press:
+      - light.turn_on: led
+    on_release:
+      - light.turn_off: led
+
+output:
+  # Relay state led
+  - platform: esp8266_pwm
+    id: state_led
+    pin:
+      number: GPIO1
+      inverted: true
+
+light:
+  # Relay state light
+  - platform: monochromatic
+    output: state_led
+    id: led
+    default_transition_length: 200ms
+    internal: true
+
+switch:
+  - platform: restart
+    name: "${friendly_name} Restart"
+
+  # Switch to toggle the relay
+  - platform: gpio
+    id: relay
+    name: "${friendly_name} Switch"
+    pin: GPIO14
+    restore_mode: ALWAYS_ON
+    # on_turn_on:
+    #   - light.turn_on: led
+    # on_turn_off:
+    #   - light.turn_off: led
+
+sensor:
+  - platform: wifi_signal
+    name: "${friendly_name} WiFi Signal"
+    update_interval: 60s
+
+  # Power sensor
+  - platform: hlw8012
+    sel_pin:
+      number: GPIO12
+      inverted: true
+    cf_pin: GPIO04
+    cf1_pin: GPIO05
+    change_mode_every: 3
+    update_interval: 3s
+    # Current sensor
+    current:
+      name: "${friendly_name} Current"
+      unit_of_measurement: A
+      accuracy_decimals: 3
+      icon: mdi:alpha-a
+    # Voltage sensor
+    voltage:
+      name: "${friendly_name} Voltage"
+      unit_of_measurement: V
+      accuracy_decimals: 1
+      icon: mdi:alpha-v
+      filters:
+        # Map from sensor -> measured value
+        - calibrate_linear:
+            - 0.0 -> 0.0
+            - 600.0 -> 230.0
+    # Power sensor
+    power:
+      id: power
+      name: "${friendly_name} Power"
+      unit_of_measurement: W
+      accuracy_decimals: 0
+      icon: mdi:alpha-w
+
+# Uses the red LED as a status indicator
+status_led:
+  pin:
+    number: GPIO13
+    inverted: true
