@@ -1,0 +1,44 @@
+alias: Bathroom Light toggle
+description: "toggle light in bathroom based on time of day"
+fields:
+  service:
+    description: service to use (optional, default toggle)
+    example: turn_on
+variables:
+  entity_id: light.bathroom_ceiling
+  service: "{{ service | default('toggle') }}"
+sequence:
+  - choose:
+      - conditions: "{{ service in ['toggle', 'turn_on'] }}"
+        sequence:
+          - choose:
+              - conditions: "{{ is_state('sensor.day_phase', 'Night') }}"
+                sequence:
+                  - service: "light.{{ service }}"
+                    data:
+                      entity_id: "{{ entity_id }}"
+                      brightness: 128
+                      transition: 1
+                      color_temp: 350
+              - conditions: "{{ is_state('sensor.day_phase', 'Evening') }}"
+                # - conditions: "{{ is_state('sun.sun', 'below_horizon') }}"
+                sequence:
+                  - service: "light.{{ service }}"
+                    data:
+                      entity_id: "{{ entity_id }}"
+                      brightness: 255
+                      transition: 0.5
+                      color_temp: 320
+            default:
+              - service: "light.{{ service }}"
+                data_template:
+                  entity_id: "{{ entity_id }}"
+                  brightness: 255
+                  transition: 0.5
+                  color_temp: 250
+      - conditions: "{{ service == 'turn_off' }}"
+        sequence:
+          - service: light.turn_off
+            data:
+              entity_id: "{{ entity_id }}"
+              transition: 0.5

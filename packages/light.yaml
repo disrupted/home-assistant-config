@@ -29,11 +29,16 @@ homeassistant:
       icon: mdi:candle
 
 light:
-  # - platform: group
-  #   name: Floor lamp
-  #   entities:
-  #     - light.floor_lamp_top
-  #     - light.floor_lamp_bottom
+  - platform: group
+    name: All
+    entities:
+      - light.livingroom
+      - light.bedroom
+      - light.bathroom
+      - light.kitchen
+      - light.desk_lamp
+      - light.corridor_ceiling
+      - light.storage_ceiling
   - platform: group
     name: Livingroom
     entities:
@@ -728,78 +733,3 @@ automation:
       - service: script.bathroom_light_toggle
         data:
           service: turn_off
-
-  - alias: light bathroom switch toggle
-    trigger:
-      platform: state
-      entity_id: binary_sensor.bathroom_light_switch
-    condition:
-      - condition: template
-        value_template: "{{ trigger.from_state.state != 'unavailable' and trigger.to_state.state != 'unavailable' }}"
-    action:
-      service: script.bathroom_light_toggle
-      # - choose:
-      #     - conditions: "{{ is_state('sensor.day_phase', 'Night') }}"
-      #       sequence:
-      #         - service: light.toggle
-      #           data:
-      #             entity_id: light.bathroom_ceiling
-      #             brightness: 128
-      #             transition: 1
-      #             color_temp: 350
-      #     - conditions: "{{ is_state('sensor.day_phase', 'Evening') }}"
-      #     # - conditions: "{{ is_state('sun.sun', 'below_horizon') }}"
-      #       sequence:
-      #         - service: light.toggle
-      #           data:
-      #             entity_id: light.bathroom_ceiling
-      #             brightness: 255
-      #             transition: 0.5
-      #             color_temp: 320
-      #     default:
-      #       - service: light.toggle
-      #         data_template:
-      #           entity_id: light.bathroom_ceiling
-      #           brightness: 255
-      #           transition: 0.5
-      #           color_temp: 250
-
-  - alias: light bedroom switch toggle
-    trigger:
-      platform: state
-      entity_id: binary_sensor.bedroom_light_switch
-    condition:
-      - condition: template
-        value_template: "{{ trigger.from_state.state != 'unavailable' and trigger.to_state.state != 'unavailable' }}"
-    action:
-      service: light.toggle
-      data_template:
-        entity_id: light.bedroom_ceiling
-        brightness: 255
-        transition: 0.5
-        color_temp: >-
-          {% if is_state('sun.sun', 'above_horizon') %}
-            270
-          {% else %}
-            350
-          {% endif %}
-
-  - alias: light kitchen switch toggle
-    trigger:
-      platform: state
-      entity_id: binary_sensor.kitchen_light_switch
-    condition:
-      - condition: template
-        value_template: "{{ trigger.from_state.state != 'unavailable' and trigger.to_state.state != 'unavailable' }}"
-    action:
-      service: light.toggle
-      data_template:
-        entity_id: light.kitchen_ceiling
-        brightness: 255
-        transition: 0.5
-        color_temp: >-
-          {% if is_state('sun.sun', 'above_horizon') %}
-            270
-          {% else %}
-            350
-          {% endif %}

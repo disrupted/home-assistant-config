@@ -12,6 +12,7 @@ sequence:
       adapt_brightness: false
       transition: "{{ transition }}"
       lights:
-        - light.bed_lamp
         - light.desk_lamp
         - light.floor_lamp
+        - light.reading_lamp
+        - light.spots
