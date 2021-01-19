@@ -256,23 +256,12 @@ views:
                   - input_boolean.present
                   - person.salomon
                   - person.polina
-      # - type: conditional
-      #   card:
-      #     type: entities
-      #     title: Scene
-      #     show_header_toggle: false
-      #     entities:
-      #       - input_select.scene
-      #       - input_number.scene_brightness
-      #       - input_select.hass_theme
-      #   conditions:
-      #     - entity: sun.sun
-      #       state: below_horizon
       - type: entities
         show_header_toggle: false
         entities:
           - input_select.scene
           - input_number.scene_brightness
+          - input_number.scene_color_temp
       # - type: "custom:stack-in-card"
       #   mode: vertical
       #   cards:
@@ -359,30 +348,7 @@ views:
                 - name: DLF Kultur
                   icon: "mdi:radio"
                   type: MUSIC
-                  # id: 'https://st01.sslstream.dlf.de/dlf/01/high/aac/stream.aac'
                   id: "https://st02.sslstream.dlf.de/dlf/02/high/opus/stream.opus"
-      # - type: thermostat
-      #   entity: climate.thermostat
-      # - type: entities
-      #   show_header_toggle: false
-      #   entities:
-      #     - type: custom:secondaryinfo-entity-row
-      #       entity: binary_sensor.washing_machine
-      #       secondary_info: "[[ sensor.washing_machine_power.state ]] W | runtime [[ sensor.washing_machine_runtime.state ]] h"
-      #     - entity: switch.washing_machine_our_laundry
-      #       name: our Laundry?
-      #     # - input_datetime.washing_machine_started
-      #     # - input_datetime.washing_machine_finished
-      #     # - sensor.washing_machine_voltage
-      #     # - sensor.washing_machine_current
-      #     # - sensor.washing_machine_power
-      #     - entity: sensor.washing_machine_total_daily_energy
-      #       name: Energy Usage today
-      #       # secondary_info: "total runtime today [[ sensor.washing_machine_runtime_today.state ]] h"
-      #     - entity: sensor.washing_machine_total_daily_energy_cost
-      #       name: Energy Cost today
-      #     - entity: sensor.washing_machine_runtime_today
-      #       name: Runtime today
       - type: vertical-stack
         cards:
           - type: entities
@@ -457,26 +423,12 @@ views:
           - type: entities
             show_header_toggle: false
             entities:
-              # - type: custom:fold-entity-row
-              #   title: Light
-              #   head:
-              #     entity: light.floor_lamp
-              #     hide_when_off: false
-              #     toggle: false
-              #     hide_state: true
-              #     type: "custom:slider-entity-row"
-              #   entities:
-              #     - type: "custom:slider-entity-row"
-              #       name: Top
-              #       entity: light.floor_lamp_top
-              #     - type: "custom:slider-entity-row"
-              #       name: Bottom
-              #       entity: light.floor_lamp_bottom
-              #     - entity: switch.adaptive_lighting_floor
-              #       name: Adaptive
-              - light.floor_lamp
-              - light.reading_lamp
-              - light.spots
+              - entity: light.floor_lamp
+                secondary_info: brightness
+              - entity: light.reading_lamp
+                secondary_info: brightness
+              - entity: light.spots
+                secondary_info: brightness
               - light.string
               - light.candle
           - entities:
@@ -560,6 +512,7 @@ views:
               - entity: switch.adaptive_lighting_bed_no_brightness
                 name: Adaptive (no brightness)
           - light.bedside_lamp
+          - binary_sensor.bedroom_light_switch
         show_header_toggle: false
       - entities:
           - type: custom:secondaryinfo-entity-row
@@ -661,6 +614,18 @@ views:
           - light.kitchen_ceiling
           - switch.christmas_star
           - binary_sensor.kitchen_light_switch
+      - type: entities
+        show_header_toggle: false
+        entities:
+          - type: custom:secondaryinfo-entity-row
+            entity: binary_sensor.dishwasher
+            icon: mdi:dishwasher
+            secondary_info: "[[ sensor.dishwasher_power.state ]] W"
+      - type: entities
+        show_header_toggle: false
+        entities:
+          - light.storage_ceiling
+          - binary_sensor.storage_door
   - id: 5
     title: Bathroom
     icon: "mdi:shower-head"
@@ -669,8 +634,12 @@ views:
         show_header_toggle: false
         entities:
           - light.bathroom_ceiling
-          - fan.bathroom
-          - binary_sensor.bathroom_motion
+          - entity: fan.bathroom
+            secondary_info: last-changed
+          - entity: binary_sensor.bathroom_motion
+            secondary_info: last-updated
+          - binary_sensor.bathroom_light_switch
+          - binary_sensor.bathroom_door
       - type: entities
         show_header_toggle: false
         entities:
@@ -687,6 +656,8 @@ views:
           include:
             # - area: Bathroom
             - entity_id: automation.*bathroom*
+              options:
+                secondary_info: last-triggered
   - id: 6
     title: Weather
     icon: "mdi:weather-partly-cloudy"
@@ -701,7 +672,7 @@ views:
           - type: "custom:stack-in-card"
             mode: vertical
             cards:
-              - entity: weather.dark_sky
+              - entity: weather.home
                 icons: "/hacsfiles/weather-card/icons/"
                 type: "custom:weather-card"
               - type: markdown
@@ -780,15 +751,15 @@ views:
               - type: "custom:mini-graph-card"
                 name: Temperature
                 icon: "mdi:thermometer"
-                # color_thresholds:
-                #   - color: '#56a0ee'
-                #     value: 0
-                #   - color: '#d35400'
-                #     value: 20
-                #   - color: '#c0392b'
-                #     value: 30
+                color_thresholds:
+                  - color: "#56a0ee"
+                    value: 0
+                  - color: "#d35400"
+                    value: 20
+                  - color: "#c0392b"
+                    value: 30
                 entities:
-                  - entity: sensor.dark_sky_apparent_temperature
+                  - entity: sensor.htw_wetter_temperature
                     name: Temperature
                 hour24: true
                 hours_to_show: 48
@@ -799,17 +770,11 @@ views:
                 # font_size: 140
                 show:
                   labels: true
-              # - type: conditional
-              #   conditions:
-              #     - entity: sensor.dark_sky_precip
-              #       state_not: unknown
-              #   card:
               - type: "custom:mini-graph-card"
                 name: Precipitation
                 icon: "mdi:weather-rainy"
                 entities:
                   - color: "#56A0EE"
-                    # entity: sensor.dark_sky_precip_intensity
                     entity: sensor.dwd_wetter_precipitation
                     name: Precipitation
                 hour24: true
@@ -834,36 +799,6 @@ views:
                 line_color: "#4bc0c0"
                 line_width: 3
                 decimals: 0
-                # show:
-                #   fill: false
-                # - type: entities
-                #   show_header_toggle: false
-                #   entities:
-                #     - group.dark_sky_currently
-                #     - sensor.dark_sky_wind_direction
-                #     - group.dark_sky_forecast_1d
-                #     - group.dark_sky_forecast_2d
-                # - type: entities
-                #   title: currently
-                #   entities:
-                #     - sensor.dark_sky_icon
-                #     - sensor.dark_sky_precip
-                #     - sensor.dark_sky_precip_intensity
-                #     - sensor.dark_sky_precip_probability
-                # - type: entities
-                #   title: today
-                #   entities:
-                #     - sensor.dark_sky_icon_1d
-                #     - sensor.dark_sky_precip_1d
-                #     - sensor.dark_sky_precip_intensity_1d
-                #     - sensor.dark_sky_precip_probability_1d
-                # - type: entities
-                #   title: tomorrow
-                #   entities:
-                #     - sensor.dark_sky_icon_2d
-                #     - sensor.dark_sky_precip_2d
-                #     - sensor.dark_sky_precip_intensity_2d
-                #     - sensor.dark_sky_precip_probability_2d
 
   - id: 7
     title: Weather details
@@ -886,7 +821,6 @@ views:
           - type: entities
             entities:
               - binary_sensor.rain
-              - binary_sensor.trend_dark_sky_precip
               - sensor.weather_bad_weather
               - sensor.weather_wind
               - sensor.weather_rain
@@ -904,62 +838,6 @@ views:
               - sensor.max_uv_index
               - sensor.current_uv_index
               - sensor.skin_type_3_safe_exposure_time
-          # - type: custom:gap-card
-          #   height: 168
-          # - type: custom:gap-card
-          #   height: 168
-          # - type: 'custom:auto-entities'
-          #   card:
-          #     type: entities
-          #     title: currently
-          #     show_header_toggle: false
-          #   filter:
-          #     include:
-          #       - group: group.dark_sky_currently
-          # - type: 'custom:auto-entities'
-          #   card:
-          #     type: entities
-          #     # title_template: "{{ now() }}"
-          #   filter:
-          #     include:
-          #       - type: custom:template-entity-row
-          #         # icon: mdi:lamp
-          #         name: "Forecast {{ as_timestamp(now()) | timestamp_custom('%H:%M') }} - {{ (as_timestamp(now()) + 59 * 60)| timestamp_custom('%H:%M') }}"
-          #       - entity_id: sensor.dark_sky_*_0h
-          # - type: 'custom:auto-entities'
-          #   card:
-          #     type: entities
-          #     show_header_toggle: false
-          #   filter:
-          #     include:
-          #       - type: custom:template-entity-row
-          #         # icon: mdi:lamp
-          #         name: "Forecast {{ (as_timestamp(now()) + 60 * 60)| timestamp_custom('%H:%M') }} - {{ (as_timestamp(now()) + 119 * 60)| timestamp_custom('%H:%M') }}"
-          #       - entity_id: sensor.dark_sky_*_1h
-          # - type: 'custom:auto-entities'
-          #   card:
-          #     type: entities
-          #     title: today
-          #     show_header_toggle: false
-          #   filter:
-          #     include:
-          #       - group: group.dark_sky_forecast_0d
-          # - type: 'custom:auto-entities'
-          #   card:
-          #     type: entities
-          #     title: tomorrow
-          #     show_header_toggle: false
-          #   filter:
-          #     include:
-          #       - group: group.dark_sky_forecast_1d
-          # - type: 'custom:auto-entities'
-          #   card:
-          #     type: entities
-          #     title: after tomorrow
-          #     show_header_toggle: false
-          #   filter:
-          #     include:
-          #       - group: group.dark_sky_forecast_2d
           - type: "custom:auto-entities"
             card:
               type: entities
@@ -1201,7 +1079,7 @@ views:
                     align_state: right
                     decimals: 0
                     entities:
-                      - entity: sensor.router_wan_curbw_in_mbit
+                      - entity: sensor.router_wan_in_mbps
                         name: Download
                         # state_adaptive_color: true
                     hour24: true
@@ -1234,7 +1112,7 @@ views:
                     align_state: right
                     decimals: 0
                     entities:
-                      - entity: sensor.router_wan_curbw_out_mbit
+                      - entity: sensor.router_wan_out_mbps
                         name: Upload
                         # state_adaptive_color: true
                     hour24: true
@@ -1299,7 +1177,7 @@ views:
               #   upper_bound: 100
               - type: custom:mini-graph-card
                 entities:
-                  - sensor.dsl_download_daily
+                  - sensor.internet_download_daily
                 name: Downloaded
                 hours_to_show: 168
                 aggregate_func: max
@@ -1308,7 +1186,7 @@ views:
                   graph: bar
               - type: custom:mini-graph-card
                 entities:
-                  - sensor.dsl_upload_daily
+                  - sensor.internet_upload_daily
                 name: Uploaded
                 hours_to_show: 168
                 aggregate_func: max
@@ -1372,7 +1250,7 @@ views:
           #   hours_to_show: 12
           #   line_width: 5
           #   lower_bound: 0
-          #   name: DSL
+          #   name: Internet
           #   points_per_hour: 1
           #   show:
           #     labels: false
@@ -1393,6 +1271,10 @@ views:
                   - sensor.tautulli
                   # - sensor.plex
                   - sensor.adguard_average_processing_speed
+                  - sensor.router_wan_in
+                  - sensor.router_wan_out
+                  - sensor.router_wan_in_mbps
+                  - sensor.router_wan_out_mbps
               - type: "custom:mini-graph-card"
                 name: Streams
                 entities:
@@ -1625,7 +1507,6 @@ views:
                 - entity_id: media_player.*
                 - entity_id: sensor.chandelier_switch
                 - entity_id: sensor.sonoff_*_version
-                - entity_id: sensor.dark_sky_*
                 - entity_id: sensor.speedtest_*
                 # - last_changed: < 15
             unique: true
@@ -1638,7 +1519,6 @@ views:
               include:
                 - entity_id: /\_[2-9]$/
               exclude:
-                - entity_id: /dark_sky/
                 - entity_id: /flora/
       - type: "custom:auto-entities"
         card:
@@ -1848,8 +1728,8 @@ views:
                   - justify-self: start
                   - font-size: 11px
                   - "--text-color-sensor": >-
-                      [[[ if (states['sensor.polina_iphone_connection_type'].state
-                      !== 'on') return "red"; ]]]
+                      [[[ if (states["sensor.polina_iphone_connection_type"].state !== 'Wi-Fi') return "red";
+                      ]]]
                 update:
                   - align-self: middle
                   - justify-self: end
@@ -1902,6 +1782,18 @@ views:
               #   - state: unavailable
               sort:
                 method: last_changed # last_updated
+          - type: custom:auto-entities
+            card:
+              type: entities
+              title: Battery warning
+            filter:
+              include:
+                - domain: device_tracker
+                  options:
+                    secondary_info: last-changed
+                  attributes:
+                    battery: "< 25"
+                    source_type: gps
           # - type: entities
           #   entities:
           #     - type: custom:secondaryinfo-entity-row
