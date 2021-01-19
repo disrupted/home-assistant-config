@@ -153,21 +153,10 @@ recorder:
       - sensor.processor_use
       - sensor.memory_use_percent
       - sensor.cpu_temperature
-      - sensor.router_cpu_load_1
-      - sensor.router_wan_total_in_byte
-      - sensor.router_wan_total_out_byte
-      - sensor.router_lan_curbw_in_mbit
-      - sensor.router_lan_curbw_out_mbit
-      - sensor.router_lan_total_in_byte
-      - sensor.router_lan_total_out_byte
-      - sensor.router_wlan0_curbw_in_mbit
-      - sensor.router_wlan0_curbw_out_mbit
-      - sensor.router_wlan0_total_in_byte
-      - sensor.router_wlan0_total_out_byte
-      - sensor.router_wlan1_curbw_in_mbit
-      - sensor.router_wlan1_curbw_out_mbit
-      - sensor.router_wlan1_total_in_byte
-      - sensor.router_wlan1_total_out_byte
+      - sensor.router_wan_in
+      - sensor.router_wan_out
+      - sensor.router_wan_in_derivative
+      - sensor.router_wan_out_derivative
       - sensor.rtorrent_down_speed
       - sensor.rtorrent_up_speed
       - sensor.rtorrent_active_torrents
@@ -210,18 +199,13 @@ influxdb:
       - sensor.disrupted_iphone_steps
       - sensor.polina_iphone_steps
       # Network
-      - sensor.router_wan_curbw_in_mbit
-      - sensor.router_wan_curbw_out_mbit
-      - sensor.router_wan_total_in_byte
-      - sensor.router_wan_total_out_byte
-      - sensor.router_wlan0_curbw_in_mbit
-      - sensor.router_wlan0_curbw_out_mbit
-      - sensor.router_wlan1_curbw_in_mbit
-      - sensor.router_wlan1_curbw_out_mbit
+      - sensor.router_wan_in
+      - sensor.router_wan_out
+      - sensor.router_wan_in_derivative
+      - sensor.router_wan_out_derivative
       - sensor.tautulli
       - sensor.tautulli_lan_bandwidth
       - sensor.tautulli_wan_bandwidth
-      - sensor.router_cpu_load_1
       - sensor.ping_google_dns
       - sensor.ping_cloudflare_dns
       - sensor.adguard_average_processing_speed
@@ -344,12 +328,5 @@ logger:
   default: warn # notset
   logs:
     custom_components.dwd_wetter: debug
-    # homeassistant.components.zha: debug
-    # zigpy: debug
-    # zigpy_deconz: debug
-    # homeassistant.components.device_tracker: debug
 
-# automation: !include automations.yaml
-# automation: !include_dir_merge_list automations/
-# automation: !include_dir_list automations
 script: !include_dir_named scripts
