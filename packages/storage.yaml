@@ -1,0 +1,32 @@
+homeassistant:
+  customize:
+    light.storage_ceiling:
+      icon: mdi:ceiling-light
+    binary_sensor.storage_door:
+      device_class: door
+
+automation:
+  - alias: light storage door
+    trigger:
+      platform: state
+      entity_id: binary_sensor.storage_door
+    action:
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ trigger.from_state.state == 'off' }}"
+              - condition: template
+                value_template: "{{ trigger.to_state.state == 'on' }}"
+            sequence:
+              - service: light.turn_on
+                data:
+                  entity_id: light.storage_ceiling
+          - conditions:
+              - condition: template
+                value_template: "{{ trigger.from_state.state == 'on' }}"
+              - condition: template
+                value_template: "{{ trigger.to_state.state == 'off' }}"
+            sequence:
+              - service: light.turn_off
+                data:
+                  entity_id: light.storage_ceiling
