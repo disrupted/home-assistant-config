@@ -20,11 +20,11 @@ sensor:
       tautulli_lan_bandwidth:
         friendly_name: "LAN Streaming Bandwidth"
         unit_of_measurement: "Mbit/s"
-        value_template: "{{ state_attr('sensor.tautulli', 'lan_bandwidth') / 1000 | round(2) }}"
+        value_template: "{{ state_attr('sensor.tautulli', 'lan_bandwidth') != None and state_attr('sensor.tautulli', 'lan_bandwidth') | float / 1000 | round(2) }}"
       tautulli_wan_bandwidth:
         friendly_name: "WAN Streaming Bandwidth"
         unit_of_measurement: "Mbit/s"
-        value_template: "{{ state_attr('sensor.tautulli', 'wan_bandwidth') / 1000 | round(2) }}"
+        value_template: "{{ state_attr('sensor.tautulli', 'wan_bandwidth') != None and state_attr('sensor.tautulli', 'wan_bandwidth') | float / 1000 | round(2) }}"
 # media_player:
 #   - platform: plex
 #     entity_namespace: 'plex'

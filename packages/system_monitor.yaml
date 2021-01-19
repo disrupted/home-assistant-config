@@ -260,89 +260,28 @@ sensor:
       - current_version
   - platform: systemmonitor
     resources:
-      # - type: last_boot
-      # - type: since_last_boot
       - type: processor_use
-      # - type: disk_use
-      #   arg: /home
-      # - type: disk_free
-      #   arg: /home
-      # - type: memory_free
       - type: memory_use_percent
-      # - type: network_in
-      #   arg: enp2s0 #eth0
-      # - type: network_out
-      #   arg: enp2s0
       - type: load_5m
 
-  # - platform: template
-  #   sensors:
-  #     hass_uptime:
-  #       friendly_name: 'HA uptime'
-  #       value_template: "{{ relative_time(state_attr('automation.hass_started', 'last_triggered')) | int }}"
-
-  # - platform: filesize
-  #   file_paths:
-  #     - /config/home-assistant_v2.db
-
-  # shell_command:
-  #   backup_github: cd /config && git commit -am 'auto backup `date +"%y%m%d %H:%M"`' --quiet && git push --quiet
-
-  # fastdotcom:
-  #   scan_interval:
-  #       minutes: 30
-
-  # speedtestdotnet:
-  #   scan_interval:
-  #     minutes: 30
-  #   monitored_conditions:
-  #     - ping
-  # - download
-  # - upload
-
-  - platform: template
-    sensors:
-      dsl_download_total:
-        friendly_name: "DSL Total Download"
-        unit_of_measurement: "GB"
-        value_template: "{{ (states('sensor.router_wan_total_in_byte') | float / 1000000000) | round(2) }}"
-      dsl_upload_total:
-        friendly_name: "DSL Total Upload"
-        unit_of_measurement: "GB"
-        value_template: "{{ (states('sensor.router_wan_total_out_byte') | float / 1000000000) | round(2) }}"
-
-utility_meter:
-  dsl_download_daily:
-    source: sensor.dsl_download_total
-    cycle: daily
-  dsl_upload_daily:
-    source: sensor.dsl_upload_total
-    cycle: daily
-  dsl_download_monthly:
-    source: sensor.dsl_download_total
-    cycle: monthly
-  dsl_upload_monthly:
-    source: sensor.dsl_upload_total
-    cycle: monthly
-
 automation:
-  # - alias: Hass Started
-  #   trigger:
-  #     platform: homeassistant
-  #     event: start
-  #   action:
-  #     - service: telegram_bot.send_message
-  #       data:
-  #         message: "Back Online \U0001f680"
+  - alias: Hass Started
+    trigger:
+      platform: homeassistant
+      event: start
+    action:
+      - service: telegram_bot.send_message
+        data:
+          message: "Back Online \U0001f680"
 
-  # - alias: Hass Stopped
-  #   trigger:
-  #     platform: homeassistant
-  #     event: shutdown
-  #   action:
-  #     - service: telegram_bot.send_message
-  #       data:
-  #         message: 'Going Offline'
+  - alias: Hass Stopped
+    trigger:
+      platform: homeassistant
+      event: shutdown
+    action:
+      - service: telegram_bot.send_message
+        data:
+          message: "Going Offline"
 
   - alias: Hass new version
     id: hass_new_version
@@ -380,9 +319,9 @@ automation:
           {% if state_attr('sensor.supervisor_updates', 'newest_version') | int > state_attr('sensor.supervisor_updates', 'current_version') | int %}
           Supervisor {{ state_attr('sensor.supervisor_updates', 'current_version') }} → {{ state_attr('sensor.supervisor_updates', 'newest_version') }}
           {% endif %}
-          {%- for addon in state_attr('sensor.supervisor_updates', 'addons') %}
-          {{ '\n' }}*{{ addon.name }}*
-          {{ addon.installed }} → {{ addon.version }}
+          {%- for addon in state_attr('sensor.supervisor_updates', 'addons') if addon.update_available %}
+          {{ '\n' }}<b>{{ addon.name }}</b>
+          {{ addon.version }} → {{ addon.version_latest }}
           {% endfor %}
 
   - alias: Supervisor updates installed
@@ -415,7 +354,7 @@ automation:
         message: >
           {{ states('sensor.hacs') }} HACS update{% if states('sensor.hacs') | int > 1 %}s{% endif %} available
           {%- for component in state_attr('sensor.hacs', 'repositories') %}
-          {{ '\n' }}*{{ component.display_name }}*
+          {{ '\n' }}<b>{{ component.display_name }}</b>
           {{ component.installed_version }} → {{ component.available_version }}
           {% endfor %}
 
@@ -475,19 +414,19 @@ automation:
 
           {{ state_attr('sensor.github_home_assistant_release', 'body') }}
 
-  - alias: Hass Update Available
-    id: hass_update_available
-    trigger:
-      platform: state
-      entity_id: binary_sensor.updater
-      from: "off"
-      to: "on"
-    action:
-      - service: notify.mobile_app_disrupted_iphone
-        data_template:
-          title: "Home Assistant"
-          message: >
-            Update {{ state_attr('binary_sensor.updater', 'newest_version') }} available for install.
+  # - alias: Hass Update Available
+  #   id: hass_update_available
+  #   trigger:
+  #     platform: state
+  #     entity_id: binary_sensor.updater
+  #     from: "off"
+  #     to: "on"
+  #   action:
+  #     - service: notify.mobile_app_disrupted_iphone
+  #       data_template:
+  #         title: "Home Assistant"
+  #         message: >
+  #           Update {{ state_attr('binary_sensor.updater', 'newest_version') }} available for install.
 
   # - alias: Hass SSL renew warning
   #   id: hass_ssl_renew_warning
