@@ -24,17 +24,17 @@ sensor:
     # start: '{{ (as_timestamp(now() - 24 * 3600) }}'
     end: "{{ now() }}"
 
-  - platform: template
-    sensors:
-      washing_machine_runtime:
-        friendly_name: Washing machine runtime
-        unit_of_measurement: h
-        value_template: >
-          {% if is_state("binary_sensor.washing_machine", "on") %}
-            {{ (as_timestamp(now()) - state_attr('input_datetime.washing_machine_started', 'timestamp') | int) | timestamp_custom('%-H:%M', False) }}
-          {% else %}
-            {{ ((state_attr('input_datetime.washing_machine_finished', 'timestamp') | int) - (state_attr('input_datetime.washing_machine_started', 'timestamp') | int)) | timestamp_custom('%-H:%M', False) }}
-          {% endif %}
+  # - platform: template
+  #   sensors:
+  #     washing_machine_runtime:
+  #       friendly_name: Washing machine runtime
+  #       unit_of_measurement: h
+  #       value_template: >
+  #         {% if is_state("binary_sensor.washing_machine", "on") %}
+  #           {{ (as_timestamp(now()) - state_attr('input_datetime.washing_machine_started', 'timestamp') | int) | timestamp_custom('%-H:%M', False) }}
+  #         {% else %}
+  #           {{ ((state_attr('input_datetime.washing_machine_finished', 'timestamp') | int) - (state_attr('input_datetime.washing_machine_started', 'timestamp') | int)) | timestamp_custom('%-H:%M', False) }}
+  #         {% endif %}
 
 automation:
   - alias: Washing machine started mobile
@@ -53,15 +53,13 @@ automation:
       - service: telegram_bot.send_message
         data_template:
           disable_notification: true
-          message: >
-            Washing machine{% if is_state('switch.washing_machine_our_laundry', 'on') %} with our laundry{% endif %} started
+          message: Washing machine started
       - service: notify.mobile_app_disrupted_iphone
         data_template:
           data:
             push:
               thread-id: "washing_machine"
-          message: >
-            Washing machine{% if is_state('switch.washing_machine_our_laundry', 'on') %} with our laundry{% endif %} started
+          message: Washing machine started
 
   - alias: Washing machine finished mobile
     trigger:
@@ -87,18 +85,15 @@ automation:
             push:
               thread-id: "washing_machine"
           message: >
-            Washing machine finished
+            Washing machine is done 👚👕
 
-  - alias: Washing machine our laundry finished
+  - alias: Washing machine finished
     trigger:
       - platform: state
         entity_id: binary_sensor.washing_machine
         from: "on"
         to: "off"
     condition:
-      - condition: state
-        entity_id: switch.washing_machine_our_laundry
-        state: "on"
       - condition: template # needs to have run for at least 15min otherwise it's likely a false positive
         value_template: "{{ (as_timestamp(now()) - state_attr('input_datetime.washing_machine_started', 'timestamp')) > 15 * 60 }}"
     action:
@@ -110,10 +105,8 @@ automation:
               thread-id: "washing_machine"
           title: >
             Washing machine is done 👚👕
-          message: >
-            took {{ states('sensor.washing_machine_runtime') }} h
-      - service: switch.turn_off
-        entity_id: switch.washing_machine_our_laundry
+          # message: >
+          #   took {{ states('sensor.washing_machine_runtime') }} h
 
   - alias: Washing machine update runtime
     trigger:
