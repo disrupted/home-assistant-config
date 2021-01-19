@@ -1,0 +1,44 @@
+# homeassistant:
+#   customize:
+#     fan.bathroom:
+#       friendly_name: Bathroom Fan
+
+automation:
+  - alias: bathroom fan
+    # If motion is detected within the delay,
+    # we restart the script.
+    mode: restart
+    max_exceeded: silent
+    trigger:
+      platform: state
+      entity_id: binary_sensor.bathroom_motion
+      # from: "off"
+      to: "on"
+      for:
+        minutes: 10
+    action:
+      - service: fan.turn_on
+        entity_id: fan.bathroom
+      - wait_for_trigger:
+          platform: state
+          entity_id: binary_sensor.bathroom_motion
+          from: "on"
+          to: "off"
+      - delay: "00:20:00"
+      - service: fan.turn_off
+        entity_id: fan.bathroom
+
+  - alias: bathroom fan timeout
+    mode: restart
+    max_exceeded: silent
+    trigger:
+      platform: state
+      entity_id: fan.bathroom
+    condition:
+      condition: state
+      entity_id: fan.bathroom
+      state: "on"
+    action:
+      - delay: "01:00:00"
+      - service: fan.turn_off
+        entity_id: fan.bathroom
