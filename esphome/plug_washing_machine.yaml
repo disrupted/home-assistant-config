@@ -13,6 +13,10 @@ wifi:
   password: !secret wifi_pass
   fast_connect: true
   reboot_timeout: 0s
+  manual_ip:
+    static_ip: !secret ip_plug_washingmachine
+    gateway: !secret ip_router
+    subnet: !secret ip_subnet
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:

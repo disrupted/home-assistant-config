@@ -1,6 +1,6 @@
 substitutions:
-  name: "plug_dishwasher"
-  friendly_name: "Dishwasher"
+  name: plug_dishwasher
+  friendly_name: Dishwasher
 
 esphome:
   name: ${name}
@@ -12,6 +12,10 @@ wifi:
   password: !secret wifi_pass
   fast_connect: true
   reboot_timeout: 0s
+  manual_ip:
+    static_ip: !secret ip_plug_dishwasher
+    gateway: !secret ip_router
+    subnet: !secret ip_subnet
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
@@ -38,6 +42,25 @@ ota:
 time:
   - platform: homeassistant
     id: homeassistant_time
+
+globals:
+  - id: time_started
+    type: long int
+    restore_value: false
+  - id: time_finished
+    type: long int
+    restore_value: false
+
+text_sensor:
+  - platform: template
+    name: "${friendly_name} started"
+    id: timestamp_started
+  - platform: template
+    name: "${friendly_name} finished"
+    id: timestamp_finished
+  # - platform: template
+  #   name: "${friendly_name} runtime"
+  #   id: runtime
 
 binary_sensor:
   - platform: status
@@ -67,8 +90,34 @@ binary_sensor:
       - delayed_off: 240s
     on_press:
       - light.turn_on: led
+      - text_sensor.template.publish:
+          id: timestamp_finished
+          state: ""
+      - text_sensor.template.publish:
+          id: timestamp_started
+          state: !lambda |-
+            char str[17];
+            time_t currTime = id(homeassistant_time).now().timestamp;
+            strftime(str, sizeof(str), "%Y-%m-%d %H:%M", localtime(&currTime));
+            return  { str };
     on_release:
       - light.turn_off: led
+      - text_sensor.template.publish:
+          id: timestamp_finished
+          state: !lambda |-
+            char str[17];
+            time_t currTime = id(homeassistant_time).now().timestamp;
+            strftime(str, sizeof(str), "%Y-%m-%d %H:%M", localtime(&currTime));
+            return  { str };
+      - lambda: |-
+          id(time_finished) = id(homeassistant_time).now().timestamp;
+      # - text_sensor.template.publish:
+      #     id: runtime
+      #     state: !lambda |-
+      #       char str[4];
+      #       double seconds;
+      #       seconds = difftime(id(time_finished), id(time_started));
+      #       return  { str };
 
 output:
   # Relay state led

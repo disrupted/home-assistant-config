@@ -1,7 +1,8 @@
 # Shelly1
 substitutions:
-  name: "bathroom"
-  friendly_name: "Bathroom"
+  name: bathroom
+  friendly_name: Bathroom
+  light_entity: light.bathroom_ceiling
 
 esphome:
   name: ${name}
@@ -24,6 +25,10 @@ wifi:
     password: !secret esphome_fallback_hotspot_pass
 
 captive_portal:
+
+# Enable Web server
+web_server:
+  port: 80
 
 # Enable logging
 # logger:
@@ -48,13 +53,10 @@ binary_sensor:
     pin:
       number: GPIO5
     name: "${friendly_name} Light Switch"
-    # on_state:
-    #   then:
-    #     - homeassistant.service:
-    #         service: light.toggle
-    #         data:
-    #           entity_id: "light.bathroom_ceiling"
-    #           brightness: "255"
+    on_state:
+      then:
+        - homeassistant.service:
+            service: script.bathroom_light_toggle
 
 output:
   - platform: gpio
