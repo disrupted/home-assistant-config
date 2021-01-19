@@ -35,13 +35,6 @@ homeassistant:
       icon: mdi:auto-fix
 
 group:
-  scene:
-    name: Scene
-    icon: mdi:vanish
-    entities:
-      - input_select.scene
-      - input_number.scene_brightness
-
   all_scenes:
     name: all Scenes
     icon: mdi:vanish
@@ -94,15 +87,19 @@ scene:
       light.floor_lamp:
         state: "on"
         brightness: 255
+        color_temp: 174
       light.reading_lamp:
         state: "on"
         brightness: 255
+        color_temp: 174
       light.spots:
         state: "on"
         brightness: 180
+        color_temp: 174
       light.desk_lamp:
         state: "on"
         brightness: 102
+        color_temp: 174
 
   - name: Dim
     entities:
@@ -186,11 +183,7 @@ scene:
         state: "off"
       switch.tv:
         state: "off"
-      # switch.kodi:
-      #   state: "off"
-      light.livingroom:
-        state: "off"
-      light.candle:
+      light.all:
         state: "off"
       # switch.adaptive_lighting_bed:
       #   state: "on"
@@ -206,15 +199,7 @@ scene:
     entities:
       media_player.google_home:
         state: paused
-      light.livingroom:
-        state: "off"
-      light.desk_lamp:
-        state: "off"
-      light.kitchen_ceiling:
-        state: "off"
-      light.bedroom_ceiling:
-        state: "off"
-      light.bathroom_ceiling:
+      light.all:
         state: "off"
       light.candle:
         state: "off"
@@ -234,9 +219,8 @@ scene:
 
   - name: "OFF"
     entities:
-      light.livingroom:
+      light.all:
         state: "off"
-        transition: 1
       light.candle:
         state: "off"
 
@@ -266,6 +250,14 @@ input_number:
     initial: 255
     min: 0
     max: 255
+    step: 1
+
+  scene_color_temp:
+    name: Color Temperature
+    icon: mdi:contrast-box
+    initial: 300
+    min: 153
+    max: 454
     step: 1
 
 automation:
@@ -342,12 +334,22 @@ automation:
     action:
       - service: light.turn_on
         data_template:
-          entity_id:
-            - light.floor_lamp
-            - light.bedroom_ceiling
-            - light.desk_lamp
-          # {% for entity in states.group.all_lights.attributes.entity_id if is_state(entity, 'on') %}
-          # {{ entity }}
-          # {% else %}
-          # {% endfor %}
+          entity_id: >
+            {% set lights = expand(state_attr('light.livingroom', 'entity_id')) | selectattr('state','eq','on') | map(attribute='entity_id') | list %}
+            {{ lights }}
           brightness: "{{ states('input_number.scene_brightness') | int }}"
+          transition: 1
+
+  - id: scene_color_temp_change
+    alias: scene_color_temp_change
+    trigger:
+      platform: state
+      entity_id: input_number.scene_color_temp
+    action:
+      - service: light.turn_on
+        data_template:
+          entity_id: >
+            {% set lights = expand(state_attr('light.livingroom', 'entity_id')) | selectattr('state','eq','on') | map(attribute='entity_id') | list %}
+            {{ lights }}
+          color_temp: "{{ states('input_number.scene_color_temp') | int }}"
+          transition: 1
