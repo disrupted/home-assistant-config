@@ -1,0 +1,63 @@
+sensor:
+  - platform: snmp
+    name: "Router WAN in"
+    host: !secret ip_router
+    baseoid: 1.3.6.1.2.1.31.1.1.1.6.4
+    community: "public"
+    version: "2c"
+    scan_interval: 10
+
+  - platform: snmp
+    name: "Router WAN out"
+    host: !secret ip_router
+    baseoid: 1.3.6.1.2.1.31.1.1.1.10.4
+    community: "public"
+    version: "2c"
+    scan_interval: 10
+
+  - platform: derivative
+    name: router_wan_in_derivative
+    source: sensor.router_wan_in
+    unit_time: s
+    unit: B
+  - platform: derivative
+    name: router_wan_out_derivative
+    source: sensor.router_wan_out
+    unit_time: s
+    unit: B
+
+  - platform: template
+    sensors:
+      router_wan_in_mbps:
+        value_template: "{{ ((states('sensor.router_wan_in_derivative')|float*8)/1000000)|round(2) }}"
+        unit_of_measurement: "Mbps"
+        friendly_name: "WAN In"
+
+      router_wan_out_mbps:
+        value_template: "{{ ((states('sensor.router_wan_out_derivative')|float*8)/1000000)|round(2) }}"
+        unit_of_measurement: "Mbps"
+        friendly_name: "WAN Out"
+
+  # - platform: template
+  #   sensors:
+  #     internet_download_total:
+  #       friendly_name: "Internet Total Download"
+  #       unit_of_measurement: "GB"
+  #       value_template: "{{ (states('sensor.router_wan_total_in_byte') | float / 1000000000) | round(2) }}"
+  #     internet_upload_total:
+  #       friendly_name: "Internet Total Upload"
+  #       unit_of_measurement: "GB"
+  #       value_template: "{{ (states('sensor.router_wan_total_out_byte') | float / 1000000000) | round(2) }}"
+# utility_meter:
+#   internet_download_daily:
+#     source: sensor.internet_download_total
+#     cycle: daily
+#   internet_upload_daily:
+#     source: sensor.internet_upload_total
+#     cycle: daily
+#   internet_download_monthly:
+#     source: sensor.internet_download_total
+#     cycle: monthly
+#   internet_upload_monthly:
+#     source: sensor.internet_upload_total
+#     cycle: monthly
