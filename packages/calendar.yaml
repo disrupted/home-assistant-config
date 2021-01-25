@@ -9,9 +9,6 @@ homeassistant:
       icon: mdi:note
     sensor.next_appt_date_time:
       icon: mdi:calendar-clock
-    # calendar.main_calender:
-    #   friendly_name: Our Calender
-    #   icon: mdi:calendar-clock
     calendar.feiertage_berlin:
       friendly_name: Feiertage Berlin
       icon: mdi:calendar-clock
@@ -31,18 +28,6 @@ homeassistant:
       icon: mdi:calendar-clock
     group.calendar:
       icon: mdi:calendar
-    sensor.uni_lsf_next_class_name_short:
-      icon: mdi:book-variant
-    sensor.uni_lsf_next_class_name_full:
-      icon: mdi:book-variant
-    sensor.uni_lsf_next_class_description:
-      icon: mdi:book-variant
-    sensor.uni_lsf_next_class_prof:
-      icon: mdi:school
-    sensor.uni_lsf_next_class_room:
-      icon: mdi:school
-    sensor.uni_lsf_next_class_date_time:
-      icon: mdi:calendar-clock
   customize_glob:
     automation.calendar_*:
       icon: mdi:calendar-clock
@@ -73,53 +58,12 @@ binary_sensor:
     country: DE
     province: BE
 
-  # - platform: template
-  #   sensors:
-  #     uni_lsf_next_class_is_lab:
-  #       friendly_name: "Next Class is lab"
-  #       value_template: >
-  #         {{ state_attr('calendar.uni_lsf', 'message') | regex_search('\(Ü\)', ignorecase=False) }}
-
 sensor:
   - platform: time_date
     display_options:
       - "time"
       - "date"
       # - 'date_time'
-
-  ### Uni ######################################################
-  - platform: template
-    sensors:
-      uni_lsf_next_class_message:
-        friendly_name: "Next Class"
-        value_template: "{{ state_attr('calendar.uni_lsf', 'message') }}"
-
-      uni_lsf_next_class_date_time:
-        friendly_name: "Next Class Date Time"
-        value_template: "{{ state_attr('calendar.uni_lsf', 'start_time') | timestamp_custom('%Y-%m-%d %H:%M') }}"
-
-      uni_lsf_next_class_description:
-        friendly_name: "Next Class Description"
-        value_template: "{{ state_attr('calendar.uni_lsf', 'description') }}"
-
-      uni_lsf_next_class_room:
-        friendly_name: "Next Class Room"
-        value_template: "{{ state_attr('calendar.uni_lsf', 'location') }}"
-
-      # uni_lsf_next_class_prof:
-      #   friendly_name: "Next Class Professor"
-      #   value_template: >
-      #     {{ state_attr('calendar.uni_lsf', 'message') | regex_findall_index(find='\((?!.*\()(.+)\)$', index=0, ignorecase=False) }}
-
-      # uni_lsf_next_class_name_short:
-      #   friendly_name: "Next Class Name Short"
-      #   value_template: >
-      #     {{ state_attr('calendar.uni_lsf', 'message') | regex_findall_index(find='^[A-Z0-9]+', index=0, ignorecase=False) }}
-
-      # uni_lsf_next_class_name_full:
-      #   friendly_name: "Next Class Name Full"
-      #   value_template: >
-      #     {{ state_attr('calendar.uni_lsf', 'message') | regex_findall_index(find='[A-Z][0-9]{2}\.[0-9] [A-Z0-9]+ [^(]+', index=0, ignorecase=False) | regex_replace('[A-Z][0-9]{2}\.[0-9] [A-Z0-9]+ ', '', ignorecase=False) |regex_replace('\sund(?![a-z])', ' & ') }}
 
   ### Appointments #############################################
   - platform: template

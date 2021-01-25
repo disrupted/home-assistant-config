@@ -2,8 +2,6 @@ homeassistant:
   customize_glob:
     sensor.waqi_*:
       friendly_name: Air Quality Index
-    automation.openuv_*:
-      icon: mdi:sunglasses
   customize:
     automation.weather_rain_alert:
       icon: mdi:umbrella
@@ -256,9 +254,6 @@ binary_sensor:
         entity_id: sensor.weather_yr_precipitation
         device_class: moisture
 
-openuv:
-  api_key: !secret api_key_openuv
-
 camera:
   - platform: generic
     name: Rain radar
@@ -374,66 +369,6 @@ automation:
             {{ state_attr('sensor.dwd_weather_warnings_current_warning_level', 'warning_1_description') }}
 
             {{ as_timestamp(state_attr('sensor.dwd_weather_warnings_current_warning_level', 'warning_1_start')) | timestamp_custom('%a %H:%M', true) }} - {{ as_timestamp(states.sensor.dwd_weather_warnings_current_warning_level.attributes.warning_1_end) | timestamp_custom('%a %H:%M', true) }}
-
-  - alias: OpenUV mobile
-    id: openuv_mobile
-    trigger:
-      - platform: state
-        entity_id: sensor.current_uv_level
-        to: "High"
-    action:
-      - service: notify.mobile_app_disrupted_iphone
-        data_template:
-          data:
-            push:
-              thread-id: "openuv"
-          title: "{{ states('sensor.current_uv_level') }} UV Level"
-          message: >-
-            UV-Index {{ states('sensor.current_uv_index') | float | round(1) }}
-
-            Max exposure time for skin type 3 is {{ states('sensor.skin_type_3_safe_exposure_time') }} minutes today
-
-  - alias: OpenUV alert max exposure reached
-    trigger:
-      platform: template
-      value_template: >
-        {{ not is_state('sensor.skin_type_3_safe_exposure_time', 'unknown') and states('sensor.time_outside_salomon') | float == (states('sensor.skin_type_3_safe_exposure_time') | int / 60) | round(2) }}
-    condition:
-      - condition: template
-        value_template: "{{ not is_state('sensor.skin_type_3_safe_exposure_time', 'unknown') }}"
-      - condition: template
-        value_template: "{{ is_state('person.salomon', 'not_home') }}"
-      # - condition: template
-      #   value_template: "{{ states('sensor.weather_bad_weather') in ['clear'] }}"
-    action:
-      - service: notify.mobile_app_disrupted_iphone
-        data_template:
-          data:
-            push:
-              thread-id: "openuv"
-          title: "UV Warning: Max Exposure time reached"
-          message: >-
-            please be careful if you stay in the sun. Max safe exposure time is {{ states('sensor.skin_type_3_safe_exposure_time') }} minutes at current UV level.
-
-  - alias: OpenUV Update during daytime
-    id: openuv_update_during_daytime
-    trigger:
-      platform: time_pattern
-      hours: "/1"
-    condition:
-      - condition: template
-        value_template: "{{ state_attr('sun.sun', 'elevation') > 10 }}"
-      - condition: template
-        value_template: "{{ (now() - states.sensor.current_uv_index.last_updated).total_seconds() >= 3600 }}"
-    action:
-      service: openuv.update_uv_index_data
-
-  - alias: OpenUV Update protection window once a day
-    trigger:
-      platform: time
-      at: "07:12:00"
-    action:
-      service: openuv.update_protection_data
 
   - alias: daylight remaining go outside reminder
     trigger:

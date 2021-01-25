@@ -206,12 +206,6 @@ automation:
       - service: script.scene_set_input_select
         data:
           name: "Select"
-      # - service: script.thermostat_21_degrees
-      # - service: climate.set_temperature
-      #   data:
-      #     entity_id: climate.thermostat
-      #     operation_mode: 'manual'
-      #     temperature: 21
       - service: notify.mobile_app_disrupted_iphone
         data:
           message: "delete_alert"

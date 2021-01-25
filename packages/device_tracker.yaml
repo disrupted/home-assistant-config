@@ -20,36 +20,6 @@ homeassistant:
     sensor.icloud_last_update:
       icon: mdi:update
 
-device_tracker:
-  # - platform: luci
-  #   host: !secret ip_router
-  #   username: !secret router_user
-  #   password: !secret router_password
-  #   ssl: false
-  #   interval_seconds: 30
-  #   consider_home: 0:10:00
-  #   new_device_defaults:
-  #     track_new_devices: True
-  - platform: ubus
-    host: !secret ip_router
-    username: !secret router_user
-    password: !secret router_password
-    interval_seconds: 30
-    consider_home: 0:10:00
-    new_device_defaults:
-      track_new_devices: true
-  # - platform: bluetooth_tracker
-  #   interval_seconds: 30
-  #   new_device_defaults:
-  #     track_new_devices: False
-
-# icloud:
-#   username: !secret icloud_username
-#   password: !secret icloud_password
-#   with_family: true
-#   max_interval: 240
-#   gps_accuracy_threshold: 500
-
 foursquare:
   access_token: !secret api_access_token_foursquare
   push_secret: !secret api_push_secret_foursquare

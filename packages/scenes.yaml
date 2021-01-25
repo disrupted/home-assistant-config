@@ -87,19 +87,19 @@ scene:
       light.floor_lamp:
         state: "on"
         brightness: 255
-        color_temp: 174
+        color_temp: 210
       light.reading_lamp:
         state: "on"
         brightness: 255
-        color_temp: 174
+        color_temp: 210
       light.spots:
         state: "on"
         brightness: 180
-        color_temp: 174
+        color_temp: 210
       light.desk_lamp:
         state: "on"
         brightness: 102
-        color_temp: 174
+        color_temp: 210
 
   - name: Dim
     entities:
@@ -203,9 +203,6 @@ scene:
         state: "off"
       light.candle:
         state: "off"
-      climate.thermostat:
-        state: heat
-        temperature: "17"
       media_player.kodi:
         state: paused
       switch.amp:

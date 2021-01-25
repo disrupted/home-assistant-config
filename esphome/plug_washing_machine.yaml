@@ -1,6 +1,6 @@
 substitutions:
-  name: "plug_washing_machine"
-  friendly_name: "Washing Machine"
+  name: plug_washing_machine
+  friendly_name: Washing Machine
 
 esphome:
   name: ${name}

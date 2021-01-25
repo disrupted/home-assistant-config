@@ -36,15 +36,6 @@ homeassistant:
       friendly_name: Used Space
     sensor.disk_free_home:
       friendly_name: Free Space
-    sensor.fast_com_download:
-      friendly_name: Speedtest
-      icon: mdi:speedometer
-    sensor.speedtest_upload:
-      icon: mdi:upload
-    sensor.speedtest_download:
-      icon: mdi:download
-    sensor.speedtest_ping:
-      icon: mdi:timer
     sensor.ping_cloudflare_dns:
       icon: mdi:timer
     sensor.ping_google_dns:
@@ -193,20 +184,6 @@ sensor:
       #   value_template: "{{ states('sensor.date') and states.input_select | list | length }}"
       # count_input_datetimes:
       #   value_template: "{{ states('sensor.date') and states.input_datetime | list | length }}"
-
-  - platform: rest
-    resource: https://api.github.com/repos/coreelec/coreelec/releases/latest
-    name: GitHub CoreELEC tag
-    username: !secret github_username
-    password: !secret github_access_token
-    authentication: basic
-    value_template: "{{ value_json.tag_name }}"
-    headers:
-      Accept: application/vnd.github.v3+json
-      Content-Type: application/json
-      User-Agent: Home Assistant REST sensor
-      Time-Zone: !secret timezone
-    scan_interval: 3600
 
   - platform: rest
     name: GitHub Home Assistant Release
@@ -372,21 +349,6 @@ automation:
       data_template:
         message: >
           HACS updates installed
-
-  - alias: GitHub CoreELEC new release tag
-    id: github_coreelec_new_release_tag
-    trigger:
-      platform: state
-      entity_id: sensor.github_coreelec_tag
-    condition:
-      - condition: template
-        value_template: "{{ trigger.from_state.state not in ['unknown', 'unavailable', None] }}"
-      - condition: template
-        value_template: "{{ trigger.to_state.state not in ['unknown', 'unavailable', None] }}"
-    action:
-      service: notify.all
-      data_template:
-        message: "CoreELEC {{ states('sensor.github_coreelec_tag') }} is now available"
 
   - alias: GitHub Home Assistant new release tag
     id: github_home_assistant_new_release_tag

@@ -19,6 +19,7 @@ notify:
     data:
       title: "Home Assistant"
       icon: "/local/ha_kodi.png"
+      displaytime: 5000 # ms
 
 automation:
   - alias: Kodi turn on

@@ -1,7 +1,7 @@
-# homeassistant:
-#   customize:
-#     fan.bathroom:
-#       friendly_name: Bathroom Fan
+homeassistant:
+  customize:
+    binary_sensor.bathroom_door:
+      device_class: lock
 
 automation:
   - alias: bathroom fan

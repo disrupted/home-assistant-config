@@ -3,11 +3,6 @@ views:
   - id: 0
     title: default_view
     icon: "mdi:home-assistant"
-    # badges:
-    #   - sun.sun
-    #   - sensor.sun_daylight_remaining
-    #   - person.salomon
-    #   - person.polina
     cards:
       - type: vertical-stack
         cards:
@@ -52,10 +47,6 @@ views:
                     - width: auto
                     - height: auto
                   custom_fields:
-                    # battery:
-                    #   - align-self: start
-                    #   - justify-self: end
-                    #   - font-size: 13px
                     steps:
                       - padding-bottom: 2px
                       - align-self: middle
@@ -71,13 +62,6 @@ views:
                       - justify-self: end
                       - font-size: 11px
                 custom_fields:
-                  # battery: |
-                  #   [[[
-                  #     return `<ha-icon
-                  #       icon="${states['sensor.disrupted_iphone_battery_level'].attributes.icon}"
-                  #       style="width: 22px; height: 22px;">
-                  #       </ha-icon><span>${entity.state}%</span>`
-                  #   ]]]
                   steps: |
                     [[[
                       return `<ha-icon
@@ -141,10 +125,6 @@ views:
                     - width: auto
                     - height: auto
                   custom_fields:
-                    # battery:
-                    #   - align-self: start
-                    #   - justify-self: end
-                    #   - font-size: 13px
                     steps:
                       - padding-bottom: 2px
                       - align-self: middle
@@ -160,13 +140,6 @@ views:
                       - justify-self: end
                       - font-size: 11px
                 custom_fields:
-                  # battery: |
-                  #   [[[
-                  #     return `<ha-icon
-                  #       icon="${states['sensor.polina_iphone_battery_level'].attributes.icon}"
-                  #       style="width: 22px; height: 22px;">
-                  #       </ha-icon><span>${entity.state}%</span>`
-                  #   ]]]
                   steps: |
                     [[[
                       return `<ha-icon
@@ -191,29 +164,6 @@ views:
                           .datetime="${entity.last_updated}"
                         ></ha-relative-time>`
                     ]]]
-          # - type: conditional
-          #   conditions:
-          #     - entity: input_boolean.present
-          #       state_not: "on"
-          #   card:
-          #     - type: map
-          #       hours_to_show: 24
-          #       aspect_ratio: 16x10
-          #       default_zoom: 14
-          #       entities:
-          #         - person.salomon
-          #         - person.polina
-          #         - zone.home
-          #         - zone.school
-          #         - zone.work
-          #       style: |
-          #         div.leaflet-control-attribution {
-          #           display: none;
-          #         }
-          # - type: custom:layout-card
-          #   layout: horizontal
-          #   max_columns: 2
-          #   cards:
           # - type: "custom:auto-entities"
           #   card:
           #     type: glance
@@ -232,23 +182,9 @@ views:
                   - type: custom:secondaryinfo-entity-row
                     entity: input_boolean.present
                     secondary_info: "[[ sensor.time_outside_salomon.attributes.value ]] outside today"
-                  # - type: 'custom:toggle-lock-entity-row'
-                  #   entity: input_boolean.away
                   - type: custom:secondaryinfo-entity-row
                     entity: sensor.day_phase
                     secondary_info: "[[ sensor.sun_daylight_remaining ]] h"
-                  # - type: conditional
-                  #   card:
-                  #     type: entities
-                  #     show_header_toggle: false
-                  #     entities:
-                  #       - type: 'custom:toggle-lock-entity-row'
-                  #         entity: input_boolean.away
-                  #   conditions:
-                  #     - entity: input_boolean.present
-                  #       state: 'off'
-                  # - binary_sensor.telegram_online
-                  # - binary_sensor.telegram_online_polina
               - type: history-graph
                 hours_to_show: 12
                 refresh_interval: 60
@@ -262,52 +198,6 @@ views:
           - input_select.scene
           - input_number.scene_brightness
           - input_number.scene_color_temp
-      # - type: "custom:stack-in-card"
-      #   mode: vertical
-      #   cards:
-      #     - type: entities
-      #       title: Climate
-      #       show_header_toggle: false
-      #       entities:
-      #         - type: custom:secondaryinfo-entity-row
-      #           entity: climate.thermostat
-      #           secondary_info: "[[ sensor.thermostat_valve_state.state ]] %"
-      #         # - sensor.thermostat_valve_state
-      #         # - sensor.room_temperature
-      # - type: 'custom:simple-thermostat'
-      #   entity: climate.thermostat
-      #   step_size: 1
-      # modes:
-      #   some_mode: false
-      #   another_mode:
-      #     include: false
-      #   'off':
-      #     name: Make it cold
-      #     icon: false
-      #   'on':
-      #     name: false
-      #     icon: mdi:whitewalker
-      # style: |
-      #   :host {
-      #     --st-font-size-xl: 24px
-      #     --st-font-size-m: 20px
-      #     --st-font-size-title: 20px
-      #     --st-font-size-sensors: 30px
-      #     --st-spacing: 2px
-      #   }
-      # - type: custom:mini-graph-card
-      #   entities:
-      #     - entity: sensor.room_temperature
-      #     - color: gray
-      #       entity: input_boolean.present
-      #       name: Night
-      #       show_line: false
-      #       show_points: false
-      #       show_legend: false
-      #       y_axis: secondary
-      #     show:
-      #       labels: true
-      #       labels_secondary: true
       - type: vertical-stack
         cards:
           - type: "custom:mini-media-player"
@@ -423,14 +313,21 @@ views:
           - type: entities
             show_header_toggle: false
             entities:
-              - entity: light.floor_lamp
-                secondary_info: brightness
-              - entity: light.reading_lamp
-                secondary_info: brightness
-              - entity: light.spots
-                secondary_info: brightness
-              - light.string
-              - light.candle
+              - type: custom:fold-entity-row
+                head:
+                  type: custom:slider-entity-row
+                  name: Living
+                  color_picker: true
+                  entity: light.livingroom
+                entities:
+                  - entity: light.floor_lamp
+                    secondary_info: brightness
+                  - entity: light.reading_lamp
+                    secondary_info: brightness
+                  - entity: light.spots
+                    secondary_info: brightness
+                  - light.string
+                  - light.candle
           - entities:
               - input_boolean.movietime
             type: entities
@@ -519,7 +416,6 @@ views:
             entity: input_boolean.sleeping
             secondary_info: "[[ sensor.total_sleep_last_night.attributes.value ]]"
           - binary_sensor.bayesian_sleeping
-          # - sensor.total_sleep_last_night
           - sensor.moon_phase
         show_header_toggle: false
         theme: Backend-selected
@@ -533,21 +429,6 @@ views:
       #   show_header_toggle: false
       #   theme: Backend-selected
       #   title: Fit
-      #   type: entities
-      # - entities:
-      #     - input_number.wakeup_duration
-      #     - script.wakeup
-      #     - automation.google_home_routine_morning
-      #   show_header_toggle: false
-      #   theme: Backend-selected
-      #   title: Wakeup
-      #   type: entities
-      # - entities:
-      #     - scene.bedtime
-      #     - scene.night
-      #   show_header_toggle: false
-      #   theme: Backend-selected
-      #   title: Scenes
       #   type: entities
   - id: 3
     title: Desk
@@ -572,26 +453,11 @@ views:
                 name: Adaptive
       - type: entities
         entities:
-          - switch.printer
           - sensor.e_studio382p
-          - sensor.printer
-          - sensor.printer_black_toner_cartridge
-          - sensor.printer_black_image_drum_unit
           - binary_sensor.disrupted_mbp_active
           - sensor.disrupted_mbp_usage_today
           - binary_sensor.disrupted_mbp_built_in_microphone
           - binary_sensor.disrupted_mbp_facetime_hd_camera
-      - type: entities
-        title: Uni
-        entities:
-          - sensor.uni_lsf_next_class_name_short
-          - sensor.uni_lsf_next_class_name_full
-          - sensor.uni_lsf_next_class_date_time
-          # - sensor.uni_lsf_next_class_message
-          # - sensor.uni_lsf_next_class_description
-          - sensor.uni_lsf_next_class_room
-          - sensor.uni_lsf_next_class_prof
-          - binary_sensor.uni_lsf_next_class_is_lab
       - type: entities
         title: Calendar
         show_header_toggle: false
@@ -621,6 +487,11 @@ views:
             entity: binary_sensor.dishwasher
             icon: mdi:dishwasher
             secondary_info: "[[ sensor.dishwasher_power.state ]] W"
+          # - type: custom:secondaryinfo-entity-row
+          #   entity: binary_sensor.fridge
+          #   icon: mdi:dishwasher
+          #   secondary_info: "[[ sensor.fridge_power.state ]] W"
+          - sensor.fridge_power
       - type: entities
         show_header_toggle: false
         entities:
@@ -651,10 +522,8 @@ views:
         card:
           show_header_toggle: false
           type: entities
-          # title: Bathroom
         filter:
           include:
-            # - area: Bathroom
             - entity_id: automation.*bathroom*
               options:
                 secondary_info: last-triggered
@@ -667,7 +536,6 @@ views:
         layout: vertical
         min_columns: 1
         max_columns: 2
-        # max_width: [40%, 50%]
         cards:
           - type: "custom:stack-in-card"
             mode: vertical
@@ -676,7 +544,6 @@ views:
                 icons: "/hacsfiles/weather-card/icons/"
                 type: "custom:weather-card"
               - type: markdown
-                # title: DWD Wetterwarnungen
                 content: >-
                   {% set level_colors = ["#c5e566", "#ffeb3b", "#fb8c00", "#e53935", "#880e4f"] %}
                   {% set current_count = state_attr("sensor.dwd_weather_warnings_current_warning_level", "warning_count") %}
@@ -708,32 +575,32 @@ views:
                     {% if not loop.last %}***{% endif %}
                     {% endfor %}
                   {% endif %}
-          - type: "custom:mini-graph-card"
-            name: AQI
-            # color_thresholds:
-            #   - color: '#56a0ee'
-            #     value: 50
-            #   - color: '#d35400'
-            #     value: 100
-            #   - color: '#c0392b'
-            #     value: 150
-            entities:
-              - entity: sensor.waqi
-                name: AQI
-                color: lightgrey
-            hour24: true
-            hours_to_show: 72
-            line_width: 4
-            # points_per_hour: 1
-            decimals: 0
-            # lower_bound: 0
-            show:
-              name: false
-              icon: false
-              labels: false
-              extrema: true
-              average: true
-              fill: true
+          # - type: "custom:mini-graph-card"
+          #   name: AQI
+          #   # color_thresholds:
+          #   #   - color: '#56a0ee'
+          #   #     value: 50
+          #   #   - color: '#d35400'
+          #   #     value: 100
+          #   #   - color: '#c0392b'
+          #   #     value: 150
+          #   entities:
+          #     - entity: sensor.waqi
+          #       name: AQI
+          #       color: lightgrey
+          #   hour24: true
+          #   hours_to_show: 72
+          #   line_width: 4
+          #   # points_per_hour: 1
+          #   decimals: 0
+          #   # lower_bound: 0
+          #   show:
+          #     name: false
+          #     icon: false
+          #     labels: false
+          #     extrema: true
+          #     average: true
+          #     fill: true
           - type: picture-glance
             entities: []
             camera_image: camera.rain_radar
@@ -742,9 +609,7 @@ views:
                 display: none;
               }
           - break
-          - type: picture # -glance
-            # entities: []
-            # camera_image: camera.meteogram
+          - type: picture
             image: !secret meteogram_url
           - type: vertical-stack
             cards:
@@ -764,10 +629,7 @@ views:
                 hour24: true
                 hours_to_show: 48
                 line_width: 3
-                # points_per_hour: 0.5
                 decimals: 0
-                # height: 120
-                # font_size: 140
                 show:
                   labels: true
               - type: "custom:mini-graph-card"
@@ -809,22 +671,13 @@ views:
         layout: horizontal
         min_columns: 1
         max_columns: 3
-        # max_width: [40%, 50%]
         cards:
-          # - type: 'custom:stack-in-card'
-          #   mode: vertical
-          #   cards:
-          # - type: 'custom:stack-in-card'
-          #   mode: vertical
-          # - type: horizontal-stack
-          #   cards:
           - type: entities
             entities:
               - binary_sensor.rain
               - sensor.weather_bad_weather
               - sensor.weather_wind
               - sensor.weather_rain
-              - binary_sensor.weather_favorite_polina
               - sensor.temperature_change_per_hour
               - entity: sensor.htw_wetter_wind_speed_statistics
                 name: Wind Speed mean
@@ -835,9 +688,6 @@ views:
                 icon: mdi:weather-sunny
               - sensor.htw_wetter_solar_radiation_max
               - sensor.aqi
-              - sensor.max_uv_index
-              - sensor.current_uv_index
-              - sensor.skin_type_3_safe_exposure_time
           - type: "custom:auto-entities"
             card:
               type: entities
@@ -901,8 +751,6 @@ views:
               type: entities
               title: Plants that need help
             filter:
-              # include:
-              #   - entity_id: plant.*
               template: |
                 {% for plant in states.plant %}
                   {% if 'moisture low' in plant.attributes.problem %}
@@ -920,19 +768,6 @@ views:
             filter:
               include:
                 - entity_id: binary_sensor.miflora_*_moisture_trend
-  # - id: 9
-  #   title: Automation
-  #   icon: 'mdi:creation'
-  #   cards:
-  #     - type: entities
-  #       entities:
-  #         - head: group.all_automations
-  #           open: false
-  #           type: 'custom:fold-entity-row'
-  #         - head: group.all_scripts
-  #           type: 'custom:fold-entity-row'
-  #         - head: group.all_scenes
-  #           type: 'custom:fold-entity-row'
   - id: 10
     title: Server
     icon: "mdi:server-network"
@@ -940,42 +775,10 @@ views:
     cards:
       - type: custom:layout-card
         layout: vertical
-        # column_num: 2
         max_columns: 2
-        # max_width: [50%, 30%]
-        #   min_height: <min height>
-        #   ltr: <ltr>
-        #   rebuild: <rebuild>
         cards:
           - type: vertical-stack
             cards:
-              # - type: 'custom:mini-graph-card'
-              #   icon: 'mdi:timer'
-              #   align_icon: left
-              #   align_state: right
-              #   decimals: 1
-              #   entities:
-              #     - entity: sensor.speedtest_ping
-              #       name: Ping
-              #   hour24: true
-              #   hours_to_show: 24
-              #   line_width: 5
-              #   lower_bound: 0
-              #   name: Ping
-              #   points_per_hour: 2
-              #   show:
-              #     extrema: false
-              #     graph: bar
-              #     labels: false
-              #     legend: true
-              #     points: true
-              #   color_thresholds:
-              #     - value: 10
-              #       color: '#4CAF50'
-              #     - value: 20
-              #       color: '#FF5722'
-              #     - value: 30
-              #       color: '#FF5252'
               - type: "custom:mini-graph-card"
                 icon: "mdi:timer"
                 align_icon: left
@@ -997,80 +800,12 @@ views:
                   legend: true
                   points: true
                 color_thresholds:
-                  - value: 10
-                    color: "#4CAF50"
                   - value: 20
+                    color: "#4CAF50"
+                  - value: 30
                     color: "#FF981A"
                   - value: 40
                     color: "#FF5252"
-              # - type: horizontal-stack
-              #   cards:
-              #     - type: 'custom:mini-graph-card'
-              #       align_icon: left
-              #       align_state: right
-              #       decimals: 0
-              #       entities:
-              #         - entity: sensor.speedtest_download
-              #           name: Download
-              #           state_adaptive_color: true
-              #       hour24: true
-              #       hours_to_show: 12
-              #       line_width: 8
-              #       lower_bound: 0
-              #       name: Down Speed
-              #       points_per_hour: 1
-              #       show:
-              #         average: true
-              #         extrema: true
-              #         labels: false
-              #         legend: true
-              #         points: hover
-              #         fill: false
-              #       color_thresholds:
-              #         - value: 89
-              #           color: '#4CAF50'
-              #         - value: 70
-              #           color: '#FF5722'
-              #         - value: 50
-              #           color: '#FF5252'
-              #         - value: 0
-              #           color: '#FF5252'
-              #       height: 200
-              #       icon: 'mdi:download'
-              #       upper_bound: 100
-              #     - type: 'custom:mini-graph-card'
-              #       align_icon: left
-              #       align_state: right
-              #       decimals: 0
-              #       entities:
-              #         - entity: sensor.speedtest_upload
-              #           name: Upload
-              #           state_adaptive_color: true
-              #       hour24: true
-              #       hours_to_show: 12
-              #       line_width: 8
-              #       lower_bound: 0
-              #       name: Up Speed
-              #       points_per_hour: 1
-              #       show:
-              #         average: true
-              #         extrema: true
-              #         labels: false
-              #         legend: true
-              #         points: hover
-              #         fill: false
-              #       color_thresholds:
-              #         - value: 35
-              #           color: '#4CAF50'
-              #         - value: 30
-              #           color: '#FF5722'
-              #         - value: 20
-              #           color: '#FF5252'
-              #         - value: 0
-              #           color: '#FF5252'
-              #       height: 200
-              #       icon: 'mdi:upload'
-              #       upper_bound: 40
               - type: horizontal-stack
                 cards:
                   - type: "custom:mini-graph-card"
@@ -1081,7 +816,6 @@ views:
                     entities:
                       - entity: sensor.router_wan_in_mbps
                         name: Download
-                        # state_adaptive_color: true
                     hour24: true
                     hours_to_show: 1
                     line_width: 8
@@ -1089,8 +823,6 @@ views:
                     points_per_hour: 50
                     aggregate_func: max
                     show:
-                      # average: true
-                      # extrema: true
                       labels: false
                       legend: true
                       points: hover
@@ -1114,7 +846,6 @@ views:
                     entities:
                       - entity: sensor.router_wan_out_mbps
                         name: Upload
-                        # state_adaptive_color: true
                     hour24: true
                     hours_to_show: 1
                     line_width: 8
@@ -1122,8 +853,6 @@ views:
                     points_per_hour: 50
                     aggregate_func: max
                     show:
-                      # average: true
-                      # extrema: true
                       labels: false
                       legend: true
                       points: hover
@@ -1135,46 +864,10 @@ views:
                         color: "#FF5722"
                       - value: 40
                         color: "#FF5252"
-                    #   - value: 35
-                    #     color: '#4CAF50'
-                    #   - value: 30
-                    #     color: '#FF5722'
-                    #   - value: 20
-                    #     color: '#FF5252'
-                    #   - value: 0
-                    #     color: '#FF5252'
                     height: 200
                     icon: "mdi:upload"
                     lower_bound: 0
                     upper_bound: 40
-              # - type: 'custom:mini-graph-card'
-              #   update_interval: 1800
-              #   align_icon: left
-              #   decimals: 0
-              #   entities:
-              #     - entity: sensor.router_wan_curbw_in_mbit
-              #       name: Download
-              #     - entity: sensor.router_wan_curbw_out_mbit
-              #       name: Upload
-              #   hour24: true
-              #   hours_to_show: 24
-              #   aggregate_func: max
-              #   line_width: 4
-              #   name: Last 24h
-              #   points_per_hour: 4
-              #   smoothing: true
-              #   show:
-              #     state: false
-              #     # average: true
-              #     # extrema: true
-              #     labels: false
-              #     legend: true
-              #     # points: hover
-              #     fill: false
-              #   height: 200
-              #   icon: 'mdi:download'
-              #   lower_bound: 0
-              #   upper_bound: 100
               - type: custom:mini-graph-card
                 entities:
                   - sensor.internet_download_daily
@@ -1193,88 +886,9 @@ views:
                 group_by: date
                 show:
                   graph: bar
-          # - type: vertical-stack
-          #   cards:
-          #     - type: custom:mini-graph-card
-          #       hour24: true
-          #       hours_to_show: 24
-          #       points_per_hour: 2
-          #       decimals: 0
-          #       entities:
-          #         - sensor.speedtest_download
-          #       show:
-          #         labels: true
-          #       color_thresholds:
-          #         - value: 0
-          #           color: '#ff0000'        #red
-          #         - value: 80
-          #           color: '#ffa500'        #orange
-          #         - value: 100
-          #           color: '#00ff00'        #green
-          #     - type: custom:mini-graph-card
-          #       hour24: true
-          #       hours_to_show: 24
-          #       points_per_hour: 2
-          #       decimals: 0
-          #       entities:
-          #         - sensor.speedtest_upload
-          #       show:
-          #         labels: true
-          #       color_thresholds:
-          #         - value: 0
-          #           color: '#ff0000'        #red
-          #         - value: 30
-          #           color: '#ffa500'        #orange
-          #         - value: 40
-          #           color: '#00ff00'        #green
-          # - type: history-graph
-          #   hours_to_show: 1
-          #   refresh_interval: 60
-          #   entities:
-          #     - entity: sensor.router_wan_curbw_in_mbit
-          #       name: Download
-          #     - entity: sensor.router_wan_curbw_out_mbit
-          #       name: Upload
           - break
-          # - align_icon: left
-          #   align_state: right
-          #   decimals: 0
-          #   entities:
-          #     - entity: sensor.speedtest_download
-          #       name: Download
-          #     - entity: sensor.speedtest_upload
-          #       name: Upload
-          #     - entity: sensor.speedtest_ping
-          #       name: Ping
-          #   hour24: true
-          #   hours_to_show: 12
-          #   line_width: 5
-          #   lower_bound: 0
-          #   name: Internet
-          #   points_per_hour: 1
-          #   show:
-          #     labels: false
-          #     legend: false
-          #     points: true
-          #   type: 'custom:mini-graph-card'
-          #   upper_bound: 105
-          # - type: entities
-          #   title: Network
-          #   show_header_toggle: false
-          #   entities:
-          #     - entity: binary_sensor.router
           - type: vertical-stack
             cards:
-              - type: entities
-                show_header_toggle: false
-                entities:
-                  - sensor.tautulli
-                  # - sensor.plex
-                  - sensor.adguard_average_processing_speed
-                  - sensor.router_wan_in
-                  - sensor.router_wan_out
-                  - sensor.router_wan_in_mbps
-                  - sensor.router_wan_out_mbps
               - type: "custom:mini-graph-card"
                 name: Streams
                 entities:
@@ -1289,7 +903,6 @@ views:
                 hours_to_show: 24
                 aggregate_func: max
                 group_by: hour
-                # line_width: 5
                 bar_spacing: 2
                 lower_bound: 0
                 show:
@@ -1329,7 +942,6 @@ views:
                 show:
                   state: false
                   labels: true
-                  # graph: bar
                   legend: true
                   extrema: true
                   points: hover
@@ -1345,10 +957,8 @@ views:
         name: Server
         styles:
           card:
-            # - background-color: '#000044'
             - border-radius: 10%
             - padding: 10%
-            # - color: ivory
             - font-size: 10px
             - text-shadow: 0px 0px 5px black
             - text-transform: capitalize
@@ -1359,7 +969,6 @@ views:
           name:
             - font-weight: bold
             - font-size: 13px
-            # - color: white
             - align-self: middle
             - justify-self: start
             - padding-bottom: 4px
@@ -1390,10 +999,6 @@ views:
               - align-self: middle
               - justify-self: start
               - --text-color-sensor: '[[[ if (states["sensor.memory_use_percent"].state > 80) return "red"; ]]]'
-            # sd:
-            #   - align-self: middle
-            #   - justify-self: start
-            #   - --text-color-sensor: '[[[ if (states["sensor.raspi_sd"].state > 80) return "red"; ]]]'
         custom_fields:
           temp: >
             [[[
@@ -1416,24 +1021,11 @@ views:
                 style="width: 12px; height: 12px; color: deepskyblue;">
                 </ha-icon><span>RAM: <span style="color: var(--text-color-sensor);">${states['sensor.memory_use_percent'].state}%</span></span>`
             ]]]
-          # sd: >
-          #   [[[
-          #     return `<ha-icon
-          #       icon="mdi:harddisk"
-          #       style="width: 12px; height: 12px; color: deepskyblue;">
-          #       </ha-icon><span>SD: <span style="color: var(--text-color-sensor);">${states['sensor.raspi_sd'].state}%</span></span>`
-          #   ]]]
       - entities:
           - sensor.wan_ip
           - sensor.connected_clients
-          # - sensor.processor_use
-          # - sensor.load_15m
-          # - sensor.disk_free_home
-          # - sensor.disk_use_home
-          # - sensor.home_assistant_version
           - sensor.github_home_assistant_release
           - sensor.ha_uptime
-          # - sensor.last_boot
           - input_select.hass_theme
         show_header_toggle: false
         title: System
@@ -1507,8 +1099,6 @@ views:
                 - entity_id: media_player.*
                 - entity_id: sensor.chandelier_switch
                 - entity_id: sensor.sonoff_*_version
-                - entity_id: sensor.speedtest_*
-                # - last_changed: < 15
             unique: true
           - type: "custom:auto-entities"
             card:
@@ -1536,30 +1126,6 @@ views:
         sort:
           method: last_updated
           reverse: true
-      # - type: entities
-      #   title: Batteries
-      #   show_header_toggle: false
-      #   entities:
-      #     - entity: sensor.disrupted_iphone_battery_state
-      #     - entity: sensor.disrupted_ipadpro_battery_state
-      # - type: entities
-      #   title: iCloud
-      #   show_header_toggle: false
-      #   entities:
-      #     - sensor.icloud_last_update
-      #     - script.icloud_update
-      # - type: entities
-      #   title: Sonoff Update
-      #   show_header_toggle: false
-      #   entities:
-      #     - sensor.sonoff_tasmota_latest_release
-      #     - script.check_sonoffs_version
-      #     - sensor.sonoff_11_version
-      #     - sensor.sonoff_12_version
-      #     - sensor.sonoff_13_version
-      #     - sensor.sonoff_14_version
-      #     - sensor.sonoff_15_version
-      #     - script.update_sonoffs
 
   - id: 11
     title: Location History
@@ -1568,10 +1134,7 @@ views:
     cards:
       - type: map
         hours_to_show: 24
-        # geo_location_sources:
-        #   - wwlln
         entities:
-          # - zone.home
           - person.salomon
           - person.polina
         style: |
@@ -1626,9 +1189,6 @@ views:
                   - align-self: middle
                   - justify-self: start
                   - font-size: 11px
-                  # - "--text-color-sensor": >-
-                  #     [[[ if (states['sensor.disrupted_iphone_connection_type'].state
-                  #     !== 'on') return "red"; ]]]
                 wifi:
                   - padding-bottom: 2px
                   - align-self: middle
@@ -1719,9 +1279,6 @@ views:
                   - align-self: middle
                   - justify-self: start
                   - font-size: 11px
-                  # - "--text-color-sensor": >-
-                  #     [[[ if (states['sensor.polina_iphone_connection_type'].state
-                  #     !== 'on') return "red"; ]]]
                 wifi:
                   - padding-bottom: 2px
                   - align-self: middle
@@ -1779,9 +1336,8 @@ views:
                 - entity_id: device_tracker.polina_*phone*
               exclude:
                 - entity_id: device_tracker.*_bt
-              #   - state: unavailable
               sort:
-                method: last_changed # last_updated
+                method: last_changed
           - type: custom:auto-entities
             card:
               type: entities
@@ -1834,33 +1390,3 @@ views:
           #   filter:
           #     include:
           #       - entity_id: sensor.populartimes_*
-          # - type: 'custom:auto-entities'
-          #   title: Lightning strikes
-          #   card:
-          #     show_header_toggle: false
-          #     type: entities
-          #   filter:
-          #     template: |
-          #       {%- set t = as_timestamp(now()) - 60 * 60 %}
-          #       {%- for s in states.geo_location %}
-          #         {%- if s.attributes.source == 'wwlln' and s.last_updated != None and as_timestamp(s.last_updated) > t %}
-          #         {{ s.entity_id }}{{ ',' if not loop.last else ''}}{%- endif %}
-          #       {%- endfor %}
-          #   sort:
-          #     method: last_changed  # last_updated
-          #     # count: 5
-  # - id: 12
-  #   title: Misc
-  #   icon: "mdi:garage"
-  #   cards:
-  #     - type: "custom:auto-entities"
-  #       card:
-  #         show_header_toggle: true
-  #         type: entities
-  #         title: Shared
-  #       filter:
-  #         include:
-  #           - area: Shared
-  #           - entity_id: binary_sensor.lights_left_on
-  #         # exclude:
-  #         #   - state: unavailable
