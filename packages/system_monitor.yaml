@@ -208,6 +208,7 @@ sensor:
     resource: https://api.github.com/graphql
     method: POST
     scan_interval: 3600
+    unit_of_measurement: contributions
     value_template: "{{ value_json.data.viewer.contributionsCollection.contributionCalendar.weeks[-1].contributionDays[-1].contributionCount }}"
     payload: >
       {"query": "query { viewer { contributionsCollection { contributionCalendar { colors totalContributions weeks { contributionDays { color contributionCount date weekday } firstDay } } } } }"}
