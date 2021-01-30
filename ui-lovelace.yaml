@@ -196,6 +196,8 @@ views:
         show_header_toggle: false
         entities:
           - input_select.scene
+          - automation.light_adaptive_apply
+          - sensor.adaptive_colortemp
           - input_number.scene_brightness
           - input_number.scene_color_temp
       - type: vertical-stack
@@ -441,16 +443,45 @@ views:
       - type: entities
         show_header_toggle: false
         entities:
-          - type: custom:fold-entity-row
-            title: Light
-            head:
-              type: "custom:slider-entity-row"
-              entity: light.desk_lamp
-              toggle: true
-              hide_when_off: false
-            entities:
-              - entity: switch.adaptive_lighting_desk
-                name: Adaptive
+          - type: "custom:slider-entity-row"
+            entity: light.desk_lamp
+            toggle: true
+            hide_when_off: false
+          - type: "custom:rgb-light-card"
+            entity: light.desk_lamp
+            justify: center
+            hide_when_off: true
+            colors:
+              - color_temp: 200
+                transition: 0.5
+                icon_color: >-
+                  linear-gradient(15deg,rgba(255,255,255,1) 20%,
+                  rgba(193,193,193,1) 100%)
+              - color_temp: 250
+                transition: 0.5
+                icon_color: >-
+                  linear-gradient(15deg, rgba(255,231,185,1) 0%,
+                  rgba(196,220,229,1) 100%)
+              - color_temp: 300
+                transition: 0.5
+                icon_color: >-
+                  linear-gradient(15deg, rgba(254,199,110,1) 0%,
+                  rgba(233,233,233,1) 100%)
+              - color_temp: 350
+                transition: 0.5
+                icon_color: >-
+                  linear-gradient(15deg, rgba(255,220,167,1) 0%,
+                  rgba(255,183,116,1) 100%)
+              - color_temp: 400
+                transition: 0.5
+                icon_color: >-
+                  linear-gradient(15deg, rgba(255,205,126,1) 0%,
+                  rgba(252,156,49,1) 100%)
+              - color_temp: 450
+                transition: 0.5
+                icon_color: >-
+                  linear-gradient(15deg, rgba(255,190,92,1) 0%,
+                  rgba(255,123,0,1) 100%)
       - type: entities
         entities:
           - sensor.e_studio382p

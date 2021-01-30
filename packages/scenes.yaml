@@ -21,7 +21,7 @@ homeassistant:
       icon: mdi:lamp
     scene.sunset:
       icon: mdi:weather-sunset
-    scene.relax:
+    scene.comfy:
       icon: mdi:sofa
     scene.dim:
       icon: mdi:theater
@@ -42,30 +42,12 @@ group:
       - scene.daytime
       - scene.sunset
       - scene.normal
-      - scene.relax
+      - scene.comfy
       - scene.dim
       - scene.undim
       - scene.bedtime
       - scene.night
-      # - scene.nightlight
       - scene.away
-
-  scenes_day:
-    name: Scenes
-    entities:
-      - scene.daytime
-      - scene.sunset
-      - scene.normal
-      - scene.bright
-      - scene.dim
-      - scene.relax
-
-  scenes_night:
-    name: Scenes
-    entities:
-      - scene.bedtime
-      - scene.night
-      # - scene.nightlight
 
 scene:
   - name: Normal
@@ -133,16 +115,19 @@ scene:
         state: "on"
         brightness: 128
 
-  - name: Relax
+  - name: Comfy
     entities:
       light.floor_lamp:
         state: "on"
-        transition: 6
-        brightness: 102
-        # kelvin: 2200
-      # light.bedroom_ceiling:
-      #   state: "on"
-      #   profile: orange
+        brightness: 150
+      light.reading_lamp:
+        state: "on"
+        brightness: 92
+      light.spots:
+        state: "on"
+        brightness: 115
+      light.desk_lamp:
+        state: "off"
 
   - name: Bedtime
     entities:
@@ -150,7 +135,6 @@ scene:
       #   state: "off"
       light.floor_lamp:
         state: "on"
-        # transition: 4
         brightness: 51
         kelvin: 2200
       # switch.adaptive_lighting_bed:
@@ -163,11 +147,9 @@ scene:
         xy_color: [0.656, 0.34]
         brightness: 15
         # flash: long
-        # transition: 4
       light.desk_lamp:
         state: "off"
         # brightness: 50
-        # transition: 4
         # flash: long
 
   - name: Daytime
@@ -232,7 +214,7 @@ input_select:
       - Sunset
       - Normal
       - Dim
-      - Relax
+      - Comfy
       - Bedtime
       - Night
       # - Nightlight

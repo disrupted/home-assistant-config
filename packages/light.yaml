@@ -1,14 +1,14 @@
 homeassistant:
   customize_glob:
-    automation.flux_*:
-      icon: mdi:image-filter-frames
-    automation.hue_switch_*:
-      icon: mdi:remote
+    automation.light_adaptive_*:
+      icon: mdi:theme-light-dark
     automation.sunrise_*:
       icon: mdi:weather-sunset-up
     automation.sunset_*:
       icon: mdi:weather-sunset-down
   customize:
+    sensor.adaptive_colortemp:
+      icon: mdi:theme-light-dark
     light.floor_lamp:
       icon: mdi:floor-lamp
     light.bedroom_ceiling:
@@ -61,62 +61,6 @@ light:
 # prettier-ignore
 sun:
 
-# hue:
-#   bridges:
-#     - host: !secret ip_hue
-#       allow_unreachable: true
-#       allow_hue_groups: true
-
-# circadian_lighting:
-#   min_colortemp: 2400 # 2200
-#   max_colortemp: 6500
-#   sunset_offset: "+01:15:00"
-#   # sunset_time: "20:30:00"
-#   sunrise_time: "06:00:00"
-#   interval: 180
-#   transition: 3
-
-# switch:
-#   - platform: circadian_lighting
-#     name: Floor
-#     disable_brightness_adjust: true
-#     lights_ct:
-#       - light.floor_lamp
-#   - platform: circadian_lighting
-#     name: Bed
-#     # disable_entity: input_boolean.movietime
-#     # disable_state: 'on'
-#     lights_ct:
-#       - light.bedroom_ceiling
-#   - platform: circadian_lighting
-#     name: Bed no brightness
-#     lights_ct:
-#       - light.bedroom_ceiling
-#     disable_brightness_adjust: true
-#   - platform: circadian_lighting
-#     name: Desk
-#     disable_brightness_adjust: true
-#     # min_brightness: 15
-#     # max_brightness: 60
-#     # disable_entity: input_boolean.movietime
-#     # disable_state: 'on'
-#     lights_ct:
-#       - light.desk_lamp
-#   # - platform: flux
-#   #   lights:
-#   #     - light.floor_lamp
-#   #     - light.desk_lamp
-#   #   name: Flux
-#   #   start_time: '16:00' # '06:00'
-#   #   stop_time: '01:00'
-#   #   start_colortemp: 4000
-#   #   sunset_colortemp: 3400
-#   #   stop_colortemp: 2400
-#   #   disable_brightness_adjust: True
-#   #   mode: mired
-#   #   transition: 3
-#   #   interval: 180
-
 sensor:
   - platform: history_stats
     name: Lights ON today
@@ -125,12 +69,12 @@ sensor:
     type: time
     start: "{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}"
     end: "{{ now() }}"
-  # - platform: template
-  #   sensors:
-  #     adaptive_colortemp:
-  #       friendly_name: "Adaptive Colortemp"
-  #       unit_of_measurement: "K"
-  #       value_template: "{{ state_attr('sensor.adaptive_values', 'colortemp') }}"
+  - platform: template
+    sensors:
+      adaptive_colortemp:
+        friendly_name: "Adaptive Colortemp"
+        unit_of_measurement: "mired"
+        value_template: "{{ state_attr('switch.adaptive_lighting_default', 'color_temp_mired') }}"
 
 automation:
   - id: light_adaptive_apply
@@ -151,17 +95,14 @@ automation:
         to: "on"
         for:
           seconds: 1
-    condition:
-      - condition: state
-        entity_id:
-          - switch.adaptive_lighting_bed
-          - switch.adaptive_lighting_desk
-          - switch.adaptive_lighting_floor
-        state: "off"
+    # condition:
+    #   - condition: state
+    #     entity_id:
+    #       - switch.adaptive_lighting_bed
+    #       - switch.adaptive_lighting_desk
+    #       - switch.adaptive_lighting_floor
+    #     state: "off"
     action:
-      # - service: script.adaptive_lighting_apply
-      #   data:
-      #     transition: 10
       - service: script.adaptive_lighting
         data:
           entities:
@@ -169,120 +110,19 @@ automation:
             - light.floor_lamp
             - light.spots
             - light.reading_lamp
+          transition: 10
 
-  # - id: light_adaptive_apply_turn_on
-  #   alias: Light Adaptive apply when light turns on
+  # - alias: Light Sunrise adaptive
   #   trigger:
-  #     - platform: state
-  #       entity_id:
-  #         - light.bedroom_ceiling
-  #         - light.desk_lamp
-  #         - light.floor_lamp
-  #       from: "off"
-  #       to: "on"
-  #   condition:
-  #     - condition: state
-  #       entity_id:
-  #         - switch.adaptive_lighting_bed
-  #         - switch.adaptive_lighting_desk
-  #         - switch.adaptive_lighting_floor
-  #       state: "off"
-  #   action:
-  #     - service: script.adaptive_lighting_apply
-  #       data:
-  #         transition: 1
-
-  # - id: light_adaptive_off_when_hue_scene
-  #   alias: Light Adaptive OFF when Hue Scene
-  #   trigger:
-  #     - platform: event
-  #       event_type: call_service
-  #       event_data:
-  #         domain: hue
-  #         service: hue_activate_scene
-  #         # service_data:
-  #         #   entity_id: [scene.test]
-  #   # condition:
-  #   #   - condition: template
-  #   #     value_template: '{{ trigger.event.data.service_data.entity_id[0] | length > 1 }}'
-  #   action:
-  #     - service: switch.turn_off
-  #       entity_id: switch.adaptive_lighting_desk
-
-  - alias: Light Adaptive Bed OFF
-    # initial_state: true
-    trigger:
-      platform: template
-      value_template: "{{ state_attr('light.bedroom_ceiling', 'rgb_color') != None }}"
-    condition:
-      - condition: or
-        conditions:
-          - condition: state
-            entity_id: switch.adaptive_lighting_bed
-            state: "on"
-          - condition: state
-            entity_id: switch.adaptive_lighting_bed_no_brightness
-            state: "on"
-    #   condition: sun
-    #   after: sunset
-    #   after_offset: "-01:00:00"
-    action:
-      service: switch.turn_off
-      entity_id:
-        - switch.adaptive_lighting_bed
-        - switch.adaptive_lighting_bed_no_brightness
-
-  - alias: Light Adaptive Bed toggle1
-    trigger:
-      platform: state
-      entity_id: switch.adaptive_lighting_bed
-      to: "on"
-    action:
-      service: switch.turn_off
-      entity_id: switch.adaptive_lighting_bed_no_brightness
-
-  - alias: Light Adaptive Bed toggle2
-    trigger:
-      platform: state
-      entity_id: switch.adaptive_lighting_bed_no_brightness
-      to: "on"
-    action:
-      service: switch.turn_off
-      entity_id: switch.adaptive_lighting_bed
-
-  # - alias: Flux startup
-  #   id: flux_startup
-  #   trigger:
-  #     platform: homeassistant
-  #     event: start
+  #     - platform: sun
+  #       event: sunrise
+  #       # offset: "-01:00:00"
   #   action:
   #     - service: switch.turn_on
   #       entity_id:
-  #         # - switch.flux
   #         - switch.adaptive_lighting_floor
   #         - switch.adaptive_lighting_bed
   #         - switch.adaptive_lighting_desk
-
-  # - alias: Flux update when turning on the light
-  #   id: flux_update_when_turning_on_light
-  #   trigger:
-  #     - platform: state
-  #       entity_id: light.floor_lamp, light.desk_lamp
-  #       to: 'on'
-  #   action:
-  #     service: switch.flux_update
-
-  - alias: Light Sunrise adaptive
-    trigger:
-      - platform: sun
-        event: sunrise
-        # offset: "-01:00:00"
-    action:
-      - service: switch.turn_on
-        entity_id:
-          - switch.adaptive_lighting_floor
-          - switch.adaptive_lighting_bed
-          - switch.adaptive_lighting_desk
 
   - alias: Light Sunset
     trigger:
@@ -306,9 +146,18 @@ automation:
     action:
       # - service: scene.turn_on
       #   entity_id: scene.sunset
-      - service: script.scene
+      # - service: script.scene
+      #   data:
+      #     scene: sunset
+      #     transition: 10
+      - service: script.adaptive_lighting
         data:
-          scene: sunset
+          turn_on: true
+          entities:
+            - light.desk_lamp
+            - light.floor_lamp
+            - light.spots
+            - light.reading_lamp
           transition: 10
 
   - alias: Light Sunset lightchain

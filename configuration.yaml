@@ -44,11 +44,7 @@ lovelace:
     - type: js
       url: /hacsfiles/lovelace-xiaomi-vacuum-card/xiaomi-vacuum-card.js
     - type: module
-      url: /hacsfiles/weather-card/weather-card.js
-    - type: module
       url: /hacsfiles/lovelace-auto-entities/auto-entities.js
-    - type: js
-      url: /hacsfiles/group-card/group-card.js
     - type: js
       url: /hacsfiles/lovelace-slider-entity-row/slider-entity-row.js
     - type: js
@@ -64,30 +60,15 @@ lovelace:
     - type: js
       url: /hacsfiles/lovelace-card-tools/card-tools.js
     - type: module
-      url: /hacsfiles/simple-thermostat/simple-thermostat.js
-    - type: module
-      url: /hacsfiles/simple-weather-card/simple-weather-card-bundle.js
-    - type: module
-      url: >-
-        https://cdn.jsdelivr.net/gh/custom-cards/spotify-card/dist/spotify-card.umd.js
-    - type: module
       url: /local/custom-lovelace/vacuum/card.js
     - type: module
-      url: /hacsfiles/lovelace-gap-card/gap-card.js
-    - type: module
       url: /hacsfiles/lovelace-template-entity-row/template-entity-row.js
-    # - type: module
-    #   url: /hacsfiles/config-template-card/config-template-card.js
-    # - type: module
-    #   url: /hacsfiles/lovelace-card-templater/lovelace-card-templater.js
     - type: module
       url: /hacsfiles/lovelace-card-mod/card-mod.js
     - type: module
       url: /hacsfiles/secondaryinfo-entity-row/secondaryinfo-entity-row.js
-    # - type: module
-    #   url: /hacsfiles/hass-bha-icons/hass-bha-icons.js
-    - url: /local/zha-network-visualization-card/zha-network-visualization-card.js
-      type: module
+    - type: module
+      url: /hacsfiles/rgb-light-card/card.js
 
 config:
 
