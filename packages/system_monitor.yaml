@@ -203,6 +203,19 @@ sensor:
       Content-Type: application/json
       User-Agent: Home Assistant REST sensor
 
+  - platform: rest
+    name: GitHub Contributions
+    resource: https://api.github.com/graphql
+    method: POST
+    scan_interval: 3600
+    value_template: "{{ value_json.data.viewer.contributionsCollection.contributionCalendar.weeks[-1].contributionDays[-1].contributionCount }}"
+    payload: >
+      {"query": "query { viewer { contributionsCollection { contributionCalendar { colors totalContributions weeks { contributionDays { color contributionCount date weekday } firstDay } } } } }"}
+    headers:
+      Authorization: !secret github_bearer
+      Content-Type: application/graphql
+      User-Agent: Home Assistant REST sensor
+
   - platform: command_line
     name: CPU Temperature
     command: "cat /sys/class/thermal/thermal_zone0/temp"
