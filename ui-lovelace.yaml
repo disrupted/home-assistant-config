@@ -901,7 +901,7 @@ views:
                     upper_bound: 40
               - type: custom:mini-graph-card
                 entities:
-                  - sensor.internet_download_daily
+                  - sensor.router_wan_in_gb_daily
                 name: Downloaded
                 hours_to_show: 168
                 aggregate_func: max
@@ -910,7 +910,7 @@ views:
                   graph: bar
               - type: custom:mini-graph-card
                 entities:
-                  - sensor.internet_upload_daily
+                  - sensor.router_wan_out_gb_daily
                 name: Uploaded
                 hours_to_show: 168
                 aggregate_func: max

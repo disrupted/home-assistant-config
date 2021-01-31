@@ -38,26 +38,27 @@ sensor:
         unit_of_measurement: "Mbps"
         friendly_name: "WAN Out"
 
-  # - platform: template
-  #   sensors:
-  #     internet_download_total:
-  #       friendly_name: "Internet Total Download"
-  #       unit_of_measurement: "GB"
-  #       value_template: "{{ (states('sensor.router_wan_total_in_byte') | float / 1000000000) | round(2) }}"
-  #     internet_upload_total:
-  #       friendly_name: "Internet Total Upload"
-  #       unit_of_measurement: "GB"
-  #       value_template: "{{ (states('sensor.router_wan_total_out_byte') | float / 1000000000) | round(2) }}"
-# utility_meter:
-#   internet_download_daily:
-#     source: sensor.internet_download_total
-#     cycle: daily
-#   internet_upload_daily:
-#     source: sensor.internet_upload_total
-#     cycle: daily
-#   internet_download_monthly:
-#     source: sensor.internet_download_total
-#     cycle: monthly
-#   internet_upload_monthly:
-#     source: sensor.internet_upload_total
-#     cycle: monthly
+  - platform: template
+    sensors:
+      router_wan_in_gb:
+        friendly_name: "Internet Total Download"
+        unit_of_measurement: "GB"
+        value_template: "{{ (states('sensor.router_wan_in') | float / 1000000000) | round(2) }}"
+      router_wan_out_gb:
+        friendly_name: "Internet Total Upload"
+        unit_of_measurement: "GB"
+        value_template: "{{ (states('sensor.router_wan_out') | float / 1000000000) | round(2) }}"
+
+utility_meter:
+  router_wan_in_gb_daily:
+    source: sensor.router_wan_in_gb
+    cycle: daily
+  router_wan_out_gb_daily:
+    source: sensor.router_wan_out_gb
+    cycle: daily
+  router_wan_in_gb_monthly:
+    source: sensor.router_wan_in_gb
+    cycle: monthly
+  router_wan_out_gb_monthly:
+    source: sensor.router_wan_out_gb
+    cycle: monthly
