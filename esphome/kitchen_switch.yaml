@@ -101,6 +101,7 @@ sensor:
     unit_of_measurement: "°C"
     accuracy_decimals: 0
     icon: mdi:thermometer
+    internal: true
     calibration:
       b_constant: 3350
       reference_resistance: 10kOhm

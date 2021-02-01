@@ -43,6 +43,12 @@ time:
   - platform: homeassistant
     id: homeassistant_time
 
+text_sensor:
+  - platform: template
+    name: "${friendly_name}"
+    id: cooling_string
+    icon: mdi:fridge
+
 binary_sensor:
   - platform: status
     name: "${friendly_name} Status"
@@ -55,6 +61,40 @@ binary_sensor:
       inverted: true
     # on_press:
     #   - switch.toggle: relay
+
+  - platform: template
+    name: "${friendly_name} Cooling"
+    device_class: cold
+    lambda: |-
+      if (id(power).state > 60) {
+        // Fridge is cooling.
+        return true;
+      } else {
+        // Fridge is idle.
+        return false;
+      }
+    on_press:
+      - light.turn_on: led
+      - text_sensor.template.publish:
+          id: cooling_string
+          state: "Cooling"
+    on_release:
+      - light.turn_off: led
+      - text_sensor.template.publish:
+          id: cooling_string
+          state: "Idle"
+
+  - platform: template
+    name: "${friendly_name} Door"
+    device_class: door
+    lambda: |-
+      if ((id(power).state > 5 and id(power).state <= 60) or (id(power).state >= 99 and id(power).state < 130)) {
+        // Fridge door is open.
+        return true;
+      } else {
+        // Fridge door is closed.
+        return false;
+      }
 
 output:
   # Relay state led
@@ -104,12 +144,14 @@ sensor:
     # Current sensor
     current:
       name: "${friendly_name} Current"
+      internal: true
       unit_of_measurement: A
       accuracy_decimals: 3
       icon: mdi:alpha-a
     # Voltage sensor
     voltage:
       name: "${friendly_name} Voltage"
+      internal: true
       unit_of_measurement: V
       accuracy_decimals: 1
       icon: mdi:alpha-v
@@ -131,6 +173,8 @@ sensor:
             - 0.0 -> 0.0
             - 14.0 -> 2.3
             - 10370.0 -> 1800.0
+        # Make everything below 2W appear as 0W.
+        - lambda: if (x < 2) return 0; else return x;
 
 # Uses the red LED as a status indicator
 status_led:
