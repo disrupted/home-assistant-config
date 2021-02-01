@@ -13,11 +13,11 @@ variables:
   transition: "{{ transition | default(1) }}"
   automation: automation.light_adaptive_apply
 sequence:
-  # - variables:
-  #     adaptive_status: "{{ is_state(automation, 'on') }}"
-  # - service: automation.turn_off
-  #   data:
-  #     entity_id: "{{ automation }}"
+  - variables:
+      adaptive_status: "{{ is_state(automation, 'on') }}"
+  - service: automation.turn_off
+    data:
+      entity_id: "{{ automation }}"
   # - service: telegram_bot.send_message
   #   data:
   #     message: "0 start {{ entity_id }}"
@@ -28,29 +28,29 @@ sequence:
   # - service: telegram_bot.send_message
   #   data:
   #     message: "1 first scene ran"
-  # - delay: "{{ transition }}"
-  # - service: telegram_bot.send_message
-  #   data:
-  #     message: "1.5 delay finished"
+  - delay: "{{ transition }}"
+  - service: telegram_bot.send_message
+    data:
+      message: "1.5 delay finished"
   # repeat after transition to make sure lights are set to the correct state
-  # - service: scene.turn_on
-  #   data:
-  #     entity_id: "{{ entity_id }}"
-  #     transition: 0
+  - service: scene.turn_on
+    data:
+      entity_id: "{{ entity_id }}"
+      transition: 0
   # - service: telegram_bot.send_message
   #   data:
   #     message: "2 second scene apply"
   # # reenable adaptive lighting if it was previously turned on
-  # - condition: template
-  #   value_template: "{{ adaptive_status }}"
+  - condition: template
+    value_template: "{{ adaptive_status }}"
   # - service: telegram_bot.send_message
   #   data:
   #     message: "3 re-enabling {{ automation }}"
   #     parse_mode: html
-  # - service: automation.turn_on
-  #   data:
-  #     entity_id: "{{ automation }}"
-  # - service: automation.trigger
-  #   data:
-  #     entity_id: "{{ automation }}"
-  #     skip_condition: false
+  - service: automation.turn_on
+    data:
+      entity_id: "{{ automation }}"
+  - service: automation.trigger
+    data:
+      entity_id: "{{ automation }}"
+      skip_condition: false
