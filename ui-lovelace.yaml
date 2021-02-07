@@ -518,10 +518,11 @@ views:
             entity: binary_sensor.dishwasher
             icon: mdi:dishwasher
             secondary_info: "[[ sensor.dishwasher_power.state ]] W"
-          # - type: custom:secondaryinfo-entity-row
-          #   entity: binary_sensor.fridge
-          #   icon: mdi:dishwasher
-          #   secondary_info: "[[ sensor.fridge_power.state ]] W"
+          - type: custom:secondaryinfo-entity-row
+            entity: sensor.fridge
+            icon: mdi:fridge
+            secondary_info: "[[ sensor.fridge_power.state ]] W"
+          - binary_sensor.fridge_door
           - sensor.fridge_power
       - type: entities
         show_header_toggle: false
@@ -977,6 +978,20 @@ views:
                   extrema: true
                   points: hover
                 icon: "mdi:server-network"
+              - type: horizontal-stack
+                cards:
+                  - type: sensor
+                    entity: sensor.omv_sda
+                    graph: none
+                  - type: sensor
+                    entity: sensor.omv_sdc
+                    graph: none
+                  - type: sensor
+                    entity: sensor.omv_sdd
+                    graph: none
+                  - type: sensor
+                    entity: sensor.omv_sde
+                    graph: none
   - id: 10
     title: System
     icon: "mdi:raspberry-pi"
