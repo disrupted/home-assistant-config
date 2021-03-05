@@ -14,6 +14,8 @@ homeassistant:
     - /config
   legacy_templates: false
 
+default_config:
+
 http:
   # For extra security set this to only accept connections on localhost if NGINX is on the same machine
   # server_host: 127.0.0.1
@@ -313,3 +315,4 @@ logger:
     custom_components.dwd_wetter: debug
 
 script: !include_dir_named scripts
+python_script:
