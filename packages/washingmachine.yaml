@@ -9,7 +9,7 @@ sensor:
     end: "{{ now() }}"
 
 automation:
-  - alias: Washing machine started mobile
+  - alias: Washing machine started
     trigger:
       - platform: state
         entity_id: binary_sensor.washing_machine
@@ -33,14 +33,11 @@ automation:
         entity_id: binary_sensor.washing_machine
         from: "on"
         to: "off"
-    # condition:
-    #   - condition: template # needs to have run for at least 15min otherwise it's likely a false positive
-    #     value_template: "{{ (as_timestamp(now()) - state_attr('input_datetime.washing_machine_started', 'timestamp')) > 15 * 60 }}"
     action:
       - service: notify.all_iphones
         data_template:
           data:
             push:
               thread-id: "washing_machine"
-          title: >
+          message: >
             Washing machine is done 👚👕
