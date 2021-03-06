@@ -21,6 +21,8 @@ automation:
               - service: light.turn_on
                 data:
                   entity_id: light.storage_ceiling
+                  brightness: 255
+                  transition: 1
           - conditions:
               - condition: template
                 value_template: "{{ trigger.from_state.state == 'on' }}"

@@ -64,8 +64,8 @@ scene:
 
   - name: Sunset
     entities:
-      # automation.light_adaptive_apply:
-      #   state: on
+      automation.light_adaptive_apply:
+        state: on
       light.floor_lamp:
         state: "on"
         brightness: 255

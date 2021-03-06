@@ -29,9 +29,9 @@ sequence:
   #   data:
   #     message: "1 first scene ran"
   - delay: "{{ transition }}"
-  - service: telegram_bot.send_message
-    data:
-      message: "1.5 delay finished"
+  #  - service: telegram_bot.send_message
+  #  data:
+  #  message: "1.5 delay finished"
   # repeat after transition to make sure lights are set to the correct state
   - service: scene.turn_on
     data:
