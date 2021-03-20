@@ -1072,7 +1072,6 @@ views:
           - sensor.connected_clients
           - sensor.github_home_assistant_release
           - sensor.ha_uptime
-          - input_select.hass_theme
         show_header_toggle: false
         title: System
         type: entities
