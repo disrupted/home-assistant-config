@@ -309,8 +309,8 @@ views:
     icon: "mdi:sofa"
     panel: true
     cards:
-      - type: "custom:layout-card"
-        layout: vertical
+      - type: custom:layout-card
+        layout_type: custom:vertical-layout
         cards:
           - type: entities
             show_header_toggle: false
@@ -333,7 +333,7 @@ views:
           - entities:
               - input_boolean.movietime
             type: entities
-          - break
+          - type: custom:layout-break
           - entities:
               - switch.amp
               - entity: media_player.tv
@@ -565,9 +565,10 @@ views:
     panel: true
     cards:
       - type: custom:layout-card
-        layout: vertical
-        min_columns: 1
-        max_columns: 2
+        layout_type: custom:vertical-layout
+        layout:
+          min_columns: 1
+          max_columns: 2
         cards:
           - type: "custom:stack-in-card"
             mode: vertical
@@ -640,7 +641,7 @@ views:
               div.box {
                 display: none;
               }
-          - break
+          - type: custom:layout-break
           - type: picture
             image: !secret meteogram_url
           - type: vertical-stack
@@ -697,71 +698,69 @@ views:
   - id: 7
     title: Weather details
     icon: "mdi:weather-partly-cloudy"
-    panel: true
+    type: custom:horizontal-layout
+    layout:
+      min_columns: 1
+      max_columns: 3
     cards:
-      - type: custom:layout-card
-        layout: horizontal
-        min_columns: 1
-        max_columns: 3
-        cards:
-          - type: entities
-            entities:
-              - binary_sensor.rain
-              - sensor.weather_bad_weather
-              - sensor.weather_wind
-              - sensor.weather_rain
-              - sensor.temperature_change_per_hour
-              - entity: sensor.htw_wetter_wind_speed_statistics
-                name: Wind Speed mean
-                icon: mdi:weather-windy
-              - sensor.htw_wetter_wind_speed_max
-              - entity: sensor.htw_wetter_solar_radiation_statistics
-                name: Solar Radiation mean
-                icon: mdi:weather-sunny
-              - sensor.htw_wetter_solar_radiation_max
-              - sensor.aqi
-          - type: "custom:auto-entities"
-            card:
-              type: entities
-              title: currently
-              show_header_toggle: false
-            filter:
-              include:
-                - entity_id: sensor.weather_yr_*
-              exclude:
-                - entity_id: "/sensor.weather_yr_[1-9]h_/"
-          - type: "custom:auto-entities"
-            card:
-              type: entities
-              title: currently
-              show_header_toggle: false
-            filter:
-              include:
-                - entity_id: sensor.htw_wetter_*
-          - type: "custom:auto-entities"
-            card:
-              type: entities
-              title: currently
-              show_header_toggle: false
-            filter:
-              include:
-                - entity_id: sensor.dwd_wetter_*
-          - type: "custom:auto-entities"
-            card:
-              type: entities
-              title: 1h
-              show_header_toggle: false
-            filter:
-              include:
-                - entity_id: sensor.weather_yr_1h_*
-          - type: "custom:auto-entities"
-            card:
-              type: entities
-              title: 6h
-              show_header_toggle: false
-            filter:
-              include:
-                - entity_id: sensor.weather_yr_6h_*
+      - type: entities
+        entities:
+          - binary_sensor.rain
+          - sensor.weather_bad_weather
+          - sensor.weather_wind
+          - sensor.weather_rain
+          - sensor.temperature_change_per_hour
+          - entity: sensor.htw_wetter_wind_speed_statistics
+            name: Wind Speed mean
+            icon: mdi:weather-windy
+          - sensor.htw_wetter_wind_speed_max
+          - entity: sensor.htw_wetter_solar_radiation_statistics
+            name: Solar Radiation mean
+            icon: mdi:weather-sunny
+          - sensor.htw_wetter_solar_radiation_max
+          - sensor.aqi
+      - type: "custom:auto-entities"
+        card:
+          type: entities
+          title: currently
+          show_header_toggle: false
+        filter:
+          include:
+            - entity_id: sensor.weather_yr_*
+          exclude:
+            - entity_id: "/sensor.weather_yr_[1-9]h_/"
+      - type: "custom:auto-entities"
+        card:
+          type: entities
+          title: currently
+          show_header_toggle: false
+        filter:
+          include:
+            - entity_id: sensor.htw_wetter_*
+      - type: "custom:auto-entities"
+        card:
+          type: entities
+          title: currently
+          show_header_toggle: false
+        filter:
+          include:
+            - entity_id: sensor.dwd_wetter_*
+      - type: "custom:auto-entities"
+        card:
+          type: entities
+          title: 1h
+          show_header_toggle: false
+        filter:
+          include:
+            - entity_id: sensor.weather_yr_1h_*
+      - type: "custom:auto-entities"
+        card:
+          type: entities
+          title: 6h
+          show_header_toggle: false
+        filter:
+          include:
+            - entity_id: sensor.weather_yr_6h_*
 
   - id: 8
     title: Plants
@@ -806,8 +805,9 @@ views:
     panel: true
     cards:
       - type: custom:layout-card
-        layout: vertical
-        max_columns: 2
+        layout_type: custom:vertical-layout
+        layout:
+          max_columns: 2
         cards:
           - type: vertical-stack
             cards:
@@ -918,7 +918,7 @@ views:
                 group_by: date
                 show:
                   graph: bar
-          - break
+          - type: custom:layout-break
           - type: vertical-stack
             cards:
               - type: "custom:mini-graph-card"
