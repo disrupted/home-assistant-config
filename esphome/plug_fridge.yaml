@@ -88,13 +88,15 @@ binary_sensor:
     name: "${friendly_name} Door"
     device_class: door
     lambda: |-
-      if ((id(power).state > 5 and id(power).state <= 60) or (id(power).state >= 99 and id(power).state < 130)) {
+      if ((id(power).state > 5 and id(power).state <= 60) or (id(power).state >= 99 and id(power).state <= 115)) {
         // Fridge door is open.
         return true;
       } else {
         // Fridge door is closed.
         return false;
       }
+    filters:
+      - delayed_on: 5s
 
 output:
   # Relay state led
