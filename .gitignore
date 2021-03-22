@@ -45,6 +45,9 @@ packages/hacs.yaml
 packages/person.yaml
 packages/shared.yaml
 packages/*internal.yaml
+*.disable
+.ps4-games.json
+.ps4-games.*.json
 
 # ESPHome
 esphome/secrets.yaml
