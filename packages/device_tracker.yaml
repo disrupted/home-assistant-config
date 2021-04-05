@@ -244,10 +244,19 @@ automation:
         entity_id: sensor.ha_uptime
         above: 15
     action:
-      service: telegram_bot.send_message
-      data_template:
-        disable_notification: true
-        message: "{{ trigger.to_state.attributes.friendly_name }} {% if trigger.to_state.state == 'home' %}arrived home{% elif trigger.from_state.state == 'home' and trigger.to_state.state == 'not_home' %}left home{% elif trigger.to_state.state != 'not_home' %}arrived at {{ trigger.to_state.state }}{% elif trigger.to_state.state == 'not_home' %}left {{ trigger.from_state.state }}{% endif %}.{% if trigger.to_state.attributes.source_type != null %} (source: {{ trigger.to_state.attributes.source_type }}){% endif %}"
+      - service: telegram_bot.send_message
+        data_template:
+          disable_notification: true
+          message: "{{ trigger.to_state.attributes.friendly_name }} {% if trigger.to_state.state == 'home' %}arrived home{% elif trigger.from_state.state == 'home' and trigger.to_state.state == 'not_home' %}left home{% elif trigger.to_state.state != 'not_home' %}arrived at {{ trigger.to_state.state }}{% elif trigger.to_state.state == 'not_home' %}left {{ trigger.from_state.state }}{% endif %}.{% if trigger.to_state.attributes.source_type != null %} (source: {{ trigger.to_state.attributes.source_type }}){% endif %}"
+      - condition: and
+        conditions:
+          - condition: template
+            value_template: "{{ is_state('binary_sensor.disrupted_mbp_active', 'on') }}"
+          - condition: template
+            value_template: "{{ is_state('device_tracker.disrupted_mbp', 'home') }}"
+      - service: notify.mobile_app_disrupted_mbp
+        data_template:
+          message: "{{ trigger.to_state.attributes.friendly_name }} {% if trigger.to_state.state == 'home' %}arrived home{% elif trigger.from_state.state == 'home' and trigger.to_state.state == 'not_home' %}left home{% elif trigger.to_state.state != 'not_home' %}arrived at {{ trigger.to_state.state }}{% elif trigger.to_state.state == 'not_home' %}left {{ trigger.from_state.state }}{% endif %}.{% if trigger.to_state.attributes.source_type != null %} (source: {{ trigger.to_state.attributes.source_type }}){% endif %}"
 
   # - alias: device_tracker_icloud_debug
   #   id: device_tracker_icloud_debug
