@@ -34,6 +34,10 @@ automation:
         from: "on"
         to: "off"
     action:
+      - service: telegram_bot.send_message
+        data_template:
+          disable_notification: true
+          message: Washing machine is done
       - service: notify.all_iphones
         data_template:
           data:
