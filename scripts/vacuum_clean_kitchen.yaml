@@ -1,0 +1,14 @@
+alias: Vacuum clean Kitchen
+icon: "mdi:robot-vacuum"
+description: "Zone cleanup Kitchen"
+sequence:
+  - service: vacuum.set_fan_speed
+    entity_id: vacuum.nono
+    data:
+      fan_speed: high
+  - service: vacuum.send_command
+    entity_id: vacuum.nono
+    data:
+      command: "zoned_cleanup"
+      params:
+        "zone_ids": ["Kitchen"]

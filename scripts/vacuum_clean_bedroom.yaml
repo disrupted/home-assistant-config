@@ -1,6 +1,6 @@
-alias: Vacuum clean Livingroom
+alias: Vacuum clean Bedroom
 icon: "mdi:seat-recline-extra"
-description: "Zone cleanup Livingroom"
+description: "Zone cleanup Bedroom"
 sequence:
   - service: vacuum.set_fan_speed
     entity_id: vacuum.nono
@@ -11,4 +11,4 @@ sequence:
     data:
       command: "zoned_cleanup"
       params:
-        "zone_ids": ["Livingroom"]
+        "zone_ids": ["Bedroom"]
