@@ -1,0 +1,76 @@
+esphome:
+  name: flora
+  platform: ESP32
+  board: esp-wrover-kit
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  fast_connect: true
+  reboot_timeout: 0s
+  manual_ip:
+    static_ip: !secret ip_flora
+    gateway: !secret ip_router
+    subnet: !secret ip_subnet
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${name} Hotspot"
+    password: !secret esphome_fallback_hotspot_pass
+
+captive_portal:
+
+esp32_ble_tracker:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret esphome_api_pass
+  reboot_timeout: 0s
+
+ota:
+  password: !secret esphome_ota_pass
+
+sensor:
+  - platform: xiaomi_hhccjcy01
+    mac_address: !secret mac_miflora_1
+    temperature:
+      name: "MiFlora 1 Temperature"
+    moisture:
+      name: "MiFlora 1 Moisture"
+    illuminance:
+      name: "MiFlora 1 Illuminance"
+    conductivity:
+      name: "MiFlora 1 Soil Conductivity"
+  - platform: xiaomi_hhccjcy01
+    mac_address: !secret mac_miflora_2
+    temperature:
+      name: "MiFlora 2 Temperature"
+    moisture:
+      name: "MiFlora 2 Moisture"
+    illuminance:
+      name: "MiFlora 2 Illuminance"
+    conductivity:
+      name: "MiFlora 2 Soil Conductivity"
+  - platform: xiaomi_hhccjcy01
+    mac_address: !secret mac_miflora_3
+    temperature:
+      name: "MiFlora 3 Temperature"
+    moisture:
+      name: "MiFlora 3 Moisture"
+    illuminance:
+      name: "MiFlora 3 Illuminance"
+    conductivity:
+      name: "MiFlora 3 Soil Conductivity"
+  - platform: xiaomi_hhccjcy01
+    mac_address: !secret mac_miflora_4
+    temperature:
+      name: "MiFlora 4 Temperature"
+    moisture:
+      name: "MiFlora 4 Moisture"
+    illuminance:
+      name: "MiFlora 4 Illuminance"
+    conductivity:
+      name: "MiFlora 4 Soil Conductivity"
