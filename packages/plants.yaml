@@ -16,29 +16,29 @@ homeassistant:
     sensor.miflora_1_illuminance:
       friendly_name: large Monstera Illuminance
     plant.miflora_2:
-      friendly_name: Basil
+      friendly_name: Ficus benjamina
     sensor.miflora_2_moisture:
-      friendly_name: Basil Moisture
+      friendly_name: Ficus benjamina Moisture
     binary_sensor.miflora_2_moisture_trend:
-      friendly_name: Basil Moisture Trend
+      friendly_name: Ficus benjamina Moisture Trend
     sensor.miflora_2_temperature:
-      friendly_name: Basil Temperature
+      friendly_name: Ficus benjamina Temperature
     sensor.miflora_2_soil_conductivity:
-      friendly_name: Basil Soil Conductivity
+      friendly_name: Ficus benjamina Soil Conductivity
     sensor.miflora_2_illuminance:
-      friendly_name: Basil Illuminance
+      friendly_name: Ficus benjamina Illuminance
     plant.miflora_3:
-      friendly_name: small Monstera
+      friendly_name: Banana
     sensor.miflora_3_moisture:
-      friendly_name: small Monstera Moisture
+      friendly_name: Banana Moisture
     binary_sensor.miflora_3_moisture_trend:
-      friendly_name: small Monstera Moisture Trend
+      friendly_name: Banana Moisture Trend
     sensor.miflora_3_temperature:
-      friendly_name: small Monstera Temperature
+      friendly_name: Banana Temperature
     sensor.miflora_3_soil_conductivity:
-      friendly_name: small Monstera Soil Conductivity
+      friendly_name: Banana Soil Conductivity
     sensor.miflora_3_illuminance:
-      friendly_name: small Monstera Illuminance
+      friendly_name: Banana Illuminance
     plant.miflora_4:
       friendly_name: Rubber tree
     sensor.miflora_4_moisture:
