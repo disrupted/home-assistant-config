@@ -11,7 +11,7 @@ sequence:
     data:
       command: "go_to"
       params:
-        "spot_id": "bin"
+        "spot_id": "Bin"
   # - event: LOGBOOK_ENTRY
   #   event_data:
   #     name: Bin
