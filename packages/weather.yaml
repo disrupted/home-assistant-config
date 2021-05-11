@@ -5,10 +5,10 @@ homeassistant:
   customize:
     automation.weather_rain_alert:
       icon: mdi:umbrella
-    sensor.weather_yr_wind_speed_km:
-      icon: mdi:weather-windy
-    sensor.weather_yr_wind_direction_friendly:
-      icon: mdi:compass
+    # sensor.weather_yr_wind_speed_km:
+    #   icon: mdi:weather-windy
+    # sensor.weather_yr_wind_direction_friendly:
+    #   icon: mdi:compass
     sensor.htw_wetter_wind_speed_max:
       icon: mdi:weather-windy
     sensor.htw_wetter_solar_radiation_max:
@@ -35,33 +35,6 @@ sensor:
 
   - platform: template
     sensors:
-      weather_yr_wind_direction_friendly:
-        friendly_name: "Wind Direction"
-        value_template: >-
-          {% if states('sensor.weather_yr_wind_direction') | float<=11 %}N
-          {% elif states('sensor.weather_yr_wind_direction') | float>348 %}N
-          {% elif states('sensor.weather_yr_wind_direction') | float<=34 | float>11 %}NNE
-          {% elif states('sensor.weather_yr_wind_direction') | float<=56 | float>34 %}NE
-          {% elif states('sensor.weather_yr_wind_direction') | float<=79 | float>56 %}ENE
-          {% elif states('sensor.weather_yr_wind_direction') | float<=101 | float>79 %}E
-          {% elif states('sensor.weather_yr_wind_direction') | float<=124 | float>101 %}ESE
-          {% elif states('sensor.weather_yr_wind_direction') | float<=146 | float>124 %}SE
-          {% elif states('sensor.weather_yr_wind_direction') | float<=169 | float>146 %}SSE
-          {% elif states('sensor.weather_yr_wind_direction') | float<=191 | float>169 %}S
-          {% elif states('sensor.weather_yr_wind_direction') | float<=214 | float>191 %}SSW
-          {% elif states('sensor.weather_yr_wind_direction') | float<=236 | float>214 %}SW
-          {% elif states('sensor.weather_yr_wind_direction') | float<=259 | float>236 %}WSW
-          {% elif states('sensor.weather_yr_wind_direction') | float<=281 | float>259 %}W
-          {% elif states('sensor.weather_yr_wind_direction') | float<=304 | float>281 %}WNW
-          {% elif states('sensor.weather_yr_wind_direction') | float<=326 | float>304 %}NW
-          {% elif states('sensor.weather_yr_wind_direction') | float<=348 | float>326 %}NNW
-          {% endif %}
-
-      weather_yr_wind_speed_km:
-        friendly_name: "Wind Speed"
-        unit_of_measurement: "km/h"
-        value_template: "{{ (states('sensor.weather_yr_wind_speed')|float * 3.6) | round(1) }}"
-
       sun_daylight_remaining:
         friendly_name_template: >-
           {% if is_state('sun.sun', 'above_horizon') %}Daylight{% else %}Night{% endif %}
@@ -70,58 +43,85 @@ sensor:
         value_template: >-
           {% if is_state('sun.sun', 'above_horizon') %}{{ (as_timestamp(state_attr('sun.sun', 'next_setting')) - now().timestamp()) | timestamp_custom('%-H:%M', false) }}{% else %}{{ (as_timestamp(state_attr('sun.sun', 'next_dawn')) - now().timestamp()) | timestamp_custom('%-H:%M', false) }}{% endif %}
 
-      weather_bad_weather:
-        friendly_name: "Bad weather"
-        value_template: >
-          {% if states('sensor.weather_yr_precipitation') | float > 0.1 and states('sensor.weather_yr_temperature') | float < 2.0 %}snow
-          {% elif ((states('sensor.weather_yr_temperature') | int < 2) and (states('sensor.weather_yr_dewpoint_temperature') | int < 6) and (states('sensor.weather_yr_wind_speed') | int < 12) and (states('sensor.weather_yr_humidity') | int > 50)) %}frost
-          {% elif states('sensor.weather_yr_precipitation') | float > 0.95 %}heavy_rain
-          {% elif states('sensor.weather_yr_precipitation') | float > 0.2 %}rain
-          {% elif states('sensor.weather_yr_precipitation') | float > 0.01 %}light_rain
-          {% elif states('sensor.weather_yr_wind_speed') | int > 18 %}heavy_wind
-          {% elif states('sensor.weather_yr_wind_speed') | int > 13 %}wind
-          {% elif states('sensor.weather_yr_low') | int > 66 %}clouded
-          {% else %}clear
-          {% endif %}
-        icon_template: >
-          {% if is_state("sensor.weather_bad_weather", "snow") %}
-            mdi:weather-snowy-rainy
-          {% elif is_state("sensor.weather_bad_weather", "frost") %}
-            mdi:snowflake-alert
-          {% elif is_state("sensor.weather_bad_weather", "rain") or is_state("sensor.weather_bad_weather", "light_rain") %}
-            mdi:weather-rainy
-          {% elif is_state("sensor.weather_bad_weather", "heavy_rain") %}
-            mdi:weather-pouring
-          {% elif is_state("sensor.weather_bad_weather", "wind") %}
-            mdi:weather-windy
-          {% elif is_state("sensor.weather_bad_weather", "heavy_wind") %}
-            mdi:weather-hurricane
-          {% elif is_state("sensor.weather_bad_weather", "clouded") %}
-            mdi:weather-cloudy
-          {% else %}
-            mdi:weather-sunny
-          {% endif %}
+  #     weather_yr_wind_direction_friendly:
+  #       friendly_name: "Wind Direction"
+  #       value_template: >-
+  #         {% if states('sensor.weather_yr_wind_direction') | float<=11 %}N
+  #         {% elif states('sensor.weather_yr_wind_direction') | float>348 %}N
+  #         {% elif states('sensor.weather_yr_wind_direction') | float<=34 | float>11 %}NNE
+  #         {% elif states('sensor.weather_yr_wind_direction') | float<=56 | float>34 %}NE
+  #         {% elif states('sensor.weather_yr_wind_direction') | float<=79 | float>56 %}ENE
+  #         {% elif states('sensor.weather_yr_wind_direction') | float<=101 | float>79 %}E
+  #         {% elif states('sensor.weather_yr_wind_direction') | float<=124 | float>101 %}ESE
+  #         {% elif states('sensor.weather_yr_wind_direction') | float<=146 | float>124 %}SE
+  #         {% elif states('sensor.weather_yr_wind_direction') | float<=169 | float>146 %}SSE
+  #         {% elif states('sensor.weather_yr_wind_direction') | float<=191 | float>169 %}S
+  #         {% elif states('sensor.weather_yr_wind_direction') | float<=214 | float>191 %}SSW
+  #         {% elif states('sensor.weather_yr_wind_direction') | float<=236 | float>214 %}SW
+  #         {% elif states('sensor.weather_yr_wind_direction') | float<=259 | float>236 %}WSW
+  #         {% elif states('sensor.weather_yr_wind_direction') | float<=281 | float>259 %}W
+  #         {% elif states('sensor.weather_yr_wind_direction') | float<=304 | float>281 %}WNW
+  #         {% elif states('sensor.weather_yr_wind_direction') | float<=326 | float>304 %}NW
+  #         {% elif states('sensor.weather_yr_wind_direction') | float<=348 | float>326 %}NNW
+  #         {% endif %}
 
-      weather_wind:
-        friendly_name: "Wind"
-        value_template: >
-          {% if states('sensor.weather_yr_wind_speed') | int > 25 %}storm
-          {% elif states('sensor.weather_yr_wind_speed') | int > 18 %}heavy_wind
-          {% elif states('sensor.weather_yr_wind_speed') | int > 13 %}wind
-          {% elif states('sensor.weather_yr_wind_speed') | int > 6 %}light_wind
-          {% elif states('sensor.weather_yr_wind_speed') | int > 2 %}light_breeze
-          {% else %}calm
-          {% endif %}
+  #     weather_yr_wind_speed_km:
+  #       friendly_name: "Wind Speed"
+  #       unit_of_measurement: "km/h"
+  #       value_template: "{{ (states('sensor.weather_yr_wind_speed')|float * 3.6) | round(1) }}"
 
-      weather_rain:
-        friendly_name: "Rain"
-        value_template: >
-          {% if states('sensor.weather_yr_precipitation') | float > 0.95 %}heavy_rain
-          {% elif states('sensor.weather_yr_precipitation') | float > 0.45 %}rain_showers
-          {% elif states('sensor.weather_yr_precipitation') | float > 0.2 %}rain
-          {% elif states('sensor.weather_yr_precipitation') | float > 0.01 %}light_rain
-          {% else %}no_rain
-          {% endif %}
+  #     weather_bad_weather:
+  #       friendly_name: "Bad weather"
+  #       value_template: >
+  #         {% if states('sensor.weather_yr_precipitation') | float > 0.1 and states('sensor.weather_yr_temperature') | float < 2.0 %}snow
+  #         {% elif ((states('sensor.weather_yr_temperature') | int < 2) and (states('sensor.weather_yr_dewpoint_temperature') | int < 6) and (states('sensor.weather_yr_wind_speed') | int < 12) and (states('sensor.weather_yr_humidity') | int > 50)) %}frost
+  #         {% elif states('sensor.weather_yr_precipitation') | float > 0.95 %}heavy_rain
+  #         {% elif states('sensor.weather_yr_precipitation') | float > 0.2 %}rain
+  #         {% elif states('sensor.weather_yr_precipitation') | float > 0.01 %}light_rain
+  #         {% elif states('sensor.weather_yr_wind_speed') | int > 18 %}heavy_wind
+  #         {% elif states('sensor.weather_yr_wind_speed') | int > 13 %}wind
+  #         {% elif states('sensor.weather_yr_low') | int > 66 %}clouded
+  #         {% else %}clear
+  #         {% endif %}
+  #       icon_template: >
+  #         {% if is_state("sensor.weather_bad_weather", "snow") %}
+  #           mdi:weather-snowy-rainy
+  #         {% elif is_state("sensor.weather_bad_weather", "frost") %}
+  #           mdi:snowflake-alert
+  #         {% elif is_state("sensor.weather_bad_weather", "rain") or is_state("sensor.weather_bad_weather", "light_rain") %}
+  #           mdi:weather-rainy
+  #         {% elif is_state("sensor.weather_bad_weather", "heavy_rain") %}
+  #           mdi:weather-pouring
+  #         {% elif is_state("sensor.weather_bad_weather", "wind") %}
+  #           mdi:weather-windy
+  #         {% elif is_state("sensor.weather_bad_weather", "heavy_wind") %}
+  #           mdi:weather-hurricane
+  #         {% elif is_state("sensor.weather_bad_weather", "clouded") %}
+  #           mdi:weather-cloudy
+  #         {% else %}
+  #           mdi:weather-sunny
+  #         {% endif %}
+
+  #     weather_wind:
+  #       friendly_name: "Wind"
+  #       value_template: >
+  #         {% if states('sensor.weather_yr_wind_speed') | int > 25 %}storm
+  #         {% elif states('sensor.weather_yr_wind_speed') | int > 18 %}heavy_wind
+  #         {% elif states('sensor.weather_yr_wind_speed') | int > 13 %}wind
+  #         {% elif states('sensor.weather_yr_wind_speed') | int > 6 %}light_wind
+  #         {% elif states('sensor.weather_yr_wind_speed') | int > 2 %}light_breeze
+  #         {% else %}calm
+  #         {% endif %}
+
+  #     weather_rain:
+  #       friendly_name: "Rain"
+  #       value_template: >
+  #         {% if states('sensor.weather_yr_precipitation') | float > 0.95 %}heavy_rain
+  #         {% elif states('sensor.weather_yr_precipitation') | float > 0.45 %}rain_showers
+  #         {% elif states('sensor.weather_yr_precipitation') | float > 0.2 %}rain
+  #         {% elif states('sensor.weather_yr_precipitation') | float > 0.01 %}light_rain
+  #         {% else %}no_rain
+  #         {% endif %}
 
   # - platform: waqi
   #   token: !secret api_token_waqi
@@ -132,59 +132,6 @@ sensor:
 
   - platform: season
     type: meteorological
-
-  - platform: yr
-    name: Weather yr
-    monitored_conditions:
-      - temperature
-      # - symbol
-      - precipitation
-      - windSpeed
-      - pressure
-      - windDirection
-      - humidity
-      - fog
-      - cloudiness
-      - lowClouds
-      - mediumClouds
-      - highClouds
-      - dewpointTemperature
-
-  - platform: yr
-    name: Weather yr 1h
-    forecast: 1
-    monitored_conditions:
-      - temperature
-      # - symbol
-      - precipitation
-      - windSpeed
-      # - pressure
-      # - windDirection
-      # - humidity
-      # - fog
-      - cloudiness
-      # - lowClouds
-      # - mediumClouds
-      # - highClouds
-      # - dewpointTemperature
-
-  - platform: yr
-    name: Weather yr 6h
-    forecast: 6
-    monitored_conditions:
-      - temperature
-      # - symbol
-      - precipitation
-      - windSpeed
-      # - pressure
-      # - windDirection
-      # - humidity
-      # - fog
-      - cloudiness
-      # - lowClouds
-      # - mediumClouds
-      # - highClouds
-      # - dewpointTemperature
 
   # - platform: openweathermap
   #   api_key: !secret api_key_openweathermap
@@ -239,20 +186,20 @@ sensor:
             Unhealthy
           {% endif %}
 
-binary_sensor:
-  - platform: template
-    sensors:
-      rain:
-        friendly_name: "Raining?"
-        value_template: "{{ states('sensor.weather_yr_precipitation') | float > 0.05 }}"
-        device_class: moisture
+# binary_sensor:
+#   - platform: template
+#     sensors:
+#       rain:
+#         friendly_name: "Raining?"
+#         value_template: "{{ states('sensor.weather_yr_precipitation') | float > 0.05 }}"
+#         device_class: moisture
 
-  - platform: trend
-    sensors:
-      trend_precip:
-        friendly_name: "Rain Trend"
-        entity_id: sensor.weather_yr_precipitation
-        device_class: moisture
+#   - platform: trend
+#     sensors:
+#       trend_precip:
+#         friendly_name: "Rain Trend"
+#         entity_id: sensor.weather_yr_precipitation
+#         device_class: moisture
 
 camera:
   - platform: generic
@@ -266,66 +213,66 @@ camera:
     scan_interval: 1800
 
 automation:
-  - alias: Weather alert rain
-    id: weather_alert_rain
-    trigger:
-      - platform: state
-        entity_id: sensor.weather_yr_precipitation
-        from: "0.0"
-    condition:
-      - condition: template
-        value_template: "{{ states('sensor.weather_yr_precipitation') | float > 0 }}"
-      - condition: state
-        entity_id: input_boolean.sleeping
-        state: "off"
-    action:
-      - service: notify.mobile_app_disrupted_iphone
-        data_template:
-          data:
-            push:
-              thread-id: "weather-alert"
-          title: >-
-            {%- if states('sensor.weather_yr_precipitation') | float > 0.95 -%}heavy rain
-            {%- elif states('sensor.weather_yr_precipitation') | float > 0.45 -%}rain showers
-            {%- elif states('sensor.weather_yr_precipitation') | float > 0.2 -%}rain
-            {%- elif states('sensor.weather_yr_precipitation') | float > 0.01 -%}light rain
-            {%- endif %} alert
-          message: >
-            {{ states('sensor.weather_yr_precipitation') | float }} mm/h
+  # - alias: Weather alert rain
+  #   id: weather_alert_rain
+  #   trigger:
+  #     - platform: state
+  #       entity_id: sensor.weather_yr_precipitation
+  #       from: "0.0"
+  #   condition:
+  #     - condition: template
+  #       value_template: "{{ states('sensor.weather_yr_precipitation') | float > 0 }}"
+  #     - condition: state
+  #       entity_id: input_boolean.sleeping
+  #       state: "off"
+  #   action:
+  #     - service: notify.mobile_app_disrupted_iphone
+  #       data_template:
+  #         data:
+  #           push:
+  #             thread-id: "weather-alert"
+  #         title: >-
+  #           {%- if states('sensor.weather_yr_precipitation') | float > 0.95 -%}heavy rain
+  #           {%- elif states('sensor.weather_yr_precipitation') | float > 0.45 -%}rain showers
+  #           {%- elif states('sensor.weather_yr_precipitation') | float > 0.2 -%}rain
+  #           {%- elif states('sensor.weather_yr_precipitation') | float > 0.01 -%}light rain
+  #           {%- endif %} alert
+  #         message: >
+  #           {{ states('sensor.weather_yr_precipitation') | float }} mm/h
 
-  - alias: weather alert rain 1h
-    id: weather_alert_rain_1h
-    trigger:
-      - platform: state
-        entity_id: sensor.weather_yr_1h_precipitation
-        from: "0.0"
-    condition:
-      # precipitation intensity
-      - condition: template
-        value_template: "{{ states('sensor.weather_yr_1h_precipitation') | float > 0 }}"
-      # not already raining (new alert)
-      - condition: template
-        value_template: "{{ states('sensor.weather_yr_precipitation') | float == 0 }}"
-      - condition: state
-        entity_id: input_boolean.sleeping
-        state: "off"
-      # - condition: time
-      #   after: '8:00'
-      #   before: '22:00'
-    action:
-      - service: notify.mobile_app_disrupted_iphone
-        data_template:
-          data:
-            push:
-              thread-id: "weather-alert"
-          title: >-
-            {%- if states('sensor.weather_yr_1h_precipitation') | float > 0.95 -%}heavy rain
-            {%- elif states('sensor.weather_yr_1h_precipitation') | float > 0.45 -%}rain showers
-            {%- elif states('sensor.weather_yr_1h_precipitation') | float > 0.2 -%}rain
-            {%- elif states('sensor.weather_yr_1h_precipitation') | float > 0.01 -%}light rain
-            {%- endif %} in 1h
-          message: >
-            {{ states('sensor.weather_yr_1h_precipitation') | float }} mm/h
+  # - alias: weather alert rain 1h
+  #   id: weather_alert_rain_1h
+  #   trigger:
+  #     - platform: state
+  #       entity_id: sensor.weather_yr_1h_precipitation
+  #       from: "0.0"
+  #   condition:
+  #     # precipitation intensity
+  #     - condition: template
+  #       value_template: "{{ states('sensor.weather_yr_1h_precipitation') | float > 0 }}"
+  #     # not already raining (new alert)
+  #     - condition: template
+  #       value_template: "{{ states('sensor.weather_yr_precipitation') | float == 0 }}"
+  #     - condition: state
+  #       entity_id: input_boolean.sleeping
+  #       state: "off"
+  #     # - condition: time
+  #     #   after: '8:00'
+  #     #   before: '22:00'
+  #   action:
+  #     - service: notify.mobile_app_disrupted_iphone
+  #       data_template:
+  #         data:
+  #           push:
+  #             thread-id: "weather-alert"
+  #         title: >-
+  #           {%- if states('sensor.weather_yr_1h_precipitation') | float > 0.95 -%}heavy rain
+  #           {%- elif states('sensor.weather_yr_1h_precipitation') | float > 0.45 -%}rain showers
+  #           {%- elif states('sensor.weather_yr_1h_precipitation') | float > 0.2 -%}rain
+  #           {%- elif states('sensor.weather_yr_1h_precipitation') | float > 0.01 -%}light rain
+  #           {%- endif %} in 1h
+  #         message: >
+  #           {{ states('sensor.weather_yr_1h_precipitation') | float }} mm/h
 
   # - alias: dwd_weather_warnings
   #   id: dwd_weather_warnings
