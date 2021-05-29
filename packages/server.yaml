@@ -6,13 +6,13 @@
 #     switch.transmission_turtle_mode:
 #       icon: mdi:gauge-empty
 
-nzbget:
-  host: !secret ip_vault
-  username: !secret nzbget_user
-  password: !secret nzbget_password
-  monitored_variables:
-    - "download_rate"
-  scan_interval: 30
+# nzbget:
+#   host: !secret ip_vault
+#   username: !secret nzbget_user
+#   password: !secret nzbget_password
+#   monitored_variables:
+#     - "download_rate"
+#   scan_interval: 30
 
 rtorrent:
   url: !secret rtorrent_url
