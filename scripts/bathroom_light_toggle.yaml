@@ -17,8 +17,8 @@ sequence:
                   - service: "light.{{ service }}"
                     data:
                       entity_id: "{{ entity_id }}"
-                      brightness: 1
-                      transition: 1
+                      brightness: 10
+                      transition: 0.5
                       color_temp: 450
               - conditions: "{{ is_state('sensor.day_phase', 'Evening') }}"
                 # - conditions: "{{ is_state('sun.sun', 'below_horizon') }}"
