@@ -24,7 +24,8 @@ automation:
         data_template:
           data:
             push:
-              thread-id: "washing_machine"
+              thread-id: washing_machine
+              interruption-level: passive
           message: Washing machine started
 
   - alias: Washing machine finished
@@ -42,6 +43,7 @@ automation:
         data_template:
           data:
             push:
-              thread-id: "washing_machine"
+              thread-id: washing_machine
+              interruption-level: time-sensitive
           message: >
             Washing machine is done 👚👕
