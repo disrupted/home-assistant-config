@@ -78,6 +78,9 @@ scene:
         state: "on"
         brightness: 180
         color_temp: 210
+
+  - name: Sunset Desk
+    entities:
       light.desk_lamp:
         state: "on"
         brightness: 102

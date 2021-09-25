@@ -133,7 +133,7 @@ automation:
     trigger:
       platform: sun
       event: sunset
-      offset: "-02:00:00"
+      offset: "-01:30:00"
       # platform: numeric_state
       # entity_id: sun.sun
       # value_template: '{{ state.attributes.elevation }}'
@@ -142,19 +142,40 @@ automation:
       - condition: state
         entity_id: input_boolean.present
         state: "on"
-      # - condition: state
-      #   entity_id: light.livingroom
-      #   state: 'off'
-      - condition: template
-        value_template: >
-          {{ is_state('light.floor_lamp', 'off') or is_state('light.bedroom_ceiling', 'off') or is_state('light.desk_lamp', 'off') }}
+      # - condition: template
+      #   value_template: >
+      #     {{ is_state('light.floor_lamp', 'off') or is_state('light.reading_lamp', 'off') or is_state('light.spots', 'off') or is_state('light.desk_lamp', 'off') }}
     action:
-      # - service: scene.turn_on
-      #   entity_id: scene.sunset
-      - service: script.scene
-        data:
-          scene: sunset
-          transition: 10
+      - choose:
+          - alias: "IF working at the desk, turn on the desk lamp"
+            conditions:
+              - condition: state
+                entity_id: light.desk_lamp
+                state: "off"
+              - condition: state
+                entity_id: binary_sensor.disrupted_mba_at_desk
+                state: "on"
+              - condition: state
+                entity_id: binary_sensor.disrupted_mba_active
+                state: "on"
+            sequence:
+              - service: scene.turn_on
+                data:
+                  entity_id: scene.sunset_desk
+                  transition: 5
+      - choose:
+          - alias: "IF livingroom light isn't already on, turn it on"
+            conditions:
+              - condition: state
+                entity_id: light.livingroom
+                state: "off"
+            sequence:
+              # - service: scene.turn_on
+              #   entity_id: scene.sunset
+              - service: script.scene
+                data:
+                  scene: sunset
+                  transition: 10
       #  - service: script.adaptive_lighting
       #  data:
       #  turn_on: true
