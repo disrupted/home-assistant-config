@@ -1,20 +1,11 @@
-# binary_sensor:
-#   - platform: mqtt
-#     state_topic: "macbookpro/power"
-#     name: MacBookPro power
-
-#     # force_update: true
-#   - platform: mqtt
-#     state_topic: "macbookpro/active"
-#     name: MacBookPro active
-
-#   - platform: mqtt
-#     state_topic: "macbookpro/screensaver"
-#     name: MacBookPro screensaver
-
-#   - platform: mqtt
-#     state_topic: "macbookpro/screens"
-#     name: MacBookPro screens
+binary_sensor:
+  - platform: template
+    sensors:
+      # is computer at desk
+      disrupted_mba_at_desk:
+        friendly_name: "At Desk"
+        device_class: presence
+        value_template: "{{ is_state('device_tracker.disrupted_mba', 'home') and states('sensor.disrupted_mba_displays') | int > 1 or is_state('sensor.disrupted_mba_primary_display_name', 'DELL P2415Q') }}"
 
 sensor:
   - platform: history_stats
@@ -27,3 +18,47 @@ sensor:
     end: "{{ now() }}"
     # duration:
     #   hours: 16
+
+automation:
+  - alias: light desk computer
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.disrupted_mba_active
+    condition:
+      - condition: state
+        entity_id: binary_sensor.disrupted_mba_at_desk
+        state: "on"
+      - condition: or
+        conditions:
+          - condition: state
+            entity_id: sun.sun
+            state: "below_horizon"
+          - condition: state
+            entity_id: light.desk_lamp
+            state: "on"
+    action:
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ trigger.from_state.state == 'off' }}"
+              - condition: template
+                value_template: "{{ trigger.to_state.state == 'on' }}"
+              - condition: state
+                entity_id: light.desk_lamp
+                state: "off"
+            sequence:
+              - service: light.turn_on
+                data:
+                  entity_id: light.desk_lamp
+          - conditions:
+              - condition: template
+                value_template: "{{ trigger.from_state.state == 'on' }}"
+              - condition: template
+                value_template: "{{ trigger.to_state.state == 'off' }}"
+              - condition: state
+                entity_id: light.desk_lamp
+                state: "on"
+            sequence:
+              - service: light.turn_off
+                data:
+                  entity_id: light.desk_lamp
