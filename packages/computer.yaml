@@ -20,7 +20,8 @@ sensor:
     #   hours: 16
 
 automation:
-  - alias: light desk computer
+  - id: light_desk_computeer
+    alias: light desk computer
     trigger:
       - platform: state
         entity_id: binary_sensor.disrupted_mba_active
