@@ -164,6 +164,10 @@ scene:
 
   - name: Night
     entities:
+      media_player.google_home:
+        state: paused
+      media_player.kitchen_speaker:
+        state: paused
       switch.amp:
         state: "off"
       switch.tv:
@@ -183,6 +187,8 @@ scene:
   - name: Away
     entities:
       media_player.google_home:
+        state: paused
+      media_player.kitchen_speaker:
         state: paused
       light.all:
         state: "off"

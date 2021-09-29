@@ -200,47 +200,17 @@ views:
           - sensor.adaptive_colortemp
           - input_number.scene_brightness
           - input_number.scene_color_temp
-      - type: vertical-stack
-        cards:
-          - type: "custom:mini-media-player"
-            entity: media_player.spotify
-            artwork: full-cover-fit
-            hide:
-              name: true
-              power: true
-              volume: true
-            name: Spotify Player
-            scroll_info: true
-            show_progress: true
-            show_source: small
-          - type: "custom:mini-media-player"
-            entity: media_player.google_home
-            artwork: none
-            icon: "mdi:speaker"
-            max_volume: 50
-            show_tts: google
-            shortcuts:
-              columns: 3
-              buttons:
-                - name: "Spotify"
-                  icon: "mdi:spotify"
-                  type: SERVICE
-                  id: spotcast.start
-                  data:
-                    entity_id: media_player.google_home
-                    force_playback: true
-                - name: FM4
-                  icon: "mdi:radio"
-                  type: MUSIC
-                  id: "http://fm4shoutcast.sf.apa.at/;"
-                - name: BBC R1
-                  icon: "mdi:radio"
-                  type: MUSIC
-                  id: "hls-radio://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/uk/sbr_high/llnw/bbc_radio_one.m3u8"
-                - name: DLF Kultur
-                  icon: "mdi:radio"
-                  type: MUSIC
-                  id: "https://st02.sslstream.dlf.de/dlf/02/high/opus/stream.opus"
+      - type: "custom:mini-media-player"
+        entity: media_player.spotify
+        artwork: full-cover-fit
+        hide:
+          name: true
+          power: true
+          volume: true
+        name: Spotify Player
+        scroll_info: true
+        show_progress: true
+        show_source: small
       - type: vertical-stack
         cards:
           - type: entities
@@ -510,7 +480,34 @@ views:
         entities:
           - light.kitchen_ceiling
           - switch.christmas_star
-          - binary_sensor.kitchen_light_switch
+          - type: "custom:mini-media-player"
+            entity: media_player.kitchen_speaker
+            artwork: none
+            icon: "mdi:speaker"
+            max_volume: 50
+            show_tts: google
+            shortcuts:
+              columns: 3
+              buttons:
+                - name: "Spotify"
+                  icon: "mdi:spotify"
+                  type: SERVICE
+                  id: spotcast.start
+                  data:
+                    entity_id: media_player.kitchen_speaker
+                    force_playback: true
+                - name: FM4
+                  icon: "mdi:radio"
+                  type: MUSIC
+                  id: "http://fm4shoutcast.sf.apa.at/;"
+                - name: BBC R1
+                  icon: "mdi:radio"
+                  type: MUSIC
+                  id: "hls-radio://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/uk/sbr_high/llnw/bbc_radio_one.m3u8"
+                - name: DLF Kultur
+                  icon: "mdi:radio"
+                  type: MUSIC
+                  id: "https://st02.sslstream.dlf.de/dlf/02/high/opus/stream.opus"
       - type: entities
         show_header_toggle: false
         entities:
