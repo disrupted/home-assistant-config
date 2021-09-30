@@ -481,34 +481,25 @@ views:
         entities:
           - light.kitchen_ceiling
           - switch.christmas_star
-          - type: "custom:mini-media-player"
-            entity: media_player.kitchen_speaker
-            artwork: none
-            icon: "mdi:speaker"
-            max_volume: 50
-            show_tts: google
-            shortcuts:
-              columns: 3
-              buttons:
-                - name: "Spotify"
-                  icon: "mdi:spotify"
-                  type: SERVICE
-                  id: spotcast.start
-                  data:
-                    entity_id: media_player.kitchen_speaker
-                    force_playback: true
-                - name: FM4
-                  icon: "mdi:radio"
-                  type: MUSIC
-                  id: "http://fm4shoutcast.sf.apa.at/;"
-                - name: BBC R1
-                  icon: "mdi:radio"
-                  type: MUSIC
-                  id: "hls-radio://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/uk/sbr_high/llnw/bbc_radio_one.m3u8"
-                - name: DLF Kultur
-                  icon: "mdi:radio"
-                  type: MUSIC
-                  id: "https://st02.sslstream.dlf.de/dlf/02/high/opus/stream.opus"
+      - type: "custom:mini-media-player"
+        entity: media_player.kitchen_speaker
+        artwork: material
+        icon: "mdi:speaker"
+        shortcuts:
+          columns: 3
+          buttons:
+            - name: "Spotify"
+              icon: "mdi:spotify"
+              type: MUSIC
+              id: "spotify:playlist:37i9dQZF1DXbm6HfkbMtFZ"
+            - name: BBC R1
+              icon: "mdi:radio"
+              type: MUSIC
+              id: "http://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/uk/sbr_high/llnw/bbc_radio_one.m3u8"
+            - name: DLF Kultur
+              icon: "mdi:radio"
+              type: MUSIC
+              id: "https://st02.sslstream.dlf.de/dlf/02/128/mp3/stream.mp3"
       - type: entities
         show_header_toggle: false
         entities:
@@ -521,7 +512,6 @@ views:
             icon: mdi:fridge
             secondary_info: "[[ sensor.fridge_power.state ]] W"
           - binary_sensor.fridge_door
-          - sensor.fridge_power
       - type: entities
         show_header_toggle: false
         entities:
