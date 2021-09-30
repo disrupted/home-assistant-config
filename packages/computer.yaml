@@ -9,8 +9,8 @@ binary_sensor:
 
 sensor:
   - platform: history_stats
-    name: disrupted-MBP usage today
-    entity_id: binary_sensor.disrupted_mbp_active
+    name: disrupted-MBA usage today
+    entity_id: binary_sensor.disrupted_mba_active
     state: "on"
     type: time
     start: "{{ now().replace(hour=8, minute=0, second=0) }}"

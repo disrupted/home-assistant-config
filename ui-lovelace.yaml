@@ -406,7 +406,7 @@ views:
     title: Desk
     icon: "mdi:monitor"
     badges:
-      - device_tracker.disrupted_mbp
+      - device_tracker.disrupted_mba
       - device_tracker.disrupted_ipadpro
       - device_tracker.disrupted_iphone
     cards:
@@ -455,10 +455,11 @@ views:
       - type: entities
         entities:
           - sensor.e_studio382p
-          - binary_sensor.disrupted_mbp_active
-          - sensor.disrupted_mbp_usage_today
-          - binary_sensor.disrupted_mbp_built_in_microphone
-          - binary_sensor.disrupted_mbp_facetime_hd_camera
+          - binary_sensor.disrupted_mba_active
+          - binary_sensor.disrupted_mba_at_desk
+          - sensor.disrupted_mba_usage_today
+          - binary_sensor.disrupted_mba_microphone_in_use
+          - binary_sensor.disrupted_mba_camera_in_use
       - type: entities
         title: Calendar
         show_header_toggle: false
