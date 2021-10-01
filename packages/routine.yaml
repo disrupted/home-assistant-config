@@ -85,10 +85,10 @@ automation:
       - choose:
           - conditions:
               - condition: state
-                entity_id: binary_sensor.disrupted_mbp_active
+                entity_id: binary_sensor.disrupted_mba_active
                 state: "on"
             sequence:
-              - service: notify.mobile_app_disrupted_mbp
+              - service: notify.mobile_app_disrupted_mba
                 data_template:
                   message: "It's getting pretty late. Don't forget to go to bed soon."
         default:

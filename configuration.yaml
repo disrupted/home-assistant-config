@@ -149,7 +149,7 @@ recorder:
       - sensor.rtorrent_downloading_torrents
       - sensor.rtorrent_uploading_torrents
       - sensor.nzbget_speed
-      - sensor.disrupted_mbp_usage_today
+      - sensor.disrupted_mba_usage_today
 
 influxdb:
   host: a0d7b954-influxdb
