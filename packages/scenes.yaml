@@ -166,7 +166,7 @@ scene:
     entities:
       media_player.google_home:
         state: paused
-      media_player.kitchen_speaker:
+      media_player.sonos_kitchen:
         state: paused
       switch.amp:
         state: "off"
@@ -188,7 +188,7 @@ scene:
     entities:
       media_player.google_home:
         state: paused
-      media_player.kitchen_speaker:
+      media_player.sonos_kitchen:
         state: paused
       light.all:
         state: "off"

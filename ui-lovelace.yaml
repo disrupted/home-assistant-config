@@ -482,9 +482,11 @@ views:
           - light.kitchen_ceiling
           - switch.christmas_star
       - type: "custom:mini-media-player"
-        entity: media_player.kitchen_speaker
+        entity: media_player.sonos_kitchen
         artwork: material
         icon: "mdi:speaker"
+        hide:
+          power: true
         shortcuts:
           columns: 3
           buttons:
@@ -1170,10 +1172,11 @@ views:
         entities:
           - person.salomon
           - person.polina
-        style: |
-          div.leaflet-control-attribution {
-            display: none;
-          }
+        card_mod:
+          style: |
+            div.leaflet-control-attribution {
+              display: none;
+            }
       - type: horizontal-stack
         cards:
           - type: "custom:button-card"

@@ -6,13 +6,13 @@ automation:
     action:
       - service: media_player.play_media
         target:
-          entity_id: media_player.kitchen_speaker
+          entity_id: media_player.sonos_kitchen
         data:
           media_content_type: "music"
           media_content_id: "spotify:playlist:66YQDZDPxIAotL6fOID7BJ"
       - service: media_player.shuffle_set
         target:
-          entity_id: media_player.kitchen_speaker
+          entity_id: media_player.sonos_kitchen
         data:
           shuffle: true
 
@@ -20,15 +20,27 @@ automation:
     alias: music kitchen reset shuffle
     trigger:
       - platform: state
-        entity_id: media_player.kitchen_speaker
+        entity_id: media_player.sonos_kitchen
         from: "playing"
         to: "paused"
     condition:
       - condition: template
-        value_template: '{{ is_state_attr("media_player.kitchen_speaker", "shuffle", false) }}'
+        value_template: '{{ is_state_attr("media_player.sonos_kitchen", "shuffle", false) }}'
     action:
       - service: media_player.shuffle_set
         target:
-          entity_id: media_player.kitchen_speaker
+          entity_id: media_player.sonos_kitchen
         data:
           shuffle: false
+
+  - id: music_kitchen_indie
+    alias: music kitchen indie
+    trigger: []
+    condition: []
+    action:
+      - service: media_player.play_media
+        target:
+          entity_id: media_player.sonos_kitchen
+        data:
+          media_content_type: "playlist"
+          media_content_id: 'plex://{"playlist_name": "indie rock", "shuffle": "1"}'

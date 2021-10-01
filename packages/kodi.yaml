@@ -117,16 +117,16 @@ automation:
         to: "playing"
     condition:
       - condition: state
-        entity_id: media_player.google_home
+        entity_id: media_player.sonos_kitchen
         state: "playing"
       - condition: template
         value_template: '{{ is_state_attr("media_player.kodi", "is_volume_muted", False) }}'
     action:
       - service: media_player.media_pause
-        entity_id: media_player.google_home
+        entity_id: media_player.sonos_kitchen
       - service: notify.kodi
         data:
-          message: "Google Home playback paused"
+          message: "Sonos playback paused"
 
   - alias: Kodi movietime off
     id: kodi_movietime_off
