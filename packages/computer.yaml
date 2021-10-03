@@ -25,10 +25,9 @@ automation:
     trigger:
       - platform: state
         entity_id: binary_sensor.disrupted_mba_active
-    condition:
-      - condition: state
+      - platform: state
         entity_id: binary_sensor.disrupted_mba_at_desk
-        state: "on"
+    condition:
       - condition: or
         conditions:
           - condition: state
@@ -40,25 +39,31 @@ automation:
     action:
       - choose:
           - conditions:
-              - condition: template
-                value_template: "{{ trigger.from_state.state == 'off' }}"
-              - condition: template
-                value_template: "{{ trigger.to_state.state == 'on' }}"
               - condition: state
                 entity_id: light.desk_lamp
                 state: "off"
+              - condition: state
+                entity_id: binary_sensor.disrupted_mba_active
+                state: "on"
+              - condition: state
+                entity_id: binary_sensor.disrupted_mba_at_desk
+                state: "on"
             sequence:
               - service: light.turn_on
                 data:
                   entity_id: light.desk_lamp
           - conditions:
-              - condition: template
-                value_template: "{{ trigger.from_state.state == 'on' }}"
-              - condition: template
-                value_template: "{{ trigger.to_state.state == 'off' }}"
               - condition: state
                 entity_id: light.desk_lamp
                 state: "on"
+              - condition: or
+                conditions:
+                  - condition: state
+                    entity_id: binary_sensor.disrupted_mba_active
+                    state: "off"
+                  - condition: state
+                    entity_id: binary_sensor.disrupted_mba_at_desk
+                    state: "off"
             sequence:
               - service: light.turn_off
                 data:
