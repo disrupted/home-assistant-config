@@ -403,6 +403,83 @@ views:
       #   title: Fit
       #   type: entities
   - id: 3
+    title: Kitchen
+    icon: "mdi:food-variant"
+    cards:
+      - type: entities
+        show_header_toggle: false
+        entities:
+          - light.kitchen_ceiling
+          - switch.christmas_star
+      - type: "custom:mini-media-player"
+        entity: media_player.sonos_kitchen
+        artwork: material
+        icon: "mdi:speaker"
+        hide:
+          power: true
+        shortcuts:
+          columns: 3
+          buttons:
+            - name: "Spotify"
+              icon: "mdi:spotify"
+              type: MUSIC
+              id: "spotify:playlist:37i9dQZF1DXbm6HfkbMtFZ"
+            - name: BBC R1
+              icon: "mdi:radio"
+              type: MUSIC
+              id: "http://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/uk/sbr_high/llnw/bbc_radio_one.m3u8"
+            - name: DLF Kultur
+              icon: "mdi:radio"
+              type: MUSIC
+              id: "https://st02.sslstream.dlf.de/dlf/02/128/mp3/stream.mp3"
+      - type: entities
+        show_header_toggle: false
+        entities:
+          - type: custom:secondaryinfo-entity-row
+            entity: binary_sensor.dishwasher
+            icon: mdi:dishwasher
+            secondary_info: "[[ sensor.dishwasher_power.state ]] W"
+          - type: custom:secondaryinfo-entity-row
+            entity: sensor.fridge
+            icon: mdi:fridge
+            secondary_info: "[[ sensor.fridge_power.state ]] W"
+          - binary_sensor.fridge_door
+      - type: entities
+        show_header_toggle: false
+        entities:
+          - light.storage_ceiling
+          - binary_sensor.storage_door
+  - id: 4
+    title: Bathroom
+    icon: "mdi:shower-head"
+    cards:
+      - type: entities
+        show_header_toggle: false
+        entities:
+          - light.bathroom_ceiling
+          - entity: fan.bathroom
+            secondary_info: last-changed
+          - entity: binary_sensor.bathroom_motion
+            secondary_info: last-updated
+          - binary_sensor.bathroom_light_switch
+          - binary_sensor.bathroom_door
+      - type: entities
+        show_header_toggle: false
+        entities:
+          - type: custom:secondaryinfo-entity-row
+            entity: binary_sensor.washing_machine
+            icon: mdi:washing-machine
+            secondary_info: "[[ sensor.washing_machine_power.state ]] W"
+      - type: "custom:auto-entities"
+        card:
+          show_header_toggle: false
+          type: entities
+        filter:
+          include:
+            - entity_id: automation.*bathroom*
+              options:
+                secondary_info: last-triggered
+  - id: 5
     title: Desk
     icon: "mdi:monitor"
     badges:
@@ -473,83 +550,6 @@ views:
           - sensor.days_to_next_holiday
           - sensor.next_birthday
           - sensor.days_to_next_birthday
-  - id: 4
-    title: Kitchen
-    icon: "mdi:food-variant"
-    cards:
-      - type: entities
-        show_header_toggle: false
-        entities:
-          - light.kitchen_ceiling
-          - switch.christmas_star
-      - type: "custom:mini-media-player"
-        entity: media_player.sonos_kitchen
-        artwork: material
-        icon: "mdi:speaker"
-        hide:
-          power: true
-        shortcuts:
-          columns: 3
-          buttons:
-            - name: "Spotify"
-              icon: "mdi:spotify"
-              type: MUSIC
-              id: "spotify:playlist:37i9dQZF1DXbm6HfkbMtFZ"
-            - name: BBC R1
-              icon: "mdi:radio"
-              type: MUSIC
-              id: "http://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/uk/sbr_high/llnw/bbc_radio_one.m3u8"
-            - name: DLF Kultur
-              icon: "mdi:radio"
-              type: MUSIC
-              id: "https://st02.sslstream.dlf.de/dlf/02/128/mp3/stream.mp3"
-      - type: entities
-        show_header_toggle: false
-        entities:
-          - type: custom:secondaryinfo-entity-row
-            entity: binary_sensor.dishwasher
-            icon: mdi:dishwasher
-            secondary_info: "[[ sensor.dishwasher_power.state ]] W"
-          - type: custom:secondaryinfo-entity-row
-            entity: sensor.fridge
-            icon: mdi:fridge
-            secondary_info: "[[ sensor.fridge_power.state ]] W"
-          - binary_sensor.fridge_door
-      - type: entities
-        show_header_toggle: false
-        entities:
-          - light.storage_ceiling
-          - binary_sensor.storage_door
-  - id: 5
-    title: Bathroom
-    icon: "mdi:shower-head"
-    cards:
-      - type: entities
-        show_header_toggle: false
-        entities:
-          - light.bathroom_ceiling
-          - entity: fan.bathroom
-            secondary_info: last-changed
-          - entity: binary_sensor.bathroom_motion
-            secondary_info: last-updated
-          - binary_sensor.bathroom_light_switch
-          - binary_sensor.bathroom_door
-      - type: entities
-        show_header_toggle: false
-        entities:
-          - type: custom:secondaryinfo-entity-row
-            entity: binary_sensor.washing_machine
-            icon: mdi:washing-machine
-            secondary_info: "[[ sensor.washing_machine_power.state ]] W"
-      - type: "custom:auto-entities"
-        card:
-          show_header_toggle: false
-          type: entities
-        filter:
-          include:
-            - entity_id: automation.*bathroom*
-              options:
-                secondary_info: last-triggered
   - id: 6
     title: Weather
     icon: "mdi:weather-partly-cloudy"
