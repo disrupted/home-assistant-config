@@ -14,19 +14,21 @@ homeassistant:
     light.bedroom_ceiling:
       icon: mdi:ceiling-light
     light.kitchen_ceiling:
-      icon: mdi:ceiling-light
+      icon: mdi:ceiling-light-outline
     light.bathroom_ceiling:
-      icon: mdi:ceiling-light
+      icon: mdi:wall-sconce-round
     light.bedside_lamp:
       icon: mdi:webcam
     light.reading_lamp:
-      icon: mdi:desk-lamp
+      icon: mdi:floor-lamp-torchiere
     light.spots:
-      icon: mdi:spotlight-beam
+      icon: mdi:light-flood-up # mdi:wall-sconce-flat-variant
     light.desk_lamp:
       icon: mdi:desk-lamp
     light.candle:
       icon: mdi:candle
+    light.livingroom:
+      icon: mdi:lamps
 
 light:
   - platform: group
