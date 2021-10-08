@@ -12,7 +12,13 @@ sequence:
       - conditions: "{{ service in ['toggle', 'turn_on'] }}"
         sequence:
           - choose:
-              - conditions: "{{ is_state('sensor.day_phase', 'Night') }}"
+              - conditions:
+                  - condition: state
+                    entity_id: input_boolean.sleeping
+                    state: "on"
+                  - condition: state
+                    entity_id: sensor.day_phase
+                    state: "Night"
                 sequence:
                   - service: "light.{{ service }}"
                     data:
@@ -20,8 +26,18 @@ sequence:
                       brightness: 10
                       transition: 0.5
                       color_temp: 450
-              - conditions: "{{ is_state('sensor.day_phase', 'Evening') }}"
-                # - conditions: "{{ is_state('sun.sun', 'below_horizon') }}"
+              - conditions:
+                  - condition: state
+                    entity_id: input_boolean.sleeping
+                    state: "off"
+                  - condition: or
+                    conditions:
+                      - condition: state
+                        entity_id: sensor.day_phase
+                        state: "Night"
+                      - condition: state
+                        entity_id: sensor.day_phase
+                        state: "Evening"
                 sequence:
                   - service: "light.{{ service }}"
                     data:

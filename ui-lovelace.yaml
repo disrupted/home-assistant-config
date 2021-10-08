@@ -458,6 +458,7 @@ views:
           - binary_sensor.disrupted_mba_active
           - binary_sensor.disrupted_mba_at_desk
           - sensor.disrupted_mba_usage_today
+          - sensor.disrupted_mba_primary_display_name
           - binary_sensor.disrupted_mba_microphone_in_use
           - binary_sensor.disrupted_mba_camera_in_use
       - type: entities
