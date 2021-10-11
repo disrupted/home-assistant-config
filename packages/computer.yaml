@@ -50,8 +50,9 @@ automation:
                 state: "on"
             sequence:
               - service: light.turn_on
-                data:
+                data_template:
                   entity_id: light.desk_lamp
+                  color_temp: "{{ states('sensor.adaptive_colortemp') }}"
           - conditions:
               - condition: state
                 entity_id: light.desk_lamp
