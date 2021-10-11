@@ -568,8 +568,9 @@ automation:
     action:
       - service: light.toggle
         entity_id: light.desk_lamp
-        data:
+        data_template:
           transition: 0.5
+          color_temp: "{{ states('sensor.adaptive_colortemp') }}"
 
   - alias: light switch desk dim up
     trigger:
