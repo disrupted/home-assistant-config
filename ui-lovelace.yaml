@@ -381,7 +381,6 @@ views:
               - entity: switch.adaptive_lighting_bed_no_brightness
                 name: Adaptive (no brightness)
           - light.bedside_lamp
-          - binary_sensor.bedroom_light_switch
         show_header_toggle: false
       - entities:
           - type: custom:secondaryinfo-entity-row
@@ -461,7 +460,6 @@ views:
             secondary_info: last-changed
           - entity: binary_sensor.bathroom_motion
             secondary_info: last-updated
-          - binary_sensor.bathroom_light_switch
           - binary_sensor.bathroom_door
       - type: entities
         show_header_toggle: false
