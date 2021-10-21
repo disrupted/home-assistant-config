@@ -13,16 +13,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Running YAMLlint
         uses: "docker://pipelinecomponents/yamllint:latest"
         with:
           args: yamllint .
   remarklint:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Running Remark lint
         uses: "docker://pipelinecomponents/remark-lint:latest"
         continue-on-error: true
@@ -33,7 +33,7 @@ jobs:
     needs: [yamllint, remarklint]
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Copy stub files into configuration folder
         run: cp -R ./.stubs/* .
       - name: Home Assistant Version
@@ -50,7 +50,7 @@ jobs:
     needs: [yamllint, remarklint]
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Copy stub files into configuration folder
         run: cp -R ./.stubs/* .
       - name: Home Assistant Version
@@ -67,7 +67,7 @@ jobs:
     needs: [yamllint, remarklint]
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Copy stub files into configuration folder
         run: cp -R ./.stubs/* .
       - name: Home Assistant Version
@@ -84,11 +84,11 @@ jobs:
     needs: [yamllint]
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v1
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v1
+        uses: actions/checkout@v2
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v2
         with:
-          python-version: 3.7
+          python-version: "3.10"
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip setuptools wheel
