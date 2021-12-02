@@ -3,6 +3,21 @@ homeassistant:
     binary_sensor.bathroom_door:
       device_class: lock
 
+input_select:
+  ambient_sound:
+    name: "Select ambient sound"
+    options:
+      - Babbling brook
+      - Oscillating fan
+      - Fireplace
+      - Forest
+      - Country night
+      - Ocean
+      - Rain
+      - River
+      - Thunderstorm
+      - White noise
+
 automation:
   - alias: bathroom fan
     # If motion is detected within the delay,
@@ -42,3 +57,89 @@ automation:
       - delay: "01:00:00"
       - service: fan.turn_off
         entity_id: fan.bathroom
+
+  - alias: bathroom ambient sound
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.bathroom_motion
+        from: "off"
+        to: "on"
+      - platform: state
+        entity_id: input_select.ambient_sound
+    condition:
+      - condition: template
+        value_template: "{{ not is_state('media_player.google_home', 'playing') }}"
+      - condition: template
+        value_template: "{{ not is_state('sensor.day_phase', 'Night') }}"
+    action:
+      - service: media_player.turn_on
+        entity_id: media_player.google_home
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: media_player.google_home
+                state: "off"
+            sequence:
+              - service: media_player.volume_mute
+                entity_id: media_player.google_home
+                data:
+                  is_volume_muted: true
+              - service: media_player.turn_on
+                entity_id: media_player.google_home
+              - wait_template: '{{ is_state("media_player.google_home", "idle") }}'
+          - conditions:
+              - condition: state
+                entity_id: media_player.google_home
+                state: idle
+            sequence:
+              - service: media_player.volume_mute
+                entity_id: media_player.google_home
+                data:
+                  is_volume_muted: false
+        default: []
+      - service: media_player.volume_mute
+        entity_id: media_player.google_home
+        data:
+          is_volume_muted: true
+      - service: media_player.play_media
+        entity_id: media_player.google_home
+        data_template:
+          media_content_id: >
+            {% if is_state("input_select.ambient_sound", "Babbling brook") %} https://www.gstatic.com/voice_delight/sounds/long/brook.mp3
+            {% elif is_state("input_select.ambient_sound", "Oscillating fan") %} https://www.gstatic.com/voice_delight/sounds/long/oscillating_fan.mp3
+            {% elif is_state("input_select.ambient_sound", "Fireplace") %} https://www.gstatic.com/voice_delight/sounds/long/fireplace.mp3
+            {% elif is_state("input_select.ambient_sound", "Forest") %} https://www.gstatic.com/voice_delight/sounds/long/forest.mp3
+            {% elif is_state("input_select.ambient_sound", "Country night") %} https://www.gstatic.com/voice_delight/sounds/long/country_night.mp3
+            {% elif is_state("input_select.ambient_sound", "Ocean") %} https://www.gstatic.com/voice_delight/sounds/long/ocean.mp3
+            {% elif is_state("input_select.ambient_sound", "Rain") %} https://www.gstatic.com/voice_delight/sounds/long/rain.mp3
+            {% elif is_state("input_select.ambient_sound", "River") %} https://www.gstatic.com/voice_delight/sounds/long/river.mp3
+            {% elif is_state("input_select.ambient_sound", "Thunderstorm") %} https://www.gstatic.com/voice_delight/sounds/long/thunder.mp3
+            {% elif is_state("input_select.ambient_sound", "White noise") %} https://www.gstatic.com/voice_delight/sounds/long/pink_noise.mp3
+            {% endif %}
+          media_content_type: "audio/mp4"
+      - wait_template: '{{ is_state("media_player.google_home", "playing") }}'
+      - service: media_player.volume_set
+        entity_id: media_player.google_home
+        data:
+          volume_level: 0.3
+      - service: media_player.volume_mute
+        entity_id: media_player.google_home
+        data:
+          is_volume_muted: false
+
+  - alias: bathroom ambient sound off
+    trigger:
+      platform: state
+      entity_id: binary_sensor.bathroom_motion
+      from: "on"
+      to: "off"
+    condition:
+      - condition: template
+        value_template: "{{ is_state('media_player.google_home', 'playing') }}"
+    action:
+      - service: media_player.volume_set
+        entity_id: media_player.google_home
+        data:
+          volume_level: 0
+      - service: media_player.media_stop
+        entity_id: media_player.google_home
