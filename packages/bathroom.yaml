@@ -97,6 +97,10 @@ automation:
                 data:
                   is_volume_muted: false
         default: []
+      - service: media_player.volume_set
+        entity_id: media_player.google_home
+        data:
+          volume_level: 0.25
       - service: media_player.volume_mute
         entity_id: media_player.google_home
         data:
@@ -118,10 +122,6 @@ automation:
             {% endif %}
           media_content_type: "audio/mp4"
       - wait_template: '{{ is_state("media_player.google_home", "playing") }}'
-      - service: media_player.volume_set
-        entity_id: media_player.google_home
-        data:
-          volume_level: 0.3
       - service: media_player.volume_mute
         entity_id: media_player.google_home
         data:
@@ -133,6 +133,8 @@ automation:
       entity_id: binary_sensor.bathroom_motion
       from: "on"
       to: "off"
+      for:
+        minutes: 5
     condition:
       - condition: template
         value_template: "{{ is_state('media_player.google_home', 'playing') }}"
@@ -141,5 +143,9 @@ automation:
         entity_id: media_player.google_home
         data:
           volume_level: 0
+      # - service: media_player.volume_mute
+      #   entity_id: media_player.google_home
+      #   data:
+      #     is_volume_muted: true
       - service: media_player.media_stop
         entity_id: media_player.google_home
