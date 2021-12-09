@@ -65,6 +65,10 @@ automation:
         from: "off"
         to: "on"
       - platform: state
+        entity_id: light.bathroom_ceiling
+        from: "off"
+        to: "on"
+      - platform: state
         entity_id: input_select.ambient_sound
     condition:
       - condition: template
@@ -97,10 +101,6 @@ automation:
                 data:
                   is_volume_muted: false
         default: []
-      - service: media_player.volume_set
-        entity_id: media_player.google_home
-        data:
-          volume_level: 0.25
       - service: media_player.volume_mute
         entity_id: media_player.google_home
         data:
@@ -126,15 +126,23 @@ automation:
         entity_id: media_player.google_home
         data:
           is_volume_muted: false
+      - service: media_player.volume_set
+        entity_id: media_player.google_home
+        data:
+          volume_level: 0.25
 
   - alias: bathroom ambient sound off
     trigger:
-      platform: state
-      entity_id: binary_sensor.bathroom_motion
-      from: "on"
-      to: "off"
-      for:
-        minutes: 5
+      - platform: state
+        entity_id: binary_sensor.bathroom_motion
+        from: "on"
+        to: "off"
+        for:
+          minutes: 5
+      - platform: state
+        entity_id: light.bathroom_ceiling
+        from: "on"
+        to: "off"
     condition:
       - condition: template
         value_template: "{{ is_state('media_player.google_home', 'playing') }}"
