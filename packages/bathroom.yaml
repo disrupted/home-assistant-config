@@ -122,14 +122,14 @@ automation:
             {% endif %}
           media_content_type: "audio/mp4"
       - wait_template: '{{ is_state("media_player.google_home", "playing") }}'
-      - service: media_player.volume_mute
-        entity_id: media_player.google_home
-        data:
-          is_volume_muted: false
       - service: media_player.volume_set
         entity_id: media_player.google_home
         data:
           volume_level: 0.25
+      - service: media_player.volume_mute
+        entity_id: media_player.google_home
+        data:
+          is_volume_muted: false
 
   - alias: bathroom ambient sound off
     trigger:
