@@ -7,6 +7,7 @@ input_select:
   ambient_sound:
     name: "Select ambient sound"
     options:
+      - Automatic
       - Babbling brook
       - Oscillating fan
       - Fireplace
@@ -109,7 +110,8 @@ automation:
         entity_id: media_player.google_home
         data_template:
           media_content_id: >
-            {% if is_state("input_select.ambient_sound", "Babbling brook") %} https://www.gstatic.com/voice_delight/sounds/long/brook.mp3
+            {% if is_state("input_select.ambient_sound", "Automatic") %}{% if is_state('sensor.day_phase', 'Day') %} {% if states('sensor.dwd_wetter_precipitation') | float > 0 %} https://www.gstatic.com/voice_delight/sounds/long/rain.mp3 {% else %} https://www.gstatic.com/voice_delight/sounds/long/forest.mp3 {% endif %}{% else %} https://www.gstatic.com/voice_delight/sounds/long/fireplace.mp3 {% endif %}
+            {% elif is_state("input_select.ambient_sound", "Babbling brook") %} https://www.gstatic.com/voice_delight/sounds/long/brook.mp3
             {% elif is_state("input_select.ambient_sound", "Oscillating fan") %} https://www.gstatic.com/voice_delight/sounds/long/oscillating_fan.mp3
             {% elif is_state("input_select.ambient_sound", "Fireplace") %} https://www.gstatic.com/voice_delight/sounds/long/fireplace.mp3
             {% elif is_state("input_select.ambient_sound", "Forest") %} https://www.gstatic.com/voice_delight/sounds/long/forest.mp3
