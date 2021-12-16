@@ -3,17 +3,23 @@ homeassistant:
     media_player.tv:
       icon: mdi:television
 
-samsungtv:
-  name: TV
-  host: !secret ip_tv_samsung
-  turn_on_action:
-    - service: kodi.call_method
-      data:
-        entity_id: media_player.kodi
-        method: Addons.ExecuteAddon
-        addonid: script.json-cec
-        params:
-          command: activate
+input_boolean:
+  movietime:
+    name: Movie Time
+    initial: false
+    icon: mdi:theater
+
+# samsungtv:
+#   name: TV
+#   host: !secret ip_tv_samsung
+#   turn_on_action:
+#     - service: kodi.call_method
+#       data:
+#         entity_id: media_player.kodi
+#         method: Addons.ExecuteAddon
+#         addonid: script.json-cec
+#         params:
+#           command: activate
 
 # media_player:
 #   - platform: samsungtv_custom
@@ -46,11 +52,115 @@ switch:
           {% else %}
             mdi:television-off
           {% endif %}
-        # turn_off:
-        #   service: media_player.kodi_call_method
-        #   data:
-        #     entity_id: media_player.kodi
-        #     method: Addons.ExecuteAddon
-        #     addonid: script.json-cec
-        #     params:
-        #       command: standby
+
+automation:
+  - alias: Apple TV movietime on
+    id: apple_tv_movietime_on
+    trigger:
+      - platform: state
+        entity_id: media_player.apple_tv
+        # from: "idle"
+        to: "playing"
+        # for: "00:00:03"
+    condition:
+      - condition: template
+        value_template: "{{ is_state_attr('media_player.apple_tv', 'media_content_type', 'video') }}"
+      - condition: template
+        value_template: "{{ state_attr('media_player.apple_tv', 'media_duration') > 1000 }}"
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.movietime
+
+  - alias: Apple TV movietime dim lights
+    id: apple_tv_movietime_dim_lights
+    trigger:
+      - platform: state
+        entity_id: input_boolean.movietime
+        from: "off"
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: light.floor_lamp
+        state: "on"
+      - condition: template
+        value_template: "{{ state_attr('light.floor_lamp', 'brightness') > 64 }}"
+      # - condition: state
+      #   entity_id: sun.sun
+      #   state: 'below_horizon'
+      # - condition: numeric_state
+      #   entity_id: sun.sun
+      #   value_template: '{{ state.attributes.elevation }}'
+      #   below: -10.0
+      - condition: template
+        value_template: "{{ state_attr('sun.sun', 'elevation') < -4.0 }}"
+    action:
+      - service: script.scene
+        data:
+          scene: dim
+          transition: 5
+
+  # - alias: Apple TV pause other players
+  #   id: apple_tv_pause_other_players
+  #   trigger:
+  #     - platform: state
+  #       entity_id: media_player.apple_tv
+  #       to: "playing"
+  #   condition:
+  #     - condition: state
+  #       entity_id: media_player.sonos_kitchen
+  #       state: "playing"
+  #     - condition: template
+  #       value_template: '{{ is_state_attr("media_player.apple_tv", "is_volume_muted", False) }}'
+  #   action:
+  #     - service: media_player.media_pause
+  #       entity_id: media_player.sonos_kitchen
+
+  - alias: Apple TV movietime off
+    id: apple_tv_movietime_off
+    trigger:
+      - platform: state
+        entity_id: media_player.apple_tv
+        # from: "playing"
+        to: "idle"
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.movietime
+
+  - alias: Apple TV movietime undim lights
+    id: apple_tv_movietime_undim_lights
+    trigger:
+      - platform: state
+        entity_id: input_boolean.movietime
+        from: "on"
+        to: "off"
+        for:
+          seconds: 30
+    condition:
+      - condition: state
+        entity_id: light.floor_lamp
+        state: "on"
+      - condition: template
+        value_template: "{{ state_attr('light.floor_lamp', 'brightness') < 77 }}"
+      - condition: template
+        value_template: "{{ not is_state('input_select.scene', 'Bedtime') }}"
+    action:
+      - service: script.scene
+        data:
+          scene: undim
+          transition: 10
+
+  - alias: Apple TV Amplifier
+    id: apple_tv_amp
+    trigger:
+      - platform: state
+        entity_id: media_player.apple_tv
+        to: "playing"
+        # for: "00:00:01"
+    condition:
+      - condition: state
+        entity_id: input_boolean.present
+        state: "on"
+    action:
+      - service: switch.turn_on
+        entity_id:
+          - switch.amp

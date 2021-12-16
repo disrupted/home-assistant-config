@@ -196,7 +196,8 @@ views:
         show_header_toggle: false
         entities:
           - input_select.scene
-          - automation.light_adaptive_apply
+          - entity: automation.light_adaptive_apply
+            name: Adaptive Light
           - sensor.adaptive_colortemp
           - input_number.scene_brightness
           - input_number.scene_color_temp
@@ -304,54 +305,54 @@ views:
               - input_boolean.movietime
             type: entities
           - type: custom:layout-break
-          - entities:
+          - type: entities
+            title: Multimedia
+            show_header_toggle: false
+            entities:
               - switch.amp
-              - entity: media_player.tv
+              - type: "custom:mini-media-player"
+                entity: media_player.tv
+                icon: "mdi:television"
                 group: true
                 hide:
                   controls: true
                   icon_state: false
                   power_state: false
-                icon: "mdi:television"
-                type: "custom:mini-media-player"
                 volume_stateless: true
-            show_header_toggle: false
-            title: Multimedia
-            type: entities
           - type: "custom:mini-media-player"
             artwork: full-cover
-            entity: media_player.kodi
+            entity: media_player.apple_tv
             group: false
             hide:
               power: true
               progress: false
               shuffle: false
-            icon: "mdi:kodi"
+            volume_stateless: true
             replace_mute: stop
             source: full
-            shortcuts:
-              buttons:
-                - icon: "mdi:music"
-                  id: "special://profile/playlists/music/*****.m3u"
-                  name: "5 Stars"
-                  type: DIRECTORY
-                - icon: "mdi:album"
-                  id: "special://profile/playlists/music/random album.xsp"
-                  name: Random
-                  type: DIRECTORY
-                - icon: "mdi:music"
-                  id: "special://profile/playlists/music/2020.xsp"
-                  name: "2020"
-                  type: DIRECTORY
-                - icon: "mdi:music"
-                  id: "special://profile/playlists/music/Drum & Bass.xsp"
-                  name: "D+B"
-                  type: DIRECTORY
-                - icon: "mdi:radio"
-                  id: "http://fm4shoutcast.sf.apa.at/;"
-                  name: FM4
-                  type: MUSIC
-              columns: 3
+            # shortcuts:
+            #   buttons:
+            #     - icon: "mdi:music"
+            #       id: "special://profile/playlists/music/*****.m3u"
+            #       name: "5 Stars"
+            #       type: DIRECTORY
+            #     - icon: "mdi:album"
+            #       id: "special://profile/playlists/music/random album.xsp"
+            #       name: Random
+            #       type: DIRECTORY
+            #     - icon: "mdi:music"
+            #       id: "special://profile/playlists/music/2020.xsp"
+            #       name: "2020"
+            #       type: DIRECTORY
+            #     - icon: "mdi:music"
+            #       id: "special://profile/playlists/music/Drum & Bass.xsp"
+            #       name: "D+B"
+            #       type: DIRECTORY
+            #     - icon: "mdi:radio"
+            #       id: "http://fm4shoutcast.sf.apa.at/;"
+            #       name: FM4
+            #       type: MUSIC
+            #   columns: 3
           - artwork: full-cover-fit
             entity: media_player.ps4
             group: false
@@ -461,6 +462,18 @@ views:
           - entity: binary_sensor.bathroom_motion
             secondary_info: last-updated
           - binary_sensor.bathroom_door
+          - input_select.ambient_sound
+          - type: "custom:mini-media-player"
+            entity: media_player.google_home
+            artwork: full-cover-fit
+            hide:
+              name: true
+              power: true
+              volume: true
+            name: Speaker
+            scroll_info: true
+            show_progress: true
+            show_source: small
       - type: entities
         show_header_toggle: false
         entities:

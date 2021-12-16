@@ -3,12 +3,6 @@ homeassistant:
     "*.kodi*":
       icon: mdi:kodi
 
-input_boolean:
-  movietime:
-    name: Movie Time
-    initial: false
-    icon: mdi:theater
-
 notify:
   - platform: kodi
     name: Kodi
@@ -54,6 +48,7 @@ automation:
           method: GUI.ActivateWindow
           params:
             window: screensaver
+
   - alias: Kodi movietime on
     id: kodi_movietime_on
     trigger:
