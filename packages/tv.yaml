@@ -120,8 +120,8 @@ automation:
     trigger:
       - platform: state
         entity_id: media_player.apple_tv
-        # from: "playing"
-        to: "idle"
+        from: "playing"
+        # to: "idle"
     action:
       - service: input_boolean.turn_off
         entity_id: input_boolean.movietime
@@ -139,8 +139,8 @@ automation:
       - condition: state
         entity_id: light.floor_lamp
         state: "on"
-      - condition: template
-        value_template: "{{ state_attr('light.floor_lamp', 'brightness') < 77 }}"
+      # - condition: template
+      #   value_template: "{{ state_attr('light.floor_lamp', 'brightness') < 77 }}"
       - condition: template
         value_template: "{{ not is_state('input_select.scene', 'Bedtime') }}"
     action:
