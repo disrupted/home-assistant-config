@@ -1,3 +1,11 @@
+substitutions:
+  name: candle
+  friendly_name: Candle
+  alpha: 90%
+  intensity: 4%
+  default_transition_length: 0.5s
+  frequency: 1000 Hz
+
 esphome:
   name: ${name}
   platform: ESP8266
@@ -7,19 +15,24 @@ wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_pass
   fast_connect: true
+  reboot_timeout: 0s
+  manual_ip:
+    static_ip: !secret ip_candle
+    gateway: !secret ip_router
+    subnet: !secret ip_subnet
 
-logger:
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${friendly_name} Hotspot"
+    password: !secret esphome_fallback_hotspot_pass
 
-substitutions:
-  name: "candle"
-  friendly_name: "Candle"
-  alpha: 90%
-  intensity: 4%
-  default_transition_length: 0.5s
-  frequency: 1000 Hz
+captive_portal:
+
+# logger:
 
 api:
   password: !secret esphome_api_pass
+  reboot_timeout: 0s
 
 ota:
   password: !secret esphome_ota_pass
