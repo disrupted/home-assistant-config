@@ -296,7 +296,6 @@ notify:
   - name: all
     platform: group
     services:
-      - service: kodi
       - service: telegram
   - name: mobile
     platform: group

@@ -52,7 +52,7 @@ automation:
       - condition: template
         value_template: "{{ trigger.from_state.state != trigger.to_state.state }}"
       - condition: template
-        value_template: "{{ states('media_player.kodi') != 'playing' }}"
+        value_template: "{{ states('media_player.apple_tv') != 'playing' }}"
     action:
       - service: media_player.turn_off
         entity_id: media_player.tv

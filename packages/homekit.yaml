@@ -33,7 +33,6 @@ homekit:
       - light.bathroom_ceiling
       - light.spots
       # - media_player.tv
-      - media_player.kodi
       - media_player.sonos_kitchen
       # - media_player.google_home
       - fan.bathroom
@@ -44,10 +43,6 @@ homekit:
       feature_list:
         - feature: play_pause
     media_player.google_home:
-      feature_list:
-        - feature: on_off
-        - feature: play_pause
-    media_player.kodi:
       feature_list:
         - feature: on_off
         - feature: play_pause

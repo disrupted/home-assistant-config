@@ -194,7 +194,7 @@ scene:
         state: "off"
       light.candle:
         state: "off"
-      media_player.kodi:
+      media_player.apple_tv:
         state: paused
       switch.amp:
         state: "off"
