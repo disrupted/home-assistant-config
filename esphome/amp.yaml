@@ -11,6 +11,7 @@ wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_pass
   fast_connect: true
+  reboot_timeout: 0s
   manual_ip:
     static_ip: !secret ip_amp
     gateway: !secret ip_router
@@ -33,6 +34,7 @@ web_server:
 # Enable Home Assistant API
 api:
   password: !secret esphome_api_pass
+  reboot_timeout: 0s
 
 ota:
   password: !secret esphome_ota_pass
