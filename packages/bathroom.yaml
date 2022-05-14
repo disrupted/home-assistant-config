@@ -159,3 +159,11 @@ automation:
       #     is_volume_muted: true
       - service: media_player.media_stop
         entity_id: media_player.google_home
+
+  - alias: light bathroom switch
+    use_blueprint:
+      path: zha_ikea_tradfri_on_off_switch_incl_dimmer.yaml
+      input:
+        remote: ee814d77c4f11216154eff0d39bd02c8
+        light:
+          entity_id: light.bathroom_ceiling
