@@ -32,11 +32,6 @@ homeassistant:
     automation.calendar_*:
       icon: mdi:calendar-clock
 
-google:
-  client_id: !secret api_client_id_google
-  client_secret: !secret api_client_secret_google
-  track_new_calendar: true
-
 group:
   google_calendar:
     name: Calendar
