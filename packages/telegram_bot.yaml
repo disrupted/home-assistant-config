@@ -14,13 +14,12 @@ sensor:
         friendly_name: "Telegram Chat ID"
         value_template: !secret telegram_chat_id
 
-binary_sensor:
-  - platform: mqtt
-    state_topic: "telegram/disrupted/online"
-    name: Telegram Online
-  - platform: mqtt
-    state_topic: "telegram/polina/online"
-    name: Telegram Online Polina
+mqtt:
+  binary_sensor:
+    - state_topic: "telegram/disrupted/online"
+      name: Telegram Online
+    - state_topic: "telegram/polina/online"
+      name: Telegram Online Polina
 
 telegram_bot:
   - platform: polling
