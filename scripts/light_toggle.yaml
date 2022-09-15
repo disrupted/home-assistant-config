@@ -14,7 +14,7 @@ variables:
   adaptive: switch.adaptive_lighting_default
   service: "{{ service | default('toggle') }}"
   entity_id: "{{ entity_id }}"
-  color_temp: "{{ state_attr(adaptive, 'color_temp_mired') | int }}"
+  color_temp: "{{ state_attr(adaptive, 'color_temp_mired') | int(300) }}"
   transition: "{{ transition | default(0.5) }}"
   automation: automation.light_adaptive_apply
 sequence:
