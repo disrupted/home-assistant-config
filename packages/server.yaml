@@ -14,21 +14,22 @@
 #     - "download_rate"
 #   scan_interval: 30
 
-rtorrent:
-  url: !secret rtorrent_url
-  monitored_variables:
-    # - "current_status"
-    - "download_speed"
-    - "upload_speed"
-    - "upload_limit"
-    - "download_limit"
-    - "all_torrents"
-    # - "stopped_torrents"
-    # - "complete_torrents"
-    - "uploading_torrents"
-    - "downloading_torrents"
-    - "active_torrents"
-  scan_interval: 30
+# FIXME
+# rtorrent:
+#   url: !secret rtorrent_url
+#   monitored_variables:
+#     # - "current_status"
+#     - "download_speed"
+#     - "upload_speed"
+#     - "upload_limit"
+#     - "download_limit"
+#     - "all_torrents"
+#     # - "stopped_torrents"
+#     # - "complete_torrents"
+#     - "uploading_torrents"
+#     - "downloading_torrents"
+#     - "active_torrents"
+#   scan_interval: 30
 
 sensor:
   # - platform: rest

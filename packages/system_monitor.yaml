@@ -127,8 +127,9 @@ sensor:
   #           {%- endif -%}
   #         {%- endif -%}
 
-  - platform: dnsip
-    name: wan_ip
+  # TODO: deprecated
+  # - platform: dnsip
+  #   name: wan_ip
 
   # - platform: rest
   #   name: wan_ip
@@ -185,23 +186,24 @@ sensor:
       # count_input_datetimes:
       #   value_template: "{{ states('sensor.date') and states.input_datetime | list | length }}"
 
-  - platform: rest
-    name: GitHub Home Assistant Release
-    resource: https://api.github.com/repos/home-assistant/core/releases/latest
-    username: !secret github_username
-    password: !secret github_access_token
-    authentication: basic
-    value_template: "{{ value_json.tag_name }}"
-    json_attributes:
-      - body
-      - html_url
-      - prerelease
-      - created_at
-      - published_at
-    headers:
-      Accept: application/vnd.github.v3+json
-      Content-Type: application/json
-      User-Agent: Home Assistant REST sensor
+  # FIXME?
+  # - platform: rest
+  #   name: GitHub Home Assistant Release
+  #   resource: https://api.github.com/repos/home-assistant/core/releases/latest
+  #   username: !secret github_username
+  #   password: !secret github_access_token
+  #   authentication: basic
+  #   value_template: "{{ value_json.tag_name }}"
+  #   json_attributes:
+  #     - body
+  #     - html_url
+  #     - prerelease
+  #     - created_at
+  #     - published_at
+  #   headers:
+  #     Accept: application/vnd.github.v3+json
+  #     Content-Type: application/json
+  #     User-Agent: Home Assistant REST sensor
 
   - platform: rest
     name: GitHub Contributions
@@ -223,17 +225,18 @@ sensor:
     unit_of_measurement: "°C"
     value_template: "{{ value | multiply(0.001) | round(1)  }}"
 
-    # local
-  - platform: version
-    # latest stable
-  - platform: version
-    name: latest Stable version
-    source: hassio
-    # latest beta
-  - platform: version
-    name: latest Beta version
-    beta: true
-    source: hassio
+  # TODO: deprecated
+  # local
+  # - platform: version
+  #   # latest stable
+  # - platform: version
+  #   name: latest Stable version
+  #   source: hassio
+  #   # latest beta
+  # - platform: version
+  #   name: latest Beta version
+  #   beta: true
+  #   source: hassio
   - platform: command_line
     name: Supervisor updates
     command: 'curl http://supervisor/supervisor/info -H "Authorization: Bearer $(printenv SUPERVISOR_TOKEN)" | jq ''{"newest_version":.data.version_latest,"current_version":.data.version,"addons":[.data.addons[] | select(.version != .installed)]}'''

@@ -5,10 +5,6 @@ homeassistant:
       icon: mdi:cart
 
 sensor:
-  # - platform: htw_wetter
-
-  - platform: dwd_wetter
-
   # - platform: flatastic
   #   api_key: !secret flatastic_api_key
   #   user_id: !secret flatastic_user_id

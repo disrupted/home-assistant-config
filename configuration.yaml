@@ -148,128 +148,123 @@ recorder:
       - sensor.nzbget_speed
       - sensor.disrupted_mba_usage_today
 
-influxdb:
-  host: a0d7b954-influxdb
-  port: 8086
-  database: homeassistant
-  username: !secret influxdb_username
-  password: !secret influxdb_password
-  max_retries: 3
-  default_measurement: state
-  include:
-    domains:
-      - person
-      - climate
-      - input_boolean
-    entities:
-      - sensor.tree
-      # Climate
-      - sensor.room_temperature
-      - sensor.thermostat_valve_state
-      # COVID-19
-      - sensor.germany_coronavirus_current
-      - sensor.germany_coronavirus_confirmed
-      - sensor.germany_coronavirus_recovered
-      - sensor.germany_coronavirus_deaths
-      - sensor.worldwide_coronavirus_current
-      - sensor.worldwide_coronavirus_confirmed
-      - sensor.worldwide_coronavirus_recovered
-      - sensor.worldwide_coronavirus_deaths
-      # Health
-      - sensor.total_sleep_last_night
-      - sensor.total_time_outside
-      - sensor.disrupted_iphone_steps
-      - sensor.polina_iphone_steps
-      # Network
-      - sensor.router_wan_in
-      - sensor.router_wan_out
-      - sensor.router_wan_in_derivative
-      - sensor.router_wan_out_derivative
-      - sensor.tautulli
-      - sensor.tautulli_lan_bandwidth
-      - sensor.tautulli_wan_bandwidth
-      - sensor.ping_google_dns
-      - sensor.ping_cloudflare_dns
-      - sensor.adguard_average_processing_speed
-      - sensor.adguard_dns_queries
-      - sensor.adguard_dns_queries_blocked_ratio
-      - sensor.rtorrent_up_speed
-      - sensor.rtorrent_down_speed
-      - sensor.rtorrent_up_limit
-      - sensor.rtorrent_down_limit
-      - sensor.rtorrent_active_torrents
-      - sensor.rtorrent_all_torrents
-      - sensor.rtorrent_complete_torrents
-      # - sensor.rtorrent_stopped_torrents
-      - sensor.rtorrent_uploading_torrents
-      - sensor.rtorrent_downloading_torrents
-      - sensor.nzbget_speed
-      # System
-      - sensor.processor_use
-      - sensor.load_5m
-      - sensor.memory_use_percent
-      - sensor.cpu_temperature
-      # Plants
-      - sensor.miflora_1_moisture
-      - sensor.miflora_1_temperature
-      - sensor.miflora_1_soil_conductivity
-      - sensor.miflora_1_illuminance
-      - sensor.miflora_2_moisture
-      - sensor.miflora_2_temperature
-      - sensor.miflora_2_soil_conductivity
-      - sensor.miflora_2_illuminance
-      - sensor.miflora_3_moisture
-      - sensor.miflora_3_temperature
-      - sensor.miflora_3_soil_conductivity
-      - sensor.miflora_3_illuminance
-      - sensor.miflora_4_moisture
-      - sensor.miflora_4_temperature
-      - sensor.miflora_4_soil_conductivity
-      - sensor.miflora_4_illuminance
-      # Washing machine
-      - binary_sensor.washing_machine
-      - sensor.washing_machine_power
-      - sensor.washing_machine_total_daily_energy
-      - sensor.washing_machine_total_daily_energy_cost
-      - sensor.washing_machine_runtime_today
-      - sensor.washing_machine_wifi_signal
-      # Weather
-      - sensor.dark_sky_temperature
-      - sensor.dark_sky_apparent_temperature
-      - sensor.dark_sky_humidity
-      - sensor.dark_sky_pressure
-      - sensor.dark_sky_precip # type
-      - sensor.dark_sky_precip_intensity
-      - sensor.dark_sky_precip_probability
-      - sensor.dark_sky_wind_speed
-      # - sensor.dark_sky_cloud_coverage
-      - sensor.dark_sky_dew_point
-      - sensor.dark_sky_uv_index
-      - sensor.dark_sky_nearest_storm_distance
-      - sensor.waqi
-      - sensor.htw_wetter_temperature
-      - sensor.htw_wetter_humidity
-      - sensor.htw_wetter_pressure
-      - sensor.htw_wetter_wind_speed
-      - sensor.htw_wetter_solar_radiation
-      - sensor.weather_yr_cloudiness
-      - sensor.weather_yr_low_clouds
-      - sensor.weather_yr_medium_clouds
-      - sensor.weather_yr_high_clouds
-      - sensor.dwd_wetter_precipitation
-      - sensor.dwd_wetter_pressure
-      - sensor.dwd_wetter_sunshine
-      - sensor.dwd_wetter_temperature
-      - sensor.dwd_wetter_wind_bearing
-      - sensor.dwd_wetter_wind_speed
-      # Transport
-      - sensor.bvg_1
-      - sensor.bvg_2
-      - sensor.bvg_3
-      # populartimes
-      - sensor.populartimes_rewe
-      - sensor.populartimes_rewe_usual
-      - sensor.populartimes_rewe_usual_difference
+# influxdb:
+#   host: a0d7b954-influxdb
+#   port: 8086
+#   database: homeassistant
+#   username: !secret influxdb_username
+#   password: !secret influxdb_password
+#   max_retries: 3
+#   default_measurement: state
+#   include:
+#     domains:
+#       - person
+#       - climate
+#       - input_boolean
+#     entities:
+#       - sensor.tree
+#       # Climate
+#       - sensor.room_temperature
+#       - sensor.thermostat_valve_state
+#       # COVID-19
+#       - sensor.germany_coronavirus_current
+#       - sensor.germany_coronavirus_confirmed
+#       - sensor.germany_coronavirus_recovered
+#       - sensor.germany_coronavirus_deaths
+#       - sensor.worldwide_coronavirus_current
+#       - sensor.worldwide_coronavirus_confirmed
+#       - sensor.worldwide_coronavirus_recovered
+#       - sensor.worldwide_coronavirus_deaths
+#       # Health
+#       - sensor.total_sleep_last_night
+#       - sensor.total_time_outside
+#       - sensor.disrupted_iphone_steps
+#       - sensor.polina_iphone_steps
+#       # Network
+#       - sensor.router_wan_in
+#       - sensor.router_wan_out
+#       - sensor.router_wan_in_derivative
+#       - sensor.router_wan_out_derivative
+#       - sensor.tautulli
+#       - sensor.tautulli_lan_bandwidth
+#       - sensor.tautulli_wan_bandwidth
+#       - sensor.ping_google_dns
+#       - sensor.ping_cloudflare_dns
+#       - sensor.adguard_average_processing_speed
+#       - sensor.adguard_dns_queries
+#       - sensor.adguard_dns_queries_blocked_ratio
+#       - sensor.rtorrent_up_speed
+#       - sensor.rtorrent_down_speed
+#       - sensor.rtorrent_up_limit
+#       - sensor.rtorrent_down_limit
+#       - sensor.rtorrent_active_torrents
+#       - sensor.rtorrent_all_torrents
+#       - sensor.rtorrent_complete_torrents
+#       # - sensor.rtorrent_stopped_torrents
+#       - sensor.rtorrent_uploading_torrents
+#       - sensor.rtorrent_downloading_torrents
+#       - sensor.nzbget_speed
+#       # System
+#       - sensor.processor_use
+#       - sensor.load_5m
+#       - sensor.memory_use_percent
+#       - sensor.cpu_temperature
+#       # Plants
+#       - sensor.miflora_1_moisture
+#       - sensor.miflora_1_temperature
+#       - sensor.miflora_1_soil_conductivity
+#       - sensor.miflora_1_illuminance
+#       - sensor.miflora_2_moisture
+#       - sensor.miflora_2_temperature
+#       - sensor.miflora_2_soil_conductivity
+#       - sensor.miflora_2_illuminance
+#       - sensor.miflora_3_moisture
+#       - sensor.miflora_3_temperature
+#       - sensor.miflora_3_soil_conductivity
+#       - sensor.miflora_3_illuminance
+#       - sensor.miflora_4_moisture
+#       - sensor.miflora_4_temperature
+#       - sensor.miflora_4_soil_conductivity
+#       - sensor.miflora_4_illuminance
+#       # Washing machine
+#       - binary_sensor.washing_machine
+#       - sensor.washing_machine_power
+#       - sensor.washing_machine_total_daily_energy
+#       - sensor.washing_machine_total_daily_energy_cost
+#       - sensor.washing_machine_runtime_today
+#       - sensor.washing_machine_wifi_signal
+#       # Weather
+#       - sensor.dark_sky_temperature
+#       - sensor.dark_sky_apparent_temperature
+#       - sensor.dark_sky_humidity
+#       - sensor.dark_sky_pressure
+#       - sensor.dark_sky_precip # type
+#       - sensor.dark_sky_precip_intensity
+#       - sensor.dark_sky_precip_probability
+#       - sensor.dark_sky_wind_speed
+#       # - sensor.dark_sky_cloud_coverage
+#       - sensor.dark_sky_dew_point
+#       - sensor.dark_sky_uv_index
+#       - sensor.dark_sky_nearest_storm_distance
+#       - sensor.waqi
+#       - sensor.weather_yr_cloudiness
+#       - sensor.weather_yr_low_clouds
+#       - sensor.weather_yr_medium_clouds
+#       - sensor.weather_yr_high_clouds
+#       - sensor.dwd_wetter_precipitation
+#       - sensor.dwd_wetter_pressure
+#       - sensor.dwd_wetter_sunshine
+#       - sensor.dwd_wetter_temperature
+#       - sensor.dwd_wetter_wind_bearing
+#       - sensor.dwd_wetter_wind_speed
+#       # Transport
+#       - sensor.bvg_1
+#       - sensor.bvg_2
+#       - sensor.bvg_3
+#       # populartimes
+#       - sensor.populartimes_rewe
+#       - sensor.populartimes_rewe_usual
+#       - sensor.populartimes_rewe_usual_difference
 
 history:
   include:

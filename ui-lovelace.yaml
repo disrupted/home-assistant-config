@@ -646,56 +646,56 @@ views:
           - type: custom:layout-break
           - type: picture
             image: !secret meteogram_url
-          - type: vertical-stack
-            cards:
-              - type: "custom:mini-graph-card"
-                name: Temperature
-                icon: "mdi:thermometer"
-                color_thresholds:
-                  - color: "#56a0ee"
-                    value: 0
-                  - color: "#d35400"
-                    value: 20
-                  - color: "#c0392b"
-                    value: 30
-                entities:
-                  - entity: sensor.htw_wetter_temperature
-                    name: Temperature
-                hour24: true
-                hours_to_show: 48
-                line_width: 3
-                decimals: 0
-                show:
-                  labels: true
-              - type: "custom:mini-graph-card"
-                name: Precipitation
-                icon: "mdi:weather-rainy"
-                entities:
-                  - color: "#56A0EE"
-                    entity: sensor.dwd_wetter_precipitation
-                    name: Precipitation
-                hour24: true
-                hours_to_show: 48
-                decimals: 1
-                lower_bound: 0
-                points_per_hour: 1
-                show:
-                  graph: bar
-              - type: "custom:mini-graph-card"
-                name: Wind Speed
-                entities:
-                  - entity: sensor.weather_yr_wind_speed
-                    name: YR
-                  - entity: sensor.htw_wetter_wind_speed_statistics
-                    name: HTW
-                  - entity: sensor.htw_wetter_wind_speed_max
-                    name: max
-                hour24: true
-                hours_to_show: 48
-                icon: "mdi:weather-windy"
-                line_color: "#4bc0c0"
-                line_width: 3
-                decimals: 0
+          # - type: vertical-stack
+          #   cards:
+          #     - type: "custom:mini-graph-card"
+          #       name: Temperature
+          #       icon: "mdi:thermometer"
+          #       color_thresholds:
+          #         - color: "#56a0ee"
+          #           value: 0
+          #         - color: "#d35400"
+          #           value: 20
+          #         - color: "#c0392b"
+          #           value: 30
+          #       entities:
+          #         - entity: sensor.htw_wetter_temperature
+          #           name: Temperature
+          #       hour24: true
+          #       hours_to_show: 48
+          #       line_width: 3
+          #       decimals: 0
+          #       show:
+          #         labels: true
+          #     - type: "custom:mini-graph-card"
+          #       name: Precipitation
+          #       icon: "mdi:weather-rainy"
+          #       entities:
+          #         - color: "#56A0EE"
+          #           entity: sensor.dwd_wetter_precipitation
+          #           name: Precipitation
+          #       hour24: true
+          #       hours_to_show: 48
+          #       decimals: 1
+          #       lower_bound: 0
+          #       points_per_hour: 1
+          #       show:
+          #         graph: bar
+          #     - type: "custom:mini-graph-card"
+          #       name: Wind Speed
+          #       entities:
+          #         - entity: sensor.weather_yr_wind_speed
+          #           name: YR
+          #         - entity: sensor.htw_wetter_wind_speed_statistics
+          #           name: HTW
+          #         - entity: sensor.htw_wetter_wind_speed_max
+          #           name: max
+          #       hour24: true
+          #       hours_to_show: 48
+          #       icon: "mdi:weather-windy"
+          #       line_color: "#4bc0c0"
+          #       line_width: 3
+          #       decimals: 0
 
   - id: 7
     title: Weather details
@@ -712,14 +712,14 @@ views:
           - sensor.weather_wind
           - sensor.weather_rain
           - sensor.temperature_change_per_hour
-          - entity: sensor.htw_wetter_wind_speed_statistics
-            name: Wind Speed mean
-            icon: mdi:weather-windy
-          - sensor.htw_wetter_wind_speed_max
-          - entity: sensor.htw_wetter_solar_radiation_statistics
-            name: Solar Radiation mean
-            icon: mdi:weather-sunny
-          - sensor.htw_wetter_solar_radiation_max
+          # - entity: sensor.htw_wetter_wind_speed_statistics
+          #   name: Wind Speed mean
+          #   icon: mdi:weather-windy
+          # - sensor.htw_wetter_wind_speed_max
+          # - entity: sensor.htw_wetter_solar_radiation_statistics
+          #   name: Solar Radiation mean
+          #   icon: mdi:weather-sunny
+          # - sensor.htw_wetter_solar_radiation_max
           - sensor.aqi
       - type: "custom:auto-entities"
         card:
@@ -731,14 +731,14 @@ views:
             - entity_id: sensor.weather_yr_*
           exclude:
             - entity_id: "/sensor.weather_yr_[1-9]h_/"
-      - type: "custom:auto-entities"
-        card:
-          type: entities
-          title: currently
-          show_header_toggle: false
-        filter:
-          include:
-            - entity_id: sensor.htw_wetter_*
+      # - type: "custom:auto-entities"
+      #   card:
+      #     type: entities
+      #     title: currently
+      #     show_header_toggle: false
+      #   filter:
+      #     include:
+      #       - entity_id: sensor.htw_wetter_*
       - type: "custom:auto-entities"
         card:
           type: entities

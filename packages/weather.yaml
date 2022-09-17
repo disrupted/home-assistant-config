@@ -5,14 +5,6 @@ homeassistant:
   customize:
     automation.weather_rain_alert:
       icon: mdi:umbrella
-    # sensor.weather_yr_wind_speed_km:
-    #   icon: mdi:weather-windy
-    # sensor.weather_yr_wind_direction_friendly:
-    #   icon: mdi:compass
-    sensor.htw_wetter_wind_speed_max:
-      icon: mdi:weather-windy
-    sensor.htw_wetter_solar_radiation_max:
-      icon: mdi:weather-sunny
     sensor.aqi:
       icon: mdi:weather-fog
     sensor.weather_wind:
@@ -139,41 +131,8 @@ sensor:
   #     - clouds
   #     - rain
 
-  - platform: derivative
-    source: sensor.htw_wetter_temperature
-    name: Temperature change per hour
-    round: 1
-    unit_time: h
-    time_window: "00:30:00" # we look at the change over the last half hour
-
-  - platform: statistics
-    entity_id: sensor.htw_wetter_wind_speed
-    name: HTW Wetter Wind Speed statistics
-    precision: 1
-    sampling_size: 25
-    max_age:
-      minutes: 120
-
-  - platform: statistics
-    entity_id: sensor.htw_wetter_solar_radiation
-    name: HTW Wetter Solar Radiation statistics
-    precision: 1
-    sampling_size: 25
-    max_age:
-      minutes: 120
-
   - platform: template
     sensors:
-      htw_wetter_wind_speed_max:
-        friendly_name: "Wind Speed max"
-        unit_of_measurement: "m/s"
-        value_template: "{{ state_attr('sensor.htw_wetter_wind_speed_statistics', 'max_value') }}"
-
-      htw_wetter_solar_radiation_max:
-        friendly_name: "Solar Radiation max"
-        unit_of_measurement: "W/m2"
-        value_template: "{{ state_attr('sensor.htw_wetter_solar_radiation_statistics', 'max_value') }}"
-
       aqi:
         friendly_name: "Air Quality Index"
         value_template: >
@@ -201,16 +160,17 @@ sensor:
 #         entity_id: sensor.weather_yr_precipitation
 #         device_class: moisture
 
-camera:
-  - platform: generic
-    name: Rain radar
-    still_image_url: !secret rain_radar_url
-    scan_interval: 600
-  - platform: generic
-    name: Meteogram
-    still_image_url: !secret meteogram_url
-    content_type: "image/svg+xml"
-    scan_interval: 1800
+# TODO: deprecated, migrate to new config
+# camera:
+#   - platform: generic
+#     name: Rain radar
+#     still_image_url: !secret rain_radar_url
+#     scan_interval: 600
+#   - platform: generic
+#     name: Meteogram
+#     still_image_url: !secret meteogram_url
+#     content_type: "image/svg+xml"
+#     scan_interval: 1800
 
 automation:
   # - alias: Weather alert rain
