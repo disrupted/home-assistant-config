@@ -75,8 +75,8 @@ sensor:
     sensors:
       adaptive_colortemp:
         friendly_name: "Adaptive Colortemp"
-        unit_of_measurement: "mired"
-        value_template: "{{ state_attr('switch.adaptive_lighting_default', 'color_temp_mired') }}"
+        unit_of_measurement: "kelvin"
+        value_template: "{{ state_attr('switch.adaptive_lighting_default', 'color_temp_kelvin') }}"
 
 automation:
   - id: light_adaptive_apply

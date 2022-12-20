@@ -97,8 +97,8 @@ scene:
         brightness: 38
       light.reading_lamp:
         state: "off"
-      light.desk_lamp:
-        state: "off"
+      # light.desk_lamp:
+      #   state: "off"
       light.candle:
         state: "on"
         brightness: 255

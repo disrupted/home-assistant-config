@@ -63,7 +63,7 @@ variables:
   #   {% else %}
   #     {{ (percent + 100) | round }}
   #   {% endif %}
-  color_temp: "{{ state_attr(adaptive, 'color_temp_mired') | int }}"
+  color_temp: "{{ state_attr(adaptive, 'color_temp_kelvin') | int }}"
   red: "{{ state_attr(adaptive, 'rgb_color')[0] | int }}"
   green: "{{ state_attr(adaptive, 'rgb_color')[1] | int }}"
   blue: "{{ state_attr(adaptive, 'rgb_color')[2] | int }}"
@@ -94,7 +94,6 @@ sequence:
               {% if is_state(entity, 'on') %}
                 {{ state_attr(entity, 'brightness_pct') }}
               {% endif %}
-        # - choose:
             # - conditions: "{{ supports_color }}"
             #   sequence:
             #     - service: light.turn_on
@@ -117,8 +116,9 @@ sequence:
           #       entity_id: "{{ entity }}"
           #       # brightness_pct: "{{ brightness }}"
           #       transition: "{{ entity_transition }}"
+        # - choose:
         - service: light.turn_on
           data:
             entity_id: "{{ entity }}"
             transition: "{{ entity_transition }}"
-            color_temp: "{{ color_temp }}"
+            kelvin: "{{ color_temp }}"
