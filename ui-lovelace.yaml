@@ -545,6 +545,8 @@ views:
           - sensor.e_studio382p
           - binary_sensor.disrupted_mba_active
           - binary_sensor.disrupted_mba_at_desk
+          - binary_sensor.disrupted_mbp_active
+          - binary_sensor.disrupted_mbp_at_desk
           - sensor.disrupted_mba_usage_today
           - sensor.disrupted_mba_primary_display_name
           - binary_sensor.disrupted_mba_microphone_in_use

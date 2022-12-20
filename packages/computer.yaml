@@ -3,9 +3,13 @@ binary_sensor:
     sensors:
       # is computer at desk
       disrupted_mba_at_desk:
-        friendly_name: "At Desk"
+        friendly_name: "MBA at Desk"
         device_class: presence
-        value_template: "{{ is_state('device_tracker.disrupted_mba', 'home') and states('sensor.disrupted_mba_displays') | int > 1 or is_state('sensor.disrupted_mba_primary_display_name', 'DELL P2415Q') }}"
+        value_template: "{{ is_state('device_tracker.disrupted_mba', 'home') and is_state('sensor.disrupted_mba_primary_display_name', 'DELL P2415Q') }}"
+      disrupted_mbp_at_desk:
+        friendly_name: "MBP at Desk"
+        device_class: presence
+        value_template: "{{ is_state('device_tracker.disrupted_mbp', 'home') and is_state('sensor.disrupted_mbp_primary_display_name', 'DELL P2415Q') }}"
 
 sensor:
   - platform: history_stats
@@ -25,8 +29,16 @@ automation:
     trigger:
       - platform: state
         entity_id: binary_sensor.disrupted_mba_active
+        id: "mba_active"
       - platform: state
         entity_id: binary_sensor.disrupted_mba_at_desk
+        id: "mba_at_desk"
+      - platform: state
+        entity_id: binary_sensor.disrupted_mbp_active
+        id: "mbp_active"
+      - platform: state
+        entity_id: binary_sensor.disrupted_mbp_at_desk
+        id: "mbp_at_desk"
     condition:
       - condition: or
         conditions:
@@ -42,12 +54,42 @@ automation:
               - condition: state
                 entity_id: light.desk_lamp
                 state: "off"
-              - condition: state
-                entity_id: binary_sensor.disrupted_mba_active
-                state: "on"
-              - condition: state
-                entity_id: binary_sensor.disrupted_mba_at_desk
-                state: "on"
+              - condition: or
+                conditions:
+                  - condition: and
+                    conditions:
+                      - condition: trigger
+                        id: "mba_active"
+                      - condition: state
+                        entity_id: binary_sensor.disrupted_mba_active
+                        state: "on"
+                      - condition: state
+                        entity_id: binary_sensor.disrupted_mba_at_desk
+                        state: "on"
+                  - condition: and
+                    conditions:
+                      - condition: trigger
+                        id: "mba_at_desk"
+                      - condition: state
+                        entity_id: binary_sensor.disrupted_mba_at_desk
+                        state: "on"
+                  - condition: and
+                    conditions:
+                      - condition: trigger
+                        id: "mbp_active"
+                      - condition: state
+                        entity_id: binary_sensor.disrupted_mbp_active
+                        state: "on"
+                      - condition: state
+                        entity_id: binary_sensor.disrupted_mbp_at_desk
+                        state: "on"
+                  - condition: and
+                    conditions:
+                      - condition: trigger
+                        id: "mbp_at_desk"
+                      - condition: state
+                        entity_id: binary_sensor.disrupted_mbp_at_desk
+                        state: "on"
             sequence:
               - service: light.turn_on
                 data_template:
@@ -59,12 +101,40 @@ automation:
                 state: "on"
               - condition: or
                 conditions:
-                  - condition: state
-                    entity_id: binary_sensor.disrupted_mba_active
-                    state: "off"
-                  - condition: state
-                    entity_id: binary_sensor.disrupted_mba_at_desk
-                    state: "off"
+                  - condition: and
+                    conditions:
+                      - condition: trigger
+                        id: "mba_active"
+                      - condition: state
+                        entity_id: binary_sensor.disrupted_mba_active
+                        state: "off"
+                      - condition: state
+                        entity_id: binary_sensor.disrupted_mba_at_desk
+                        state: "on"
+                  - condition: and
+                    conditions:
+                      - condition: trigger
+                        id: "mba_at_desk"
+                      - condition: state
+                        entity_id: binary_sensor.disrupted_mba_at_desk
+                        state: "off"
+                  - condition: and
+                    conditions:
+                      - condition: trigger
+                        id: "mbp_active"
+                      - condition: state
+                        entity_id: binary_sensor.disrupted_mbp_active
+                        state: "off"
+                      - condition: state
+                        entity_id: binary_sensor.disrupted_mbp_at_desk
+                        state: "on"
+                  - condition: and
+                    conditions:
+                      - condition: trigger
+                        id: "mbp_at_desk"
+                      - condition: state
+                        entity_id: binary_sensor.disrupted_mbp_at_desk
+                        state: "off"
             sequence:
               - service: light.turn_off
                 data:
