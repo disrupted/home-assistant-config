@@ -44,35 +44,6 @@ zone:
     longitude: !secret location_home_lon
     radius: !secret location_home_radius
     icon: mdi:home
-  - name: Uni
-    latitude: !secret location_uni_lat
-    longitude: !secret location_uni_lon
-    radius: !secret location_uni_radius
-    icon: mdi:school
-  # - name: Work
-  #   latitude: !secret location_work_lat
-  #   longitude: !secret location_work_lon
-  #   radius: !secret location_work_radius
-  #   icon: mdi:briefcase
-  #  - name: Neighbourhood
-  #    latitude: !secret location_home_lat
-  #    longitude: !secret location_home_lon
-  #    radius: 1000
-  #    icon: mdi:google-circles-communities
-  #    passive: true
-  #    track_ios: false
-  # - name: City
-  #   latitude: !secret location_city_lat
-  #   longitude: !secret location_city_lon
-  #   radius: 15000
-  #   icon: mdi:city
-  #   passive: true
-  #   track_ios: false
-  - name: Mama
-    latitude: !secret location_mama_lat
-    longitude: !secret location_mama_lon
-    radius: !secret location_mama_radius
-    icon: mdi:home-heart
 
 sensor:
   # - platform: google_travel_time

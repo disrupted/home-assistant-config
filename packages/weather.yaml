@@ -21,10 +21,6 @@ group:
       - sensor.dwd_weather_warnings_current_warning_level
 
 sensor:
-  - platform: dwd_weather_warnings
-    name: DWD Weather Warnings
-    region_name: !secret location_city
-
   - platform: template
     sensors:
       sun_daylight_remaining:

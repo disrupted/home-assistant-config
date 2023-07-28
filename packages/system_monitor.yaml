@@ -7,8 +7,6 @@ homeassistant:
   customize:
     script.hass_restart:
       icon: mdi:restart
-    script.hassio_reboot:
-      icon: mdi:power
     sensor.homeassistant_v2db:
       friendly_name: Database size
       icon: mdi:database-plus

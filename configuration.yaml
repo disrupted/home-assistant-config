@@ -3,6 +3,7 @@ homeassistant:
   latitude: !secret location_home_lat
   longitude: !secret location_home_lon
   elevation: !secret location_home_elevation
+  country: !secret location_city_country_iso
   unit_system: metric
   time_zone: !secret timezone
   internal_url: !secret internal_url
@@ -77,8 +78,6 @@ lovelace:
 config:
 
 mobile_app:
-
-hassio:
 
 # Discover some devices automatically
 # discovery:
