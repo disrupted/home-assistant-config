@@ -86,84 +86,6 @@ views:
                           .datetime="${entity.last_updated}"
                         ></ha-relative-time>`
                     ]]]
-              - type: "custom:button-card"
-                entity: person.polina
-                entity_picture: /local/memoji_polina.png
-                show_entity_picture: true
-                aspect_ratio: 1/1
-                name: >-
-                  [[[
-                    var device_tracker = states['person.polina'].state
-                    if (device_tracker === 'not_home')
-                      return `Away ${states['proximity.home_polina'].state}km`;
-                    else
-                      return device_tracker;
-                  ]]]
-                styles:
-                  card:
-                    - border-radius: 10%
-                    - padding: 7%
-                    - padding-bottom: 4%
-                    - font-size: 10px
-                  grid:
-                    - grid-template-areas: '"i battery" "n n" "steps steps" "outside outside" "update update"'
-                    - grid-template-columns: 1fr 1fr
-                    - grid-template-rows: 1fr min-content min-content min-content min-content
-                  name:
-                    - font-weight: bold
-                    - font-size: 18px
-                    - align-self: middle
-                    - justify-self: start
-                    - padding-bottom: 6px
-                    - text-transform: capitalize
-                  img_cell:
-                    - justify-content: start
-                    - align-items: start
-                    - margin: none
-                  icon:
-                    - max-height: 90%
-                    - width: auto
-                    - height: auto
-                  custom_fields:
-                    steps:
-                      - padding-bottom: 2px
-                      - align-self: middle
-                      - justify-self: start
-                      - font-size: 12px
-                    outside:
-                      - padding-bottom: 2px
-                      - align-self: middle
-                      - justify-self: start
-                      - font-size: 12px
-                    update:
-                      - align-self: middle
-                      - justify-self: end
-                      - font-size: 11px
-                custom_fields:
-                  steps: |
-                    [[[
-                      return `<ha-icon
-                        icon="mdi:walk"
-                        style="width: 20px; height: 20px;">
-                        </ha-icon>  <span style="padding-left: 4px; position: relative; top: 1px;">${states['sensor.polina_iphone_steps'].state} steps</span>`
-                    ]]]
-                  outside: |
-                    [[[
-                      return `<ha-icon
-                        icon="mdi:virus-outline"
-                        style="width: 20px; height: 20px;">
-                        </ha-icon>  <span style="padding-left: 4px; position: relative; top: 1px;">${states['sensor.time_outside_polina'].attributes.value} outside</span>`
-                    ]]]
-                  update: |
-                    [[[
-                      return html`
-                        <ha-relative-time
-                          id="label"
-                          class="ellipsis"
-                          .hass="${hass}"
-                          .datetime="${entity.last_updated}"
-                        ></ha-relative-time>`
-                    ]]]
           # - type: "custom:auto-entities"
           #   card:
           #     type: glance
@@ -182,6 +104,7 @@ views:
                   - type: custom:secondaryinfo-entity-row
                     entity: input_boolean.present
                     secondary_info: "[[ sensor.time_outside_salomon.attributes.value ]] outside today"
+                  - lock.door_lock
                   - type: custom:secondaryinfo-entity-row
                     entity: sensor.day_phase
                     secondary_info: "[[ sensor.sun_daylight_remaining ]] h"
@@ -1185,7 +1108,6 @@ views:
         hours_to_show: 24
         entities:
           - person.salomon
-          - person.polina
         card_mod:
           style: |
             div.leaflet-control-attribution {

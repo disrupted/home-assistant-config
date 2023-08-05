@@ -194,8 +194,8 @@ scene:
         state: "off"
       light.candle:
         state: "off"
-      media_player.apple_tv:
-        state: paused
+      # media_player.apple_tv:
+      #   state: paused
       switch.amp:
         state: "off"
       media_player.tv:
