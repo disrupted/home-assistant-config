@@ -186,6 +186,10 @@ scene:
 
   - name: Away
     entities:
+      fan.standing_fan:
+        state: "off"
+      lock.door_lock:
+        state: "locked"
       media_player.google_home:
         state: paused
       media_player.sonos_kitchen:
@@ -194,8 +198,6 @@ scene:
         state: "off"
       light.candle:
         state: "off"
-      # media_player.apple_tv:
-      #   state: paused
       switch.amp:
         state: "off"
       media_player.tv:
