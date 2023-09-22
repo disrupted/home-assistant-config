@@ -4,7 +4,7 @@ sensor:
       nearest_iphone_notify:
         friendly_name: Nearest iPhone's notify service
         value_template: >
-          {% if is_state("person.salomon", "home") and is_state("person.polina", "home") %}
+          {% if is_state("person.salomon", "home") %}
             notify.all_iphones
           {% elif is_state_attr("proximity.home", "nearest", "Salomon") %}
             notify.mobile_app_disrupted_iphone

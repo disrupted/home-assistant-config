@@ -298,10 +298,6 @@ automation:
         to: "on"
         for:
           hours: 5
-      - platform: state
-        entity_id: binary_sensor.telegram_online
-        from: "off"
-        to: "on"
     condition:
       - condition: state
         entity_id: input_boolean.sleeping

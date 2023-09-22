@@ -14,13 +14,6 @@ sensor:
         friendly_name: "Telegram Chat ID"
         value_template: !secret telegram_chat_id
 
-mqtt:
-  binary_sensor:
-    - state_topic: "telegram/disrupted/online"
-      name: Telegram Online
-    - state_topic: "telegram/polina/online"
-      name: Telegram Online Polina
-
 telegram_bot:
   - platform: polling
     api_key: !secret api_key_telegram
@@ -232,7 +225,6 @@ automation:
         data_template:
           target:
             - !secret telegram_chat_id
-            - !secret telegram_chat_id_polina
           parse_mode: html
           message: >
             {%- for plant in states.plant -%}

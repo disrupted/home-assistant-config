@@ -178,7 +178,6 @@ recorder:
 #       - sensor.total_sleep_last_night
 #       - sensor.total_time_outside
 #       - sensor.disrupted_iphone_steps
-#       - sensor.polina_iphone_steps
 #       # Network
 #       - sensor.router_wan_in
 #       - sensor.router_wan_out
@@ -297,7 +296,6 @@ notify:
     platform: group
     services:
       - service: mobile_app_disrupted_iphone
-      - service: mobile_app_polina_iphone
 
 logger:
   default: warn # notset
