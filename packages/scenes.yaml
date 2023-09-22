@@ -188,8 +188,8 @@ scene:
     entities:
       fan.standing_fan:
         state: "off"
-      lock.door_lock:
-        state: "locked"
+      # lock.door_lock:
+      #   state: "locked"
       media_player.google_home:
         state: paused
       media_player.sonos_kitchen:
