@@ -77,13 +77,15 @@ binary_sensor:
         device_class: problem
         value_template: "{{ states('sensor.supervisor_updates') | int > 0 }}"
 
+command_line:
+  - sensor:
+      name: CPU Temperature
+      command: "cat /sys/class/thermal/thermal_zone0/temp"
+      unit_of_measurement: "°C"
+      value_template: "{{ value | multiply(0.001) | round(1)  }}"
+
 sensor:
   - platform: websocket_api
-  # - platform: command_line
-  #   command: 'grep -c invalidpassword /config/home-assistant.log'
-  #   name: Failed logins
-  - platform: uptime
-    name: HA Uptime
   - platform: template
     sensors:
       ping_cloudflare_dns:
@@ -217,39 +219,6 @@ sensor:
       Content-Type: application/graphql
       User-Agent: Home Assistant REST sensor
 
-  - platform: command_line
-    name: CPU Temperature
-    command: "cat /sys/class/thermal/thermal_zone0/temp"
-    unit_of_measurement: "°C"
-    value_template: "{{ value | multiply(0.001) | round(1)  }}"
-
-  # TODO: deprecated
-  # local
-  # - platform: version
-  #   # latest stable
-  # - platform: version
-  #   name: latest Stable version
-  #   source: hassio
-  #   # latest beta
-  # - platform: version
-  #   name: latest Beta version
-  #   beta: true
-  #   source: hassio
-  - platform: command_line
-    name: Supervisor updates
-    command: 'curl http://supervisor/supervisor/info -H "Authorization: Bearer $(printenv SUPERVISOR_TOKEN)" | jq ''{"newest_version":.data.version_latest,"current_version":.data.version,"addons":[.data.addons[] | select(.version != .installed)]}'''
-    value_template: "{{ value_json.addons | length }}"
-    json_attributes:
-      - newest_version
-      - current_version
-      - addons
-  - platform: command_line
-    name: Updater CLI
-    command: 'curl http://supervisor/cli/info -H "Authorization: Bearer $(printenv SUPERVISOR_TOKEN)" | jq ''{"newest_version":.data.version_latest,"current_version":.data.version}'''
-    value_template: "{% if value_json.newest_version != value_json.current_version %}on{% else %}off{% endif %}"
-    json_attributes:
-      - newest_version
-      - current_version
   - platform: systemmonitor
     resources:
       - type: processor_use

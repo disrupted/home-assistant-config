@@ -12,7 +12,6 @@ input_boolean:
     icon: mdi:sleep
 
 sensor:
-  - platform: moon
   - platform: template
     sensors:
       moon_phase:

@@ -118,9 +118,6 @@ sensor:
   #   stations:
   #     - !secret waqi_station
 
-  - platform: season
-    type: meteorological
-
   # - platform: openweathermap
   #   api_key: !secret api_key_openweathermap
   #   monitored_conditions:
