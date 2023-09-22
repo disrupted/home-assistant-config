@@ -48,16 +48,14 @@ automation:
         state: "on"
       - condition: template
         value_template: "{{ state_attr('light.floor_lamp', 'brightness') > 64 }}"
-      # - condition: state
-      #   entity_id: sun.sun
-      #   state: 'below_horizon'
-      # - condition: numeric_state
-      #   entity_id: sun.sun
-      #   value_template: '{{ state.attributes.elevation }}'
-      #   below: -10.0
       - condition: template
         value_template: "{{ state_attr('sun.sun', 'elevation') < -4.0 }}"
     action:
+      # cancel any running undim transition
+      - service: automation.turn_off
+        entity_id: automation.apple_tv_movietime_undim_lights
+      - service: automation.turn_on
+        entity_id: automation.apple_tv_movietime_undim_lights
       - service: script.scene
         data:
           scene: dim
@@ -97,8 +95,8 @@ automation:
         entity_id: input_boolean.movietime
         from: "on"
         to: "off"
-        for:
-          seconds: 30
+        # for:
+        #   seconds: 30
     condition:
       - condition: state
         entity_id: light.floor_lamp
@@ -108,6 +106,11 @@ automation:
       - condition: template
         value_template: "{{ not is_state('input_select.scene', 'Bedtime') }}"
     action:
+      # cancel any running dim transition
+      - service: automation.turn_off
+        entity_id: automation.apple_tv_movietime_dim_lights
+      - service: automation.turn_on
+        entity_id: automation.apple_tv_movietime_dim_lights
       - service: script.scene
         data:
           scene: undim
