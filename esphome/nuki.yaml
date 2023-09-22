@@ -1,0 +1,70 @@
+substitutions:
+  name: nuki
+  friendly_name: Nuki
+
+esphome:
+  name: ${name}
+  libraries:
+  - Preferences
+  - https://github.com/vinmenn/Crc16.git
+  - https://github.com/uriyacovy/NukiBleEsp32
+
+external_components:
+  - source: github://uriyacovy/ESPHome_nuki_lock
+
+esp32:
+  board: esp-wrover-kit
+  # framework:
+  #   type: arduino
+  #   version: 2.0.3
+  #   platform_version: 5.3.0
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  fast_connect: true
+  reboot_timeout: 0s
+  manual_ip:
+    static_ip: !secret ip_nuki
+    gateway: !secret ip_router
+    subnet: !secret ip_subnet
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: ${name} Hotspot
+    password: !secret esphome_fallback_hotspot_pass
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret esphome_api_encryption_key
+  reboot_timeout: 0s
+
+ota:
+  password: !secret esphome_ota_pass
+
+switch:
+  - platform: restart
+    name: ${friendly_name} Restart
+
+sensor:
+  - platform: wifi_signal
+    name: ${friendly_name} WiFi Signal
+    update_interval: 60s
+
+lock:
+  - platform: nuki_lock
+    name: Door Lock
+    is_connected:
+      name: ${friendly_name} Connected
+    is_paired:
+      name: ${friendly_name} Paired
+    # battery_critical:
+    #   name: ${friendly_name} Battery Critical
+    battery_level:
+      name: ${friendly_name} Battery Level
