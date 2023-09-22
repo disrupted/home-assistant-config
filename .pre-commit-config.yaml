@@ -10,6 +10,7 @@ repos:
     rev: 2.1.2
     hooks:
       - id: prettier
+        exclude: custom_components/.*
   - repo: local
     hooks:
       - id: yamllint
