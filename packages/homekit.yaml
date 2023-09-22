@@ -10,6 +10,8 @@ homekit:
     include_domains:
       # - media_player
       - climate
+      - fan
+      - lock
     include_entities:
       - input_boolean.present
       - input_boolean.sleeping
@@ -20,22 +22,15 @@ homekit:
       - switch.amp
       - switch.ps4
       - person.salomon
-      - person.polina
-      - person.max
-      - person.emmi
       - light.floor_lamp
-      - light.reading_lamp
+      # - light.reading_lamp
       - light.bedroom_ceiling
-      # - light.bedside_lamp
+      - light.bedside_lamp
       - light.desk_lamp
       # - light.candle
       - light.kitchen_ceiling
       - light.bathroom_ceiling
       - light.spots
-      # - media_player.tv
-      - media_player.sonos_kitchen
-      # - media_player.google_home
-      - fan.bathroom
       - binary_sensor.bathroom_motion
       # - camera.xiaofang
   entity_config:
@@ -57,7 +52,4 @@ homekit:
 # input_boolean:
 #   homekit_presence_disrupted:
 #     name: Salomon
-#     icon: mdi:account
-#   homekit_presence_polina:
-#     name: Polina
 #     icon: mdi:account

@@ -17,8 +17,6 @@ homeassistant:
       icon: mdi:ceiling-light-outline
     light.bathroom_ceiling:
       icon: mdi:wall-sconce-round
-    light.bedside_lamp:
-      icon: mdi:webcam
     light.reading_lamp:
       icon: mdi:floor-lamp-torchiere
     light.spots:
@@ -59,6 +57,7 @@ light:
     name: Bedroom
     entities:
       - light.bedroom_ceiling
+      - light.bedside_lamp
 
 # prettier-ignore
 sun:
