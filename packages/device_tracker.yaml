@@ -33,9 +33,6 @@ input_boolean:
   presence_guest:
     name: Guest Home
 
-# prettier-ignore
-# map:
-
 zone:
   - name: Home
     latitude: !secret location_home_lat
@@ -44,6 +41,19 @@ zone:
     icon: mdi:home
 
 sensor:
+  - platform: mqtt_room
+    name: Presence iPhone
+    device_id: !secret presence_iphone_device_id
+    state_topic: !secret presence_iphone_mqtt_topic
+    timeout: 10
+    away_timeout: 120
+  - platform: mqtt_room
+    name: Presence Apple Watch
+    device_id: !secret presence_apple_watch_device_id
+    state_topic: !secret presence_apple_watch_mqtt_topic
+    timeout: 10
+    away_timeout: 120
+
   - platform: history_stats
     name: time outside Salomon
     entity_id: person.salomon
@@ -83,13 +93,36 @@ automation:
             ({{trigger.event.data.entity_id}})
               DEBUG: {{trigger.event.data}}
 
+  - alias: device_tracker Update presence device tracker
+    id: device_tracker_presence_refresh
+    mode: queued
+    trigger:
+      - platform: state
+        entity_id: sensor.presence_apple_watch
+      - platform: state
+        entity_id: sensor.presence_iphone
+    condition:
+      - condition: template
+        value_template: "{{ trigger.from_state.state != trigger.to_state.state }}"
+    action:
+      - service: device_tracker.see
+        data_template:
+          dev_id: "{{ trigger.entity_id | replace('sensor.', '') }}"
+          location_name: "{{ 'home' if is_state(trigger.entity_id, 'home') else 'not_home' }}"
+
   - alias: device_tracker coming Home
     id: device_tracker_coming_home
     trigger:
       platform: state
       entity_id: group.awesome_people
       to: "home"
+    condition:
+      - condition: state
+        entity_id: input_boolean.present
+        state: "off"
     action:
+      - alias: "Wait until person enters"
+        wait_template: "{{ is_state('binary_sensor.entrance_door', 'on') }}"
       - service: homeassistant.turn_on
         entity_id: input_boolean.present
 
@@ -102,6 +135,16 @@ automation:
     action:
       - service: input_boolean.turn_off
         entity_id: input_boolean.present
+      - if:
+          - condition: state
+            entity_id: automation.device_tracker_coming_home
+            state: "on"
+        then:
+          # cancel automation waiting for door to open
+          - service: automation.turn_off
+            entity_id: automation.device_tracker_coming_home
+          - service: automation.turn_on
+            entity_id: automation.device_tracker_coming_home
 
   - alias: Coming Home lights
     id: coming_home_light
@@ -135,6 +178,83 @@ automation:
         data:
           scene: normal
           transition: 1
+
+  - alias: Coming Home unlock door
+    id: coming_home_unlock_door
+    mode: single # single or restart
+    max_exceeded: silent
+    trigger:
+      - platform: state
+        entity_id: sensor.presence_apple_watch
+        from: "not_home"
+        to: "home"
+      - platform: state
+        entity_id: sensor.presence_iphone
+        from: "not_home"
+        to: "home"
+    condition:
+      - condition: state
+        entity_id: binary_sensor.entrance_door
+        state: "off"
+    action:
+      - alias: "Set up variables for the actions"
+        variables:
+          # Including an id in the action allows us to identify this script run
+          # and not accidentally trigger for other notification actions
+          action_open: "{{ 'OPEN_' ~ context.id }}"
+      - alias: "Ask to open the door"
+        service: notify.mobile_app_disrupted_iphone
+        data:
+          message: "Welcome Home"
+          data:
+            tag: "door"
+            push:
+              thread-id: security
+              interruption-level: time-sensitive
+            actions:
+              - action: "{{ action_open }}"
+                title: Open Door
+      - alias: "Wait for a response"
+        wait_for_trigger:
+          - platform: event
+            event_type: mobile_app_notification_action
+            event_data:
+              # waiting for the specific action avoids accidentally continuing
+              # for another script/automation's notification action
+              action: "{{ action_open }}"
+        continue_on_timeout: true
+        timeout:
+          minutes: 5
+      - if:
+          - "{{ wait.trigger != none }}" # wait_for_trigger completed
+        then: # not timed out
+          - alias: "Perform the action"
+            choose:
+              - conditions: "{{ wait.trigger.event.data.action == action_open }}"
+                sequence:
+                  - service: script.door_open
+      - service: notify.mobile_app_disrupted_iphone
+        data:
+          message: "clear_notification"
+          data:
+            tag: "door"
+
+  - alias: Lock notify
+    id: lock_notify
+    mode: restart
+    max_exceeded: silent
+    trigger:
+      platform: state
+      entity_id: lock.door_lock
+    action:
+      - service: notify.mobile_app_disrupted_iphone
+        data_template:
+          data:
+            tag: "door-state"
+            push:
+              thread-id: security
+              interruption-level: time-sensitive
+          message: Door is {{ trigger.to_state.state }}
 
   - alias: Leaving Home
     id: leaving_home

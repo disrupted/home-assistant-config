@@ -9,7 +9,7 @@ sensor:
           {% elif is_state_attr("proximity.home", "nearest", "Salomon") %}
             notify.mobile_app_disrupted_iphone
           {% else %}
-            notify.mobile_app_scar_on
+            notify.mobile_app_disrupted_iphone
           {% endif %}
 
 automation:

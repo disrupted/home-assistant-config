@@ -1,0 +1,27 @@
+alias: Open door
+icon: mdi:door-open
+description: Open door lock
+sequence:
+  - choose:
+      - conditions: "{{ is_state('binary_sensor.nuki_connected', 'off') }}"
+        sequence:
+          - service: switch.turn_on
+            entity_id: switch.nuki_restart
+          - wait_template: "{{ is_state('binary_sensor.nuki_connected', 'on') }}"
+  - service: lock.open
+    entity_id: lock.door_lock
+  - alias: "Wait until door opens and person enters"
+    wait_template: "{{ is_state('binary_sensor.entrance_door', 'on') }}"
+    timeout: "00:01:00"
+    continue_on_timeout: true
+  - if:
+      - "{{ not wait.completed }}"
+    then:
+      - alias: "Notify door did not open"
+        service: notify.mobile_app_disrupted_iphone
+        data:
+          message: "Door was not opened"
+          data:
+            push:
+              thread-id: security
+              interruption-level: time-sensitive
