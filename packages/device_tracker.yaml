@@ -121,8 +121,14 @@ automation:
         entity_id: input_boolean.present
         state: "off"
     action:
-      - alias: "Wait until person enters"
-        wait_template: "{{ is_state('binary_sensor.entrance_door', 'on') }}"
+      - if:
+          - alias: "Door is closed"
+            condition: state
+            entity_id: binary_sensor.entrance_door
+            state: "off"
+        then:
+          - alias: "Wait until person enters"
+            wait_template: "{{ is_state('binary_sensor.entrance_door', 'on') }}"
       - service: homeassistant.turn_on
         entity_id: input_boolean.present
 
@@ -193,8 +199,12 @@ automation:
         from: "not_home"
         to: "home"
     condition:
-      - condition: state
+      - alias: "Door is closed"
+        condition: state
         entity_id: binary_sensor.entrance_door
+        state: "off"
+      - condition: state
+        entity_id: input_boolean.sleeping
         state: "off"
     action:
       - alias: "Set up variables for the actions"
