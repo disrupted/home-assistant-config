@@ -23,12 +23,12 @@ views:
                   ]]]
                 styles:
                   card:
-                    - border-radius: 10%
+                    - border-radius: 4%
                     - padding: 7%
                     - padding-bottom: 4%
                     - font-size: 10px
                   grid:
-                    - grid-template-areas: '"i battery" "n n" "steps steps" "outside outside" "update update"'
+                    - grid-template-areas: '"i battery" "n n" "steps steps" "distance distance" "update update"'
                     - grid-template-columns: 1fr 1fr
                     - grid-template-rows: 1fr min-content min-content min-content min-content
                   name:
@@ -52,7 +52,7 @@ views:
                       - align-self: middle
                       - justify-self: start
                       - font-size: 12px
-                    outside:
+                    distance:
                       - padding-bottom: 2px
                       - align-self: middle
                       - justify-self: start
@@ -69,12 +69,12 @@ views:
                         style="width: 20px; height: 20px;">
                         </ha-icon>  <span style="padding-left: 4px; position: relative; top: 1px;">${states['sensor.disrupted_iphone_steps'].state} steps</span>`
                     ]]]
-                  outside: |
+                  distance: |
                     [[[
                       return `<ha-icon
-                        icon="mdi:virus-outline"
+                        icon="mdi:map-marker-distance"
                         style="width: 20px; height: 20px;">
-                        </ha-icon>  <span style="padding-left: 4px; position: relative; top: 1px;">${states['sensor.time_outside_salomon'].attributes.value} outside</span>`
+                        </ha-icon>  <span style="padding-left: 4px; position: relative; top: 1px;">${states['sensor.disrupted_iphone_distance'].state} m</span>`
                     ]]]
                   update: |
                     [[[
@@ -103,7 +103,7 @@ views:
                 entities:
                   - type: custom:secondaryinfo-entity-row
                     entity: input_boolean.present
-                    secondary_info: "[[ sensor.time_outside_salomon.attributes.value ]] outside today"
+                    secondary_info: "[[ sensor.time_outside_salomon ]] h outside today"
                   - lock.door_lock
                   - type: custom:secondaryinfo-entity-row
                     entity: sensor.day_phase
@@ -309,7 +309,7 @@ views:
       - entities:
           - type: custom:secondaryinfo-entity-row
             entity: input_boolean.sleeping
-            secondary_info: "[[ sensor.total_sleep_last_night.attributes.value ]]"
+            secondary_info: "[[ sensor.total_sleep_last_night ]] h"
           - binary_sensor.bayesian_sleeping
           - sensor.moon_phase
         show_header_toggle: false
@@ -472,20 +472,9 @@ views:
           - binary_sensor.disrupted_mbp_at_desk
           - sensor.disrupted_mba_usage_today
           - sensor.disrupted_mba_primary_display_name
-          - binary_sensor.disrupted_mba_microphone_in_use
+          - binary_sensor.disrupted_mba_audio_input_in_use
+          - binary_sensor.disrupted_mba_audio_output_in_use
           - binary_sensor.disrupted_mba_camera_in_use
-      - type: entities
-        title: Calendar
-        show_header_toggle: false
-        entities:
-          - sensor.next_appt_message
-          - sensor.next_appt_description
-          - sensor.next_appt_date_time
-          - sensor.days_to_next_appointment
-          - sensor.next_holiday
-          - sensor.days_to_next_holiday
-          - sensor.next_birthday
-          - sensor.days_to_next_birthday
   - id: 6
     title: Weather
     icon: "mdi:weather-partly-cloudy"
@@ -930,7 +919,7 @@ views:
         name: Server
         styles:
           card:
-            - border-radius: 10%
+            - border-radius: 4%
             - padding: 10%
             - font-size: 10px
             - text-shadow: 0px 0px 5px black
@@ -1126,7 +1115,7 @@ views:
               ]]]
             styles:
               card:
-                - border-radius: 10%
+                - border-radius: 4%
                 - padding: 7%
                 - padding-bottom: 4%
                 - font-size: 10px
