@@ -41,7 +41,6 @@ plex.conf
 zigbee.db
 bvg_*.json
 .omv_cookies.json
-packages/hacs.yaml
 packages/person.yaml
 packages/shared.yaml
 packages/*internal.yaml
