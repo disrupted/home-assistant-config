@@ -2,7 +2,7 @@
 substitutions:
   name: bedroom
   friendly_name: Bedroom
-  light_entity: light.bedroom_ceiling
+  light_entity: light.bedroom
 
 esphome:
   name: ${name}
@@ -35,7 +35,8 @@ web_server:
 
 # Enable Home Assistant API
 api:
-  password: !secret esphome_api_pass
+  encryption:
+    key: !secret esphome_api_encryption_key
   reboot_timeout: 0s
 
 ota:
