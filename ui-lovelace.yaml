@@ -306,6 +306,13 @@ views:
           - light.bedside_lamp
           - fan.standing_fan
         show_header_toggle: false
+      - type: "custom:mini-media-player"
+        entity: media_player.bedroom_homepod
+        name: HomePod
+        artwork: material
+        icon: "mdi:speaker"
+        hide:
+          power: true
       - entities:
           - type: custom:secondaryinfo-entity-row
             entity: input_boolean.sleeping
@@ -397,6 +404,13 @@ views:
             scroll_info: true
             show_progress: true
             show_source: small
+      - type: "custom:mini-media-player"
+        entity: media_player.bathroom_homepod
+        name: HomePod
+        artwork: material
+        icon: "mdi:speaker"
+        hide:
+          power: true
       - type: entities
         show_header_toggle: false
         entities:
