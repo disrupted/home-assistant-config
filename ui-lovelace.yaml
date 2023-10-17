@@ -340,6 +340,8 @@ views:
         show_header_toggle: false
         entities:
           - light.kitchen_ceiling
+          - light.cooker
+          - light.countertop
           - switch.christmas_star
       - type: "custom:mini-media-player"
         entity: media_player.sonos_kitchen

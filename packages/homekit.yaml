@@ -29,6 +29,8 @@ homekit:
       - light.desk_lamp
       # - light.candle
       - light.kitchen_ceiling
+      - light.cooker
+      - light.countertop
       - light.bathroom_ceiling
       - light.spots
       - binary_sensor.bathroom_motion

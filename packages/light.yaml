@@ -49,6 +49,12 @@ light:
     name: Kitchen
     entities:
       - light.kitchen_ceiling
+      - light.cooking
+  - platform: group
+    name: Cooking
+    entities:
+      - light.cooker
+      - light.countertop
   - platform: group
     name: Bathroom
     entities:
@@ -92,60 +98,35 @@ automation:
         event: start
       - platform: state
         entity_id:
-          # - light.bedroom_ceiling
-          - light.desk_lamp
           - light.floor_lamp
           - light.spots
-          - light.reading_lamp
+          - light.desk_lamp
         from: "off"
         to: "on"
         for:
           seconds: 1
-    # condition:
-    #   - condition: state
-    #     entity_id:
-    #       - switch.adaptive_lighting_bed
-    #       - switch.adaptive_lighting_desk
-    #       - switch.adaptive_lighting_floor
-    #     state: "off"
     action:
       - service: script.adaptive_lighting
         data:
           entities:
-            - light.desk_lamp
             - light.floor_lamp
             - light.spots
-            - light.reading_lamp
-          transition: 10
-
-  # - alias: Light Sunrise adaptive
-  #   trigger:
-  #     - platform: sun
-  #       event: sunrise
-  #       # offset: "-01:00:00"
-  #   action:
-  #     - service: switch.turn_on
-  #       entity_id:
-  #         - switch.adaptive_lighting_floor
-  #         - switch.adaptive_lighting_bed
-  #         - switch.adaptive_lighting_desk
+            - light.desk_lamp
+          transition: 4
 
   - alias: Light Sunset
     trigger:
-      platform: sun
-      event: sunset
-      offset: "-01:30:00"
-      # platform: numeric_state
-      # entity_id: sun.sun
-      # value_template: '{{ state.attributes.elevation }}'
-      # below: 5
+      # - platform: sun
+      #   event: sunset
+      #   offset: "-01:30:00"
+      - platform: numeric_state
+        entity_id: sun.sun
+        value_template: "{{ state.attributes.elevation }}"
+        below: 5
     condition:
       - condition: state
         entity_id: input_boolean.present
         state: "on"
-      # - condition: template
-      #   value_template: >
-      #     {{ is_state('light.floor_lamp', 'off') or is_state('light.reading_lamp', 'off') or is_state('light.spots', 'off') or is_state('light.desk_lamp', 'off') }}
     action:
       - choose:
           - alias: "IF working at the desk, turn on the desk lamp"
@@ -171,8 +152,6 @@ automation:
                 entity_id: light.livingroom
                 state: "off"
             sequence:
-              # - service: scene.turn_on
-              #   entity_id: scene.sunset
               - service: script.scene
                 data:
                   scene: sunset
@@ -193,19 +172,12 @@ automation:
         entity_id: sun.sun
         value_template: "{{ state.attributes.elevation }}"
         below: -4.0
-        # above: -8.0
-      # - platform: sun
-      #   event: sunset
-      #   offset: "+01:00:00"
     condition:
       - condition: template
         value_template: '{{ is_state_attr("sun.sun", "rising", False) }}'
       - condition: state
         entity_id: input_boolean.away
         state: "off"
-      # - condition: state
-      #   entity_id: input_boolean.sleeping
-      #   state: 'off'
     action:
       service: homeassistant.turn_on
       entity_id:
@@ -287,6 +259,16 @@ automation:
         remote: 26e2dec1fe6f42caafb738958bc3b26a
         light:
           entity_id: light.livingroom
+
+  - id: "1696940134753"
+    alias: Cooker remote
+    description: ""
+    use_blueprint:
+      path: damru/ikea-rodret_E2201_ZHA-Z2M_control-light.yaml
+      input:
+        remote_device: 3b0c562606f4c9923f2bfad98e8a9a72
+        light:
+          - light.cooking
 
   #  - alias: Light switch bed nightlight
   #  trigger:
