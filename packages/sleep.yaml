@@ -12,15 +12,6 @@ input_boolean:
     icon: mdi:sleep
 
 sensor:
-  - platform: template
-    sensors:
-      moon_phase:
-        friendly_name: Moon Phase
-        value_template: >
-          {{ states('sensor.moon') }}
-        icon_template: >
-          moon:{{ states('sensor.moon') }}
-
   - platform: history_stats
     name: Total Sleep last night
     entity_id: input_boolean.sleeping
