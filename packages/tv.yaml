@@ -95,8 +95,8 @@ automation:
         entity_id: input_boolean.movietime
         from: "on"
         to: "off"
-        # for:
-        #   seconds: 30
+        for:
+          seconds: 3
     condition:
       - condition: state
         entity_id: light.floor_lamp
