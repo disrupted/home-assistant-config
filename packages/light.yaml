@@ -11,16 +11,10 @@ homeassistant:
       icon: mdi:theme-light-dark
     light.floor_lamp:
       icon: mdi:floor-lamp
-    light.bedroom_ceiling:
-      icon: mdi:ceiling-light
-    light.kitchen_ceiling:
-      icon: mdi:ceiling-light-outline
-    light.bathroom_ceiling:
-      icon: mdi:wall-sconce-round
     light.reading_lamp:
       icon: mdi:floor-lamp-torchiere
     light.spots:
-      icon: mdi:light-flood-up # mdi:wall-sconce-flat-variant
+      icon: mdi:light-flood-up
     light.desk_lamp:
       icon: mdi:desk-lamp
     light.candle:
@@ -37,7 +31,7 @@ light:
       - light.bathroom
       - light.kitchen
       - light.desk_lamp
-      - light.corridor_ceiling
+      - light.corridor
       - light.storage_ceiling
   - platform: group
     name: Livingroom
@@ -59,6 +53,7 @@ light:
     name: Bathroom
     entities:
       - light.bathroom_ceiling
+      - light.mirror
   - platform: group
     name: Bedroom
     entities:
@@ -233,7 +228,7 @@ automation:
         state: "on"
     action:
       - service: light.turn_off
-        entity_id: light.bedroom_ceiling
+        entity_id: light.bedroom
 
   - alias: Bedroom Light switch turn on
     trigger:
@@ -250,7 +245,7 @@ automation:
       - service: script.light_toggle
         data:
           service: "turn_on"
-          entity_id: light.bedroom_ceiling
+          entity_id: light.bedside_lamp
 
   - alias: Livingroom Light switch
     use_blueprint:
@@ -621,6 +616,9 @@ automation:
       # from: "off"
       to: "on"
     condition:
+      - condition: state
+        entity_id: light.bathroom
+        state: "off"
       - condition: template
         value_template: "{{ state_attr('sun.sun', 'elevation') <= 8.0 }}"
     action:

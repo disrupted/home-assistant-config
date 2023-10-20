@@ -5,7 +5,7 @@ fields:
     description: service to use (optional, default toggle)
     example: turn_on
 variables:
-  entity_id: light.bathroom_ceiling
+  entity_id: light.bathroom
   service: "{{ service | default('toggle') }}"
 sequence:
   - choose:

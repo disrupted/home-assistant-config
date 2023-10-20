@@ -22,6 +22,8 @@ homekit:
       - switch.amp
       - switch.ps4
       - person.salomon
+      - light.corridor
+      - light.spots
       - light.floor_lamp
       # - light.reading_lamp
       - light.bedroom_ceiling
@@ -32,7 +34,7 @@ homekit:
       - light.cooker
       - light.countertop
       - light.bathroom_ceiling
-      - light.spots
+      - light.mirror
       - binary_sensor.bathroom_motion
       # - camera.xiaofang
   entity_config:

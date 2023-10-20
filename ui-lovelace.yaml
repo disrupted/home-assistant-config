@@ -105,6 +105,7 @@ views:
                     entity: input_boolean.present
                     secondary_info: "[[ sensor.time_outside_salomon ]] h outside today"
                   - lock.door_lock
+                  - light.corridor
                   - type: custom:secondaryinfo-entity-row
                     entity: sensor.day_phase
                     secondary_info: "[[ sensor.sun_daylight_remaining ]] h"
@@ -318,7 +319,6 @@ views:
             entity: input_boolean.sleeping
             secondary_info: "[[ sensor.total_sleep_last_night ]] h"
           - binary_sensor.bayesian_sleeping
-          - sensor.moon_phase
         show_header_toggle: false
         theme: Backend-selected
         title: Sleep Tracking
@@ -389,6 +389,7 @@ views:
         show_header_toggle: false
         entities:
           - light.bathroom_ceiling
+          - light.mirror
           - entity: fan.bathroom
             secondary_info: last-changed
           - entity: binary_sensor.bathroom_motion
