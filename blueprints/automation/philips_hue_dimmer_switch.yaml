@@ -70,7 +70,7 @@ action:
       args: "{{ trigger.event.data.args }}"
   - choose:
       - conditions:
-          - "{{ command == 'on_press' }}"
+          - "{{ command == 'on_short_release' }}"
         sequence:
           - choose:
               - conditions: "{{ force_brightness }}"
@@ -86,7 +86,7 @@ action:
                 data:
                   transition: 1
       - conditions:
-          - "{{ command == 'off_press' }}"
+          - "{{ command == 'off_short_release' }}"
         sequence:
           - service: light.turn_off
             target: !input "light"
