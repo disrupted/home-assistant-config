@@ -124,17 +124,6 @@ views:
           - sensor.adaptive_colortemp
           - input_number.scene_brightness
           - input_number.scene_color_temp
-      - type: "custom:mini-media-player"
-        entity: media_player.spotify
-        artwork: full-cover-fit
-        hide:
-          name: true
-          power: true
-          volume: true
-        name: Spotify Player
-        scroll_info: true
-        show_progress: true
-        show_source: small
       - type: vertical-stack
         cards:
           - type: entities
@@ -292,18 +281,10 @@ views:
     cards:
       - type: entities
         entities:
-          - type: custom:fold-entity-row
-            title: Light
-            head:
-              entity: light.bedroom_ceiling
-              hide_when_off: false
-              toggle: true
-              type: "custom:slider-entity-row"
-            entities:
-              - entity: switch.adaptive_lighting_bed
-                name: Adaptive
-              - entity: switch.adaptive_lighting_bed_no_brightness
-                name: Adaptive (no brightness)
+          - type: "custom:slider-entity-row"
+            entity: light.bedroom_ceiling
+            hide_when_off: false
+            toggle: true
           - light.bedside_lamp
           - fan.standing_fan
         show_header_toggle: false
@@ -352,10 +333,6 @@ views:
         shortcuts:
           columns: 3
           buttons:
-            - name: "Spotify"
-              icon: "mdi:spotify"
-              type: MUSIC
-              id: "spotify:playlist:37i9dQZF1DXbm6HfkbMtFZ"
             - name: BBC R1
               icon: "mdi:radio"
               type: MUSIC
@@ -392,7 +369,7 @@ views:
           - light.mirror
           - entity: fan.bathroom
             secondary_info: last-changed
-          - entity: binary_sensor.bathroom_motion
+          - entity: binary_sensor.bathroom_occupancy
             secondary_info: last-updated
           - binary_sensor.bathroom_door
           - input_select.ambient_sound
