@@ -1,21 +1,4 @@
 automation:
-  - id: music_kitchen_lofi
-    alias: music kitchen lofi
-    trigger: []
-    condition: []
-    action:
-      - service: media_player.play_media
-        target:
-          entity_id: media_player.sonos_kitchen
-        data:
-          media_content_type: "music"
-          media_content_id: "spotify:playlist:66YQDZDPxIAotL6fOID7BJ"
-      - service: media_player.shuffle_set
-        target:
-          entity_id: media_player.sonos_kitchen
-        data:
-          shuffle: true
-
   - id: music_kitchen_reset_shuffle
     alias: music kitchen reset shuffle
     trigger:
