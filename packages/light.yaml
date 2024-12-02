@@ -105,6 +105,7 @@ automation:
         data:
           entities:
             - light.floor_lamp
+            - light.reading_lamp
             - light.spots
             - light.desk_lamp
           transition: 4
@@ -178,6 +179,7 @@ automation:
       entity_id:
         - light.string
         - switch.christmas_star
+        - light.christmas_star
 
   - alias: Light Sunrise lightchain
     trigger:
@@ -195,6 +197,7 @@ automation:
     action:
       service: homeassistant.turn_off
       entity_id:
+        - light.christmas_star
         - light.string
         - switch.christmas_star
 
@@ -612,7 +615,7 @@ automation:
     max_exceeded: silent
     trigger:
       platform: state
-      entity_id: binary_sensor.bathroom_motion
+      entity_id: binary_sensor.bathroom_occupancy
       # from: "off"
       to: "on"
     condition:
@@ -627,7 +630,7 @@ automation:
           service: turn_on
       - wait_for_trigger:
           platform: state
-          entity_id: binary_sensor.bathroom_motion
+          entity_id: binary_sensor.bathroom_occupancy
           from: "on"
           to: "off"
       - delay: "00:10:00" # turn off after motion timeout

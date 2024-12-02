@@ -25,7 +25,7 @@ homekit:
       - light.corridor
       - light.spots
       - light.floor_lamp
-      # - light.reading_lamp
+      - light.reading_lamp
       - light.bedroom_ceiling
       - light.bedside_lamp
       - light.desk_lamp
@@ -35,7 +35,7 @@ homekit:
       - light.countertop
       - light.bathroom_ceiling
       - light.mirror
-      - binary_sensor.bathroom_motion
+      - binary_sensor.bathroom_occupancy
       # - camera.xiaofang
   entity_config:
     media_player.sonos_kitchen:

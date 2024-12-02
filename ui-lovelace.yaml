@@ -109,6 +109,7 @@ views:
                   - type: custom:secondaryinfo-entity-row
                     entity: sensor.day_phase
                     secondary_info: "[[ sensor.sun_daylight_remaining ]] h"
+                  - light.christmas_star
               - type: history-graph
                 hours_to_show: 12
                 refresh_interval: 60

@@ -135,7 +135,7 @@ group:
       - automation.google_home_routine_morning
 
 automation:
-  - alias: Sleeping Begin
+  - alias: Sleeping begin
     id: sleeping_begin
     trigger:
       platform: state
@@ -157,7 +157,6 @@ automation:
       - service: media_player.media_pause
         entity_id:
           - media_player.google_home
-          - media_player.spotify
       - service: media_player.volume_set
         entity_id: media_player.google_home
         data:

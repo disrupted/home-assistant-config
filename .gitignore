@@ -30,7 +30,6 @@ secrets.yaml
 ip_bans.yaml
 known_devices.yaml
 .ios.conf
-.spotify-token-cache
 .uuid
 .config_entries.json
 .homekit.state

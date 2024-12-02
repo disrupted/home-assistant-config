@@ -171,6 +171,10 @@ automation:
           - condition: sun
             before: sunrise
     action:
+      - service: light.turn_on
+        data:
+          entity_id: light.corridor
+          brightness_pct: 70
       # - service: switch.turn_on
       #   entity_id:
       #     - switch.circadian_lighting_floor
@@ -240,7 +244,13 @@ automation:
         then: # not timed out
           - alias: "Perform the action"
             choose:
-              - conditions: "{{ wait.trigger.event.data.action == action_open }}"
+              - conditions:
+                - condition: template
+                  value_template: "{{ wait.trigger.event.data.action == action_open }}"
+                  alias: check action type
+                - condition: template
+                  value_template: "{{ (as_timestamp(now()) - as_timestamp(wait.trigger.event.time_fired)) | int < 60 }}"
+                  alias: check timeout
                 sequence:
                   - service: script.door_open
       - service: notify.mobile_app_disrupted_iphone

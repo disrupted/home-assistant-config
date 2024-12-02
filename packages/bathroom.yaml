@@ -27,7 +27,7 @@ automation:
     max_exceeded: silent
     trigger:
       platform: state
-      entity_id: binary_sensor.bathroom_motion
+      entity_id: binary_sensor.bathroom_occupancy
       # from: "off"
       to: "on"
       for:
@@ -37,7 +37,7 @@ automation:
         entity_id: fan.bathroom
       - wait_for_trigger:
           platform: state
-          entity_id: binary_sensor.bathroom_motion
+          entity_id: binary_sensor.bathroom_occupancy
           from: "on"
           to: "off"
       - delay: "00:20:00"
@@ -62,7 +62,7 @@ automation:
   - alias: bathroom ambient sound
     trigger:
       - platform: state
-        entity_id: binary_sensor.bathroom_motion
+        entity_id: binary_sensor.bathroom_occupancy
         from: "off"
         to: "on"
       - platform: state
@@ -136,7 +136,7 @@ automation:
   - alias: bathroom ambient sound off
     trigger:
       - platform: state
-        entity_id: binary_sensor.bathroom_motion
+        entity_id: binary_sensor.bathroom_occupancy
         from: "on"
         to: "off"
         for:
