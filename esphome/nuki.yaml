@@ -6,18 +6,19 @@ esphome:
   name: ${name}
   libraries:
     - Preferences
-    - https://github.com/vinmenn/Crc16.git
+    - https://github.com/h2zero/NimBLE-Arduino#1.4.0
+    - Crc16
     - https://github.com/uriyacovy/NukiBleEsp32
 
 external_components:
   - source: github://uriyacovy/ESPHome_nuki_lock
 
 esp32:
-  board: esp-wrover-kit
-  # framework:
-  #   type: arduino
-  #   version: 2.0.3
-  #   platform_version: 5.3.0
+  board: esp32dev
+  framework:
+    type: arduino
+    version: 2.0.16
+    platform_version: 6.7.0
 
 wifi:
   ssid: !secret wifi_ssid
@@ -46,7 +47,8 @@ api:
   reboot_timeout: 0s
 
 ota:
-  password: !secret esphome_ota_pass
+  - platform: esphome
+    password: !secret esphome_ota_pass
 
 switch:
   - platform: restart

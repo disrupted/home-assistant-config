@@ -26,16 +26,19 @@ wifi:
     ssid: "${friendly_name} Hotspot"
     password: !secret esphome_fallback_hotspot_pass
 
-captive_portal:
+# captive_portal:
 
-# logger:
+logger:
 
+# Enable Home Assistant API
 api:
-  password: !secret esphome_api_pass
+  encryption:
+    key: !secret esphome_api_encryption_key
   reboot_timeout: 0s
 
 ota:
-  password: !secret esphome_ota_pass
+  - platform: esphome
+    password: !secret esphome_ota_pass
 
 light:
   - platform: monochromatic
