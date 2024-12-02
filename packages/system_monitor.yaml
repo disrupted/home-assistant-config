@@ -42,20 +42,6 @@ homeassistant:
       icon: mdi:key-remove
 
 binary_sensor:
-  # - platform: ping
-  #   host: !secret ip_router
-  #   name: router
-  - platform: ping
-    host: 1.1.1.1
-    name: Cloudflare DNS
-    count: 2
-    scan_interval: 60
-  - platform: ping
-    host: 8.8.8.8
-    name: Google DNS
-    count: 2
-    scan_interval: 60
-
   - platform: template
     sensors:
       # True if there's an update available for supervisor
@@ -218,12 +204,6 @@ sensor:
       Authorization: !secret github_bearer
       Content-Type: application/graphql
       User-Agent: Home Assistant REST sensor
-
-  - platform: systemmonitor
-    resources:
-      - type: processor_use
-      - type: memory_use_percent
-      - type: load_5m
 
 automation:
   - alias: Hass Started

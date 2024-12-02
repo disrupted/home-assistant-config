@@ -68,15 +68,6 @@ sensor:
       {% else %}{{ as_timestamp((as_timestamp(now()) | timestamp_custom('%Y-%m-%dT')) + (as_timestamp(state_attr('sun.sun', 'next_dusk')) | timestamp_custom('%H:%M:%S+00:00', False))) }}
       {% endif %}
 
-proximity:
-  home:
-    devices:
-      - person.salomon
-    # tolerance: 50
-  home_salomon:
-    devices:
-      - person.salomon
-
 automation:
   - id: device_tracker_new_device
     alias: device_tracker new device
