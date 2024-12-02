@@ -245,12 +245,12 @@ automation:
           - alias: "Perform the action"
             choose:
               - conditions:
-                - condition: template
-                  value_template: "{{ wait.trigger.event.data.action == action_open }}"
-                  alias: check action type
-                - condition: template
-                  value_template: "{{ (as_timestamp(now()) - as_timestamp(wait.trigger.event.time_fired)) | int < 60 }}"
-                  alias: check timeout
+                  - condition: template
+                    value_template: "{{ wait.trigger.event.data.action == action_open }}"
+                    alias: check action type
+                  - condition: template
+                    value_template: "{{ (as_timestamp(now()) - as_timestamp(wait.trigger.event.time_fired)) | int < 60 }}"
+                    alias: check timeout
                 sequence:
                   - service: script.door_open
       - service: notify.mobile_app_disrupted_iphone
