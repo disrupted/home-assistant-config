@@ -17,7 +17,7 @@ views:
                   [[[
                     var device_tracker = states['person.salomon'].state
                     if (device_tracker === 'not_home')
-                      return `Away ${states['proximity.home_salomon'].state}km`;
+                      return `Away ${states['sensor.home_salomon_distance'].state}km`;
                     else
                       return device_tracker;
                   ]]]
