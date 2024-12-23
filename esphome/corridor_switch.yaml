@@ -1,0 +1,93 @@
+# Shelly i3
+substitutions:
+  name: corridor
+  friendly_name: Corridor
+  light_entity: light.corridor
+
+esphome:
+  name: ${name}
+  platform: ESP8266
+  board: esp01_1m
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  fast_connect: true
+  reboot_timeout: 0s
+  # manual_ip:
+  #   static_ip: !secret ip_shelly_corridor
+  #   gateway: !secret ip_router
+  #   subnet: !secret ip_subnet
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${friendly_name} Hotspot"
+    password: !secret esphome_fallback_hotspot_pass
+
+captive_portal:
+
+# Enable Web server
+web_server:
+  port: 80
+
+# Enable logging
+# logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret esphome_api_encryption_key
+  reboot_timeout: 0s
+
+ota:
+  - platform: esphome
+    password: !secret esphome_ota_pass
+
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+switch:
+  - platform: restart
+    name: "${friendly_name} Restart"
+
+sensor:
+  - platform: wifi_signal
+    name: "${friendly_name} WiFi Signal"
+    update_interval: 60s
+
+binary_sensor:
+  - platform: status
+    name: "${friendly_name} Status"
+
+  # binary sensors for button inputs
+  - platform: gpio
+    pin:
+      number: GPIO14
+      mode: INPUT
+    name: "${friendly_name} Switch 1"
+    id: input1
+    filters:
+      - delayed_on_off: 50ms
+    on_state:
+      then:
+        - homeassistant.service:
+            service: light.toggle
+            data:
+              entity_id: light.corridor
+  - platform: gpio
+    pin:
+      number: GPIO12
+      mode: INPUT
+    name: "${friendly_name} Switch 2"
+    id: input2
+    filters:
+      - delayed_on_off: 50ms
+  - platform: gpio
+    pin:
+      number: GPIO13
+      mode: INPUT
+    name: "${friendly_name} Switch 3"
+    id: input3
+    filters:
+      - delayed_on_off: 50ms
