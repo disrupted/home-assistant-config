@@ -69,7 +69,7 @@ binary_sensor:
         return false;
       }
     filters:
-      - delayed_on: 10s
+      - delayed_on: 60s
       - delayed_off: 240s
     on_press:
       - light.turn_on: led
