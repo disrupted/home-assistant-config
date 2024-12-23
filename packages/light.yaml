@@ -184,7 +184,7 @@ automation:
   - alias: Light Sunrise lightchain
     trigger:
       - platform: time
-        at: "02:00:00"
+        at: "01:00:00"
       - platform: numeric_state
         entity_id: sun.sun
         value_template: "{{ state.attributes.elevation }}"
@@ -616,12 +616,12 @@ automation:
     trigger:
       platform: state
       entity_id: binary_sensor.bathroom_occupancy
-      # from: "off"
+      from: "off"
       to: "on"
     condition:
-      - condition: state
-        entity_id: light.bathroom
-        state: "off"
+      # - condition: state
+      #   entity_id: light.bathroom
+      #   state: "off"
       - condition: template
         value_template: "{{ state_attr('sun.sun', 'elevation') <= 8.0 }}"
     action:

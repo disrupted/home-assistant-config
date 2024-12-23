@@ -31,7 +31,7 @@ web_server:
   port: 80
 
 # Enable logging
-# logger:
+logger:
 
 # Enable Home Assistant API
 api:
@@ -100,7 +100,7 @@ binary_sensor:
                 - binary_sensor.is_on: light_avail
             then:
               - homeassistant.service:
-                  service: script.light_toggle
+                  service: script.bedroom_light_toggle
                   data:
                     entity_id: "${light_entity}"
             else:

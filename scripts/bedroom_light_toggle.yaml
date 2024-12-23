@@ -1,0 +1,121 @@
+alias: Light toggle
+description: "toggle light using adaptive lighting"
+fields:
+  service:
+    description: service to use (optional, default toggle)
+    example: turn_on
+  entity_id:
+    description: Entity of light (required)
+    example: light.bedside_lamp
+  transition:
+    description: Transition time for changes (optional, default 0.5)
+    example: 0.5
+variables:
+  adaptive: switch.adaptive_lighting_default
+  service: "{{ service | default('toggle') }}"
+  entity_id: "{{ entity_id }}"
+  color_temp: "{{ state_attr(adaptive, 'color_temp_mired') | int(300) }}"
+  transition: "{{ transition | default(0.5) }}"
+  automation: automation.light_adaptive_apply
+sequence:
+  - variables:
+      adaptive_status: "{{ is_state(automation, 'on') }}"
+  - choose:
+      - conditions: "{{ service == 'turn_on' }}"
+        sequence:
+          - choose:
+              - conditions: "{{ is_state('sensor.day_phase', 'Night') }}"
+                sequence:
+                  - service: "light.{{ service }}"
+                    data:
+                      entity_id: "{{ entity_id }}"
+                      brightness: 155
+                      transition: 1
+                      color_temp: 390
+              - conditions: "{{ is_state('sensor.day_phase', 'Evening') }}"
+                # - conditions: "{{ is_state('sun.sun', 'below_horizon') }}"
+                sequence:
+                  - service: "light.{{ service }}"
+                    data:
+                      entity_id: "{{ entity_id }}"
+                      brightness: 255
+                      transition: 0.5
+                      color_temp: 350
+            default:
+              - service: "light.{{ service }}"
+                data_template:
+                  entity_id: "{{ entity_id }}"
+                  brightness: 255
+                  transition: 0.5
+                  color_temp: 250
+                  # color_temp: "{{ color_temp }}"
+      - conditions: "{{ service == 'toggle' }}"
+        sequence:
+          - choose:
+              - conditions: "{{ is_state('light.bedside_lamp', 'off') }}"
+                sequence:
+                  - choose:
+                      - conditions: "{{ is_state('sensor.day_phase', 'Night') }}"
+                        sequence:
+                          - service: "light.turn_on"
+                            data:
+                              entity_id: "light.bedside_lamp"
+                              brightness: 155
+                              transition: 1
+                              rgb_color: [255, 82, 40]
+                      - conditions: "{{ is_state('sensor.day_phase', 'Evening') }}"
+                        # - conditions: "{{ is_state('sun.sun', 'below_horizon') }}"
+                        sequence:
+                          - service: "light.turn_on"
+                            data:
+                              entity_id: "light.bedside_lamp"
+                              brightness: 255
+                              transition: 0.5
+                              color_temp: 500
+                    default:
+                      - service: "light.turn_on"
+                        data_template:
+                          entity_id: "light.bedside_lamp"
+                          brightness: 255
+                          transition: 0.5
+                          color_temp: 250
+                          # color_temp: "{{ color_temp }}"
+              - conditions: "{{ is_state('light.bedside_lamp', 'on') and is_state('light.bedroom_ceiling', 'off') and (as_timestamp(now()) - as_timestamp(states.light.bedside_lamp.last_changed)) < 2}}"
+                sequence:
+                  - choose:
+                      - conditions: "{{ is_state('sensor.day_phase', 'Night') }}"
+                        sequence:
+                          - service: "light.turn_on"
+                            data:
+                              entity_id: "light.bedroom_ceiling"
+                              brightness: 128
+                              transition: 1
+                              color_temp: 390
+                      - conditions: "{{ is_state('sensor.day_phase', 'Evening') }}"
+                        # - conditions: "{{ is_state('sun.sun', 'below_horizon') }}"
+                        sequence:
+                          - service: "light.turn_on"
+                            data:
+                              entity_id: "light.bedroom_ceiling"
+                              brightness: 255
+                              transition: 0.5
+                              color_temp: 350
+                    default:
+                      - service: "light.turn_on"
+                        data_template:
+                          entity_id: "light.bedroom_ceiling"
+                          brightness: 255
+                          transition: 0.5
+                          color_temp: 250
+                          # color_temp: "{{ color_temp }}"
+            default:
+              - service: "light.turn_off"
+                data:
+                  entity_id: "light.bedroom"
+                  transition: 0.5
+      - conditions: "{{ service == 'turn_off' }}"
+        sequence:
+          - service: light.turn_off
+            data:
+              entity_id: "{{ entity_id }}"
+              transition: 0.5
